@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { LoomEngine } from './engine';
 import type { EngineStatus, ToolName } from './engine/events/types';
+import { fetchReplay, scheduleReplay } from './engine/events/replay';
 
 const TOOLS: ToolName[] = ['Read', 'Edit', 'Write', 'Bash', 'Search'];
 
@@ -20,7 +21,16 @@ export default function App() {
     const unsub = engine.bus.subscribe(setStatus);
     const params = new URLSearchParams(location.search);
     const staticMode = params.has('static');
-    engine.init(el, { autoplay: !staticMode && !params.has('noauto'), static: staticMode }).catch((err) => {
+    const replayMode = params.has('replay');
+    engine.init(el, { autoplay: !staticMode && !params.has('noauto') && !replayMode, static: staticMode }).then(async () => {
+      if (replayMode) {
+        try {
+          const replay = await fetchReplay();
+          engine.play();
+          scheduleReplay(replay, (e) => engine.inject(e));
+        } catch (e) { console.error('replay failed', e); }
+      }
+    }).catch((err) => {
       console.error(err);
       setFatal(String(err));
     });
@@ -34,6 +44,7 @@ export default function App() {
       setSpeed: (s: number) => engine.setSpeed(s),
       getStatus: () => engine.status,
       tick: (dt: number) => engine.manualTick(dt),
+      inject: (e: { id: number; type: ToolName; detail: string; at: number }) => engine.inject(e),
       ready: engine.ready,
     };
     const onKey = (ev: KeyboardEvent) => {

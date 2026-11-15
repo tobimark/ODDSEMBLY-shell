@@ -1,0 +1,17 @@
+{
+  "name": "loom-demo-session",
+  "events": [
+    { "at": 600,  "type": "Read",   "detail": "src/engine/loom/warpField.ts · 262 lines" },
+    { "at": 900,  "type": "Edit",   "detail": "src/engine/loom/heddleReed.ts · 12 - 38" },
+    { "at": 1250, "type": "Write",  "detail": "src/engine/loom/particles.ts · +64 lines" },
+    { "at": 1600, "type": "Read",   "detail": "src/engine/layout.ts · 52 lines" },
+    { "at": 1950, "type": "Bash",   "detail": "npm run build · exit 0 · 3.4 s" },
+    { "at": 2450, "type": "Search", "detail": "grep \"heddle\" src · 14 matches" },
+    { "at": 2900, "type": "Edit",   "detail": "src/engine/loom/scene.ts · 44 - 61" },
+    { "at": 3250, "type": "Write",  "detail": "src/engine/anim/spring.ts · +38 lines" },
+    { "at": 3650, "type": "Bash",   "detail": "node scripts/capture.mjs · 4 shots" },
+    { "at": 4200, "type": "Edit",   "detail": "src/styles.css · 88 - 104" },
+    { "at": 4700, "type": "Search", "detail": "grep \"spring\" src · 22 matches" },
+    { "at": 5200, "type": "Write",  "detail": "README.md · +96 lines" }
+  ]
+}

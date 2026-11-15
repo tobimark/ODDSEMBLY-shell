@@ -68,14 +68,12 @@ export class Frame extends Container {
         t.anchor.set(0.5); t.position.set(x, bot - 18); t.alpha = 0.4; this.addChild(t);
       }
     }
-    const q = new Text({ text: 'QUEUE 000', style: { fontFamily: FONT.mono, fontSize: 7, fill: T.navy, letterSpacing: 1.2 } });
-    q.position.set(FABRIC.x + FABRIC.w + 16, bot + 4); q.alpha = 0.45; this.addChild(q);
 
     // base plinth
-    g.rect(300, bot + 24, 880, 26).fill({ color: 0xf0e9df, alpha: 0.8 }).stroke({ width: 0.9, color: T.navy, alpha: 0.4 });
-    g.rect(312, bot + 31, 856, 12).stroke({ width: 0.4, color: T.navy, alpha: 0.16 });
-    hatch(g, 300, bot + 24, 880, 26, 9, 0.06);
-    g.moveTo(320, bot + 56).lineTo(1160, bot + 56).stroke({ width: 0.5, color: T.navy, alpha: 0.25 });
+    g.rect(300, bot + 20, 800, 26).fill({ color: 0xf0e9df, alpha: 0.8 }).stroke({ width: 0.9, color: T.navy, alpha: 0.4 });
+    g.rect(312, bot + 27, 776, 12).stroke({ width: 0.4, color: T.navy, alpha: 0.16 });
+    hatch(g, 300, bot + 20, 800, 26, 9, 0.06);
+    g.moveTo(320, bot + 52).lineTo(1080, bot + 52).stroke({ width: 0.5, color: T.navy, alpha: 0.25 });
 
     // gussets
     for (const [x, sx] of [[L, 1], [R, -1]] as const) {
@@ -94,12 +92,6 @@ export class Frame extends Container {
       bolt(g, x - sx * 4 - (sx > 0 ? 0 : 34) + 30, y - (sy > 0 ? 4 : 30) + 8, 2.2, 0.45);
       bolt(g, x - sx * 4 - (sx > 0 ? 0 : 34) + 8, y - (sy > 0 ? 4 : 30) + 26, 2.2, 0.45);
       bolt(g, x - sx * 4 - (sx > 0 ? 0 : 34) + 30, y - (sy > 0 ? 4 : 30) + 26, 2.2, 0.45);
-    }
-
-    // diagonal cross bracing (rear plane, lighter)
-    for (const [x1, y1, x2, y2] of [[L + 20, top + 40, R - 20, bot - 40], [R - 20, top + 40, L + 20, bot - 40]] as const) {
-      g.moveTo(x1, y1).lineTo(x2, y2).stroke({ width: 0.45, color: T.navy, alpha: 0.12 });
-      g.circle(x1, y1, 2.2).stroke({ width: 0.4, color: T.navy, alpha: 0.2 });
     }
 
     // oil cups at post tops
@@ -125,10 +117,6 @@ export class Frame extends Container {
       g.circle(x, y, 2).fill({ color: T.navy, alpha: 0.5 });
     }
 
-    // tension cables from posts to heddle area
-    for (const x of [L + 14, R - 14]) {
-      g.moveTo(x, 300).lineTo(x + (x < 800 ? 30 : -30), 392).stroke({ width: 0.45, color: T.navy, alpha: 0.25 });
-    }
 
     this.addChild(g);
 

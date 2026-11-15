@@ -11,12 +11,12 @@ const PITCH = FABRIC.pitch;
 
 /** local y landmarks (canvas space: 0 = warp beam, H = bottom beam) */
 const Y_BEAM = 2;
-const Y_LEASE_1 = 62;
-const Y_LEASE_2 = 82;
-const Y_EYE_A = 196;
-const Y_EYE_B = 290;
-const Y_REED = 424;
-const Y_CLOTH_TOP = 444;
+const Y_LEASE_1 = 60;
+const Y_LEASE_2 = 80;
+const Y_EYE_A = 190;
+const Y_EYE_B = 286;
+const Y_REED = 420;
+const Y_CLOTH_TOP = 442;
 const ROW_H = 5.4;
 const ROWS_MAX = Math.floor((H - Y_CLOTH_TOP - 6) / ROW_H);
 
@@ -153,8 +153,8 @@ export class WarpField {
         g.beginPath();
         g.moveTo(x + ox, Y_BEAM + oy);
         // lease rods: alternate threads cross slightly
-        g.lineTo(x + ox + (up ? 0.9 : -0.9), Y_LEASE_1 + oy);
-        g.lineTo(x + ox + (up ? -0.7 : 0.7), Y_LEASE_2 + oy);
+        g.lineTo(x + ox + (up ? 0.42 : -0.42), Y_LEASE_1 + oy);
+        g.lineTo(x + ox + (up ? -0.32 : 0.32), Y_LEASE_2 + oy);
         // sag to the heddle eye
         g.quadraticCurveTo(x + ox + sway * 0.4, (Y_LEASE_2 + eye) / 2 + oy + th.sag, x + ox + zig, eye + oy);
         // through the reed

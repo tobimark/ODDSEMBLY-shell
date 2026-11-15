@@ -1,4 +1,4 @@
-import { Container, Graphics, Text, TilingSprite, Texture } from 'pixi.js';
+import { Container, Graphics, Sprite, Text, TilingSprite, Texture } from 'pixi.js';
 import { FABRIC, LOOM } from '../layout';
 import { FONT, T } from '../theme';
 import { Spring } from '../anim/spring';
@@ -31,6 +31,7 @@ export class LoomScene extends Container {
   private shadows = new Shadows();
   private draft = new DraftPanel();
   private grain!: TilingSprite;
+  private paperGlow!: Sprite;
   private annotation = new Container();
   private vignette = new Graphics();
 
@@ -53,6 +54,7 @@ export class LoomScene extends Container {
     }
     this.addChild(this.vignette);
     this.addChild(this.backdrop, this.shadows, this.frame, this.extras, this.bobbins, ...wf, this.heddle, this.reed, this.shuttle, this.drive, this.instruments, this.console, this.draft, this.particles, this.annotation);
+    this.buildPaperGlow();
     this.buildGrain();
     this.buildAnnotations();
     this.buildVignette();
@@ -74,6 +76,21 @@ export class LoomScene extends Container {
       const a = 0.012 - i * 0.002;
       g.rect(SHEETLIKE.x + i * 8, SHEETLIKE.y + i * 8, SHEETLIKE.w - i * 16, SHEETLIKE.h - i * 16).stroke({ width: 8, color: T.navy, alpha: a });
     }
+  }
+
+  private buildPaperGlow(): void {
+    const c = document.createElement('canvas');
+    c.width = 736; c.height = 504;
+    const x = c.getContext('2d')!;
+    const g = x.createRadialGradient(400, 300, 40, 400, 300, 520);
+    g.addColorStop(0, 'rgba(255,253,248,0.9)');
+    g.addColorStop(0.55, 'rgba(251,247,240,0.45)');
+    g.addColorStop(1, 'rgba(232,222,206,0.35)');
+    x.fillStyle = g;
+    x.fillRect(0, 0, 736, 504);
+    this.paperGlow = new Sprite(Texture.from(c));
+    this.paperGlow.width = 1472; this.paperGlow.height = 1008;
+    this.addChildAt(this.paperGlow, 0);
   }
 
   private buildGrain(): void {
@@ -101,8 +118,8 @@ export class LoomScene extends Container {
       const t = new Text({ text: txt, style: { fontFamily: FONT.mono, fontSize: size, fill: T.navy, letterSpacing: 1.5 } });
       t.position.set(x, y); t.alpha = alpha; this.annotation.addChild(t);
     };
-    mk('WARP FIELD  ·  106 ENDS  ·  PITCH 4.2  ·  WEFT / PIRN', FABRIC.x - 2, LOOM.bottomBeam + 66);
-    mk('PROCEDURAL WEAVE  /  SPRING-DRIVEN  /  EVENT SYNCED', 300, 936, 7.4, 0.42);
+    mk('WARP FIELD  ·  106 ENDS  ·  WEFT / PIRN  ·  EVENT SYNC', FABRIC.x, LOOM.bottomBeam + 78);
+    
     const g = new Graphics();
     g.moveTo(FABRIC.x, 916).lineTo(FABRIC.x + FABRIC.w, 916).stroke({ width: 0.4, color: T.navy, alpha: 0.2 });
     this.annotation.addChild(g);

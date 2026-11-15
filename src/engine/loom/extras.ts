@@ -19,7 +19,6 @@ export class Extras extends Container {
     this.buildCables();
     this.buildRailPanel();
     this.buildSprings();
-    this.buildTreadles();
     this.buildClothRoll();
     this.buildCallouts();
     this.buildDetail();
@@ -225,13 +224,7 @@ export class Extras extends Container {
     const g = new Graphics();
     const R = FABRIC.x + FABRIC.w;
     this.callout(g, FABRIC.x + 120, 176, FABRIC.x + 120, 104, 'WARP BEAM / 106 ENDS');
-    this.callout(g, FABRIC.x - 30, LOOM.heddleB + 16, FABRIC.x - 100, LOOM.heddleB + 52, 'HEDDLE SHAFTS A/B', 'left');
-    this.callout(g, FABRIC.x - 20, LOOM.reedY + 6, FABRIC.x - 100, LOOM.reedY + 36, 'REED 106 DENTS', 'left');
-    this.callout(g, FABRIC.x + FABRIC.w + 8, LOOM.raceY, FABRIC.x + FABRIC.w + 76, LOOM.raceY - 18, 'SHUTTLE / PIRN');
-    this.callout(g, FABRIC.x + FABRIC.w + 12, 858, FABRIC.x + FABRIC.w + 76, 838, 'CLOTH ROLL');
-    this.callout(g, 380, 660, 300, 620, 'FLYWHEEL  Ø192', 'left');
-    this.callout(g, 560, 542, 470, 528, 'CAM / HEDDLE DRIVE', 'left');
-    this.callout(g, 352, 610, 300, 700, 'DRIVE BELT', 'left');
+    this.callout(g, FABRIC.x + FABRIC.w - 40, 848, FABRIC.x + FABRIC.w + 40, 874, 'CLOTH ROLL');
     this.addChild(g);
 
     // dimensions

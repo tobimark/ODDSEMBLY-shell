@@ -90,7 +90,7 @@ async function main() {
     await sendS('Runtime.enable');
     await sendS('Emulation.setDeviceMetricsOverride', { width: 1472, height: 1008, deviceScaleFactor: 1, mobile: false });
 
-    const url = mode === 'static' ? `${URL_BASE}/?static=1` : mode === 'hero-art' ? `${URL_BASE}/?noauto=1&ui=0` : `${URL_BASE}/?noauto=1`;
+    const url = mode === 'static' ? `${URL_BASE}/?static=1` : mode === 'hero-art' ? `${URL_BASE}/?noauto=1&ui=0` : mode === 'replay' ? `${URL_BASE}/?noauto=1&replay=1` : mode === 'replay-art' ? `${URL_BASE}/?noauto=1&replay=1&ui=0` : `${URL_BASE}/?noauto=1`;
     await sendS('Page.navigate', { url });
     await sleep(1200);
     await sendS('Runtime.evaluate', { expression: 'new Promise(r => { const t=setInterval(()=>{ if(window.__loom&&window.__loom.ready){clearInterval(t);r(1)} },100); setTimeout(()=>{clearInterval(t);r(0)},15000) })', awaitPromise: true });
@@ -104,7 +104,10 @@ async function main() {
       console.log('saved', p);
     };
 
-    if (mode === 'static') {
+    if (mode === 'replay' || mode === 'replay-art') {
+      await sleep(5600);
+      await shoot(mode === 'replay' ? 'replay.png' : 'replay-art.png');
+    } else if (mode === 'static') {
       // freeze exactly at idle state
       await sendS('Runtime.evaluate', { expression: 'window.__loom.pause()' });
       await sleep(300);

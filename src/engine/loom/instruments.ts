@@ -116,9 +116,9 @@ export class Instruments extends Container {
     title.position.set(PANEL.x + 14, y); title.alpha = 0.55; this.addChild(title);
 
     // tool mix rows
-    const my = y + 66;
+    const my = y + 62;
     TOOLS.forEach((tool, i) => {
-      const yy = my + i * 22;
+      const yy = my + i * 21;
       const dot = new Graphics();
       dot.circle(PANEL.x + 18, yy + 5, 3).fill({ color: EVENT_COLORS[tool], alpha: 0.9 });
       this.addChild(dot);
@@ -142,11 +142,11 @@ export class Instruments extends Container {
   }
 
   private buildLedger(): void {
-    const y0 = PANEL.y + 594;
+    const y0 = PANEL.y + 580;
     const title = new Text({ text: 'EVENT LEDGER', style: { fontFamily: FONT.mono, fontSize: 7, fill: T.navy, letterSpacing: 1.5 } });
     title.position.set(PANEL.x + 14, y0); title.alpha = 0.55; this.addChild(title);
     for (let i = 0; i < 3; i++) {
-      const y = y0 + 16 + i * 26;
+      const y = y0 + 16 + i * 24;
       const dot = new Graphics();
       dot.circle(PANEL.x + 17, y + 6, 2.6).fill({ color: T.navy, alpha: 0.25 });
       this.addChild(dot);
@@ -166,7 +166,7 @@ export class Instruments extends Container {
   }
 
   private buildRate(): void {
-    const x = PANEL.x + 14, y = PANEL.y + 548;
+    const x = PANEL.x + 14, y = PANEL.y + 530;
     const title = new Text({ text: 'EVENT RATE / 15S', style: { fontFamily: FONT.mono, fontSize: 6.8, fill: T.navy, letterSpacing: 1.3 } });
     title.position.set(x, y); title.alpha = 0.55; this.addChild(title);
   }
@@ -174,7 +174,7 @@ export class Instruments extends Container {
   private drawRate(rate: number): void {
     const g = this.rateG;
     g.clear();
-    const x0 = PANEL.x + 14, y0 = PANEL.y + 562, w = PANEL.w - 28, h = 18;
+    const x0 = PANEL.x + 14, y0 = PANEL.y + 544, w = PANEL.w - 28, h = 18;
     for (let i = 0; i < 15; i++) {
       const filled = i < Math.min(15, rate);
       const bh = filled ? Math.max(3, h * (0.35 + 0.65 * Math.min(1, rate / 15))) : 3;
@@ -201,7 +201,7 @@ export class Instruments extends Container {
       const w = Math.min(96, c * 9);
       const bar = this.toolBars[i];
       bar.clear();
-      const by = PANEL.y + 372 + 66 + i * 22 - 2;
+      const by = PANEL.y + 372 + 62 + i * 21 - 2;
       bar.roundRect(PANEL.x + 86, by, 96, 5, 2).stroke({ width: 0.35, color: T.navy, alpha: 0.18 });
       bar.roundRect(PANEL.x + 86, by, Math.max(2, w), 5, 2).fill({ color: EVENT_COLORS[tool], alpha: 0.55 });
     });

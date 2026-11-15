@@ -21,7 +21,6 @@ export class Backdrop extends Container {
     this.buildBorder();
     this.buildGrid();
     this.buildArc();
-    this.buildTitleBlock();
     this.addChild(this.arcMarker);
   }
 
@@ -154,38 +153,10 @@ export class Backdrop extends Container {
     this.addChild(g);
 
     // labels
-    const cap2 = new Text({ text: 'DRIVE ANGLE / DEG', style: { fontFamily: FONT.mono, fontSize: 7, fill: T.navy, letterSpacing: 1.6 } });
-    cap2.position.set(ocx - 150, ocy - R2 + 6); cap2.alpha = 0.45; this.addChild(cap2);
     const cap = new Text({ text: 'TENSION  /  DRIVE  ANGLE', style: { fontFamily: FONT.mono, fontSize: 8, fill: T.navy, letterSpacing: 1.6 } });
     cap.position.set(cx - 210, cy + R + 44);
     cap.alpha = 0.5;
     this.addChild(cap);
-  }
-
-  private buildTitleBlock(): void {
-    const g = new Graphics();
-    const x = SHEET.x + SHEET.w - 252;
-    const y = SHEET.y + SHEET.h - 92;
-    g.rect(x, y, 236, 74).stroke({ width: 0.6, color: T.navy, alpha: 0.3 });
-    g.moveTo(x, y + 24).lineTo(x + 236, y + 24).stroke({ width: 0.4, color: T.navy, alpha: 0.22 });
-    g.moveTo(x, y + 48).lineTo(x + 236, y + 48).stroke({ width: 0.4, color: T.navy, alpha: 0.22 });
-    g.moveTo(x + 150, y + 24).lineTo(x + 150, y + 74).stroke({ width: 0.4, color: T.navy, alpha: 0.22 });
-    this.addChild(g);
-
-    const mk = (txt: string, px: number, py: number, size: number, alpha = 0.72, family = FONT.mono, spacing = 0.6) => {
-      const t = new Text({ text: txt, style: { fontFamily: family, fontSize: size, fill: T.navy, letterSpacing: spacing } });
-      t.position.set(px, py); t.alpha = alpha; this.addChild(t); return t;
-    };
-    mk('KUNLUNMETA  ·  AGENT VISUAL ENGINE', x + 10, y + 7, 8.5, 0.7, FONT.mono, 1.1);
-    mk('LOOM 01', x + 10, y + 30, 14, 0.9, FONT.display, 1.4);
-    mk('PROC. WEAVE / 106 ENDS', x + 10, y + 53, 7.5, 0.55);
-    mk('SCALE 1:2', x + 158, y + 29, 7.5, 0.55);
-    mk('DWG KM-LM-001', x + 158, y + 53, 7.5, 0.55);
-
-    const tl = new Text({ text: 'SHEET 01 / PROCEDURAL MECHANISM STUDY', style: { fontFamily: FONT.mono, fontSize: 7.5, fill: T.navy, letterSpacing: 1.5 } });
-    tl.position.set(SHEET.x + 26, SHEET.y + SHEET.h - 26);
-    tl.alpha = 0.45;
-    this.addChild(tl);
   }
 
   /** animate the teal sweep marker along the arc (drive angle feedback) */

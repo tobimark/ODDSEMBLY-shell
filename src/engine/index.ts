@@ -146,6 +146,8 @@ export class LoomEngine {
     this.bus.patch({ muted: m });
   }
 
+  inject(e: ToolEvent): void { this.handleEvent(e); }
+
   trigger(type: ToolName): void {
     this.audio.ensure();
     if (this.mode === 'idle' || this.mode === 'stopped') {
