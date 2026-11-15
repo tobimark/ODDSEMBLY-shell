@@ -1,0 +1,111 @@
+:root {
+  --paper: #fbf9f6;
+  --navy: #171c60;
+  --navy-soft: #3b4177;
+  --muted: #6a6f96;
+  --teal: #33cbcc;
+  --teal-deep: #1f8f92;
+  --line: rgba(23, 28, 96, 0.28);
+  --display: 'Bahnschrift', 'DIN Alternate', 'Segoe UI', system-ui, sans-serif;
+  --mono: 'Consolas', 'JetBrains Mono', 'Courier New', monospace;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--navy);
+  font-family: var(--display);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app { position: relative; width: 100%; height: 100%; }
+.stage { position: absolute; inset: 0; }
+.stage canvas { display: block; width: 100% !important; height: 100% !important; }
+
+/* ---------- brand ---------- */
+.brand {
+  position: absolute; left: 34px; top: 26px;
+  display: flex; flex-direction: column; gap: 10px;
+  pointer-events: none;
+}
+.brand-mark { display: flex; align-items: center; gap: 12px; }
+.brand-glyph { display: inline-flex; opacity: 0.95; }
+.brand h1 {
+  margin: 0; font-size: 15px; letter-spacing: 0.42em; font-weight: 600;
+  color: var(--navy);
+}
+.brand p {
+  margin: 5px 0 0; font-family: var(--mono); font-size: 8.5px;
+  letter-spacing: 0.34em; color: var(--muted);
+}
+.brand-sub {
+  margin-left: 40px; font-family: var(--mono); font-size: 7.5px;
+  letter-spacing: 0.26em; color: var(--muted); opacity: 0.8;
+}
+
+/* ---------- telemetry ---------- */
+.telemetry {
+  position: absolute; right: 34px; top: 26px;
+  display: flex; align-items: flex-start; gap: 18px;
+  pointer-events: none; text-align: right;
+}
+.pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid var(--line); border-radius: 999px;
+  padding: 6px 12px; font-family: var(--mono); font-size: 9px;
+  letter-spacing: 0.24em; color: var(--navy); background: rgba(251, 249, 246, 0.72);
+}
+.pill i { width: 6px; height: 6px; border-radius: 50%; background: var(--navy-soft); display: inline-block; }
+.pill.running i { background: var(--teal); box-shadow: 0 0 0 3px rgba(51, 203, 204, 0.16); }
+.pill.paused i { background: #b28d5e; }
+.pill.stopped i { background: var(--muted); }
+.telemetry dl { display: flex; gap: 22px; margin: 2px 0 0; }
+.telemetry dl div { display: flex; flex-direction: column; gap: 3px; }
+.telemetry dt { font-family: var(--mono); font-size: 7px; letter-spacing: 0.22em; color: var(--muted); }
+.telemetry dd { margin: 0; font-family: var(--mono); font-size: 13px; letter-spacing: 0.08em; color: var(--navy); }
+
+/* ---------- console ---------- */
+.console {
+  position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
+  display: flex; flex-direction: column; gap: 10px; align-items: center;
+  pointer-events: none;
+  padding: 12px 16px 10px;
+  border: 1px solid rgba(23, 28, 96, 0.18);
+  border-radius: 10px;
+  background: rgba(251, 249, 246, 0.78);
+  backdrop-filter: blur(6px);
+}
+.transport, .tools { display: flex; align-items: center; gap: 8px; pointer-events: auto; }
+.console button {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--navy);
+  background: transparent; border: 1px solid rgba(23, 28, 96, 0.32);
+  border-radius: 4px; padding: 6px 11px; cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.console button:hover { border-color: var(--navy); background: rgba(23, 28, 96, 0.05); }
+.console button.on { border-color: var(--teal-deep); color: var(--teal-deep); background: rgba(51, 203, 204, 0.1); }
+.speed { display: flex; gap: 4px; margin-left: 6px; }
+.tools { gap: 6px; }
+.tool { display: inline-flex; align-items: baseline; gap: 7px; }
+.tool b { font-weight: 500; color: var(--muted); font-size: 8px; }
+.tool-read:not(.on) { border-color: rgba(23, 28, 96, 0.22); }
+.tool-write { border-color: rgba(51, 203, 204, 0.5); }
+.tool-bash { border-color: rgba(34, 38, 63, 0.5); }
+.hint { font-family: var(--mono); font-size: 7.5px; letter-spacing: 0.18em; color: var(--muted); pointer-events: none; }
+
+.fatal {
+  position: absolute; inset: auto 0 40% 0; text-align: center;
+  font-family: var(--mono); font-size: 12px; color: #b34a4a;
+}
+
+@media (max-width: 1100px) {
+  .brand { left: 18px; top: 16px; }
+  .telemetry { right: 18px; top: 16px; }
+  .telemetry dl { gap: 12px; }
+  .console { bottom: 10px; padding: 8px 10px; }
+  .console button { padding: 5px 8px; }
+}
