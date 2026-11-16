@@ -98,22 +98,10 @@ export default function App() {
       setMuted: (m: boolean) => engine.setMuted(m),
     };
 
-    const onKey = (ev: KeyboardEvent) => {
-      if (ev.code === 'Space') {
-        ev.preventDefault();
-        if (engine.status.state === 'running') engine.pause();
-        else if (engine.status.state === 'paused') engine.resume();
-        else engine.play();
-      }
-      if (ev.key === 'm' || ev.key === 'M') engine.setMuted(!engine.status.muted);
-      const n = Number(ev.key);
-      if (n >= 1 && n <= 5) engine.trigger(TOOLS[n - 1]);
-    };
-    window.addEventListener('keydown', onKey);
+
 
     return () => {
       disposed = true;
-      window.removeEventListener('keydown', onKey);
       unsub();
       engine.destroy();
       engineRef.current = null;

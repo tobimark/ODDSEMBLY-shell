@@ -11,7 +11,9 @@
     "shot:mode": "node scripts/shot-mode.mjs",
     "parity:loom": "node scripts/parity-loom.mjs",
     "test": "node scripts/test-mechanism.mjs",
-    "review:atelier": "node scripts/atelier-review.mjs"
+    "review:atelier": "node scripts/atelier-review.mjs",
+    "bridge": "node scripts/agent-bridge.mjs",
+    "agent:demo": "node scripts/agent-bridge.mjs --demo"
   },
   "dependencies": {
     "pixi.js": "^8.6.0",
