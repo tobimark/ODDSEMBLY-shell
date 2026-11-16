@@ -1,143 +1,74 @@
-# KunlunMeta · Agent Visual Engine — V0.1 (Loom 01)
+# KunlunMeta Loom — Mechanical Arts / Series 01
 
-一台由 **TypeScript + React + PixiJS v8** 独立实现的程序化数字织布机，用模拟 Agent 工具事件驱动机械运动、织物生长与仪表反馈。所有几何均由代码生成，**没有使用参考项目截图作为背景**。
+由 Agent 工具事件驱动的程序化机械艺术。TypeScript、React、PixiJS 8；全部零件、纱线和织物由本项目代码生成，未使用参考截图作贴图。
 
-> 参考：CrommaCode 0.3.11 Game View / Loom 的视觉语言（米白纸面、极细线稿、低饱和经线、精密仪表）。
-> 品牌：KunlunMeta — 深海军蓝 `#171C60` / 青绿 `#33CBCC` / 暖白 `#FBF9F6`。
+本次视觉重构位于 `visual/atelier-loom`，原版保留在 `master`（起点 `00aeb56`）。交付说明与实际运行证据见 [review/atelier/DESIGN.md](review/atelier/DESIGN.md)。
 
----
+## 运行
 
-## 快速开始
-
-```bash
-cd kunlun-loom
+```sh
 npm install
-npm run dev          # http://127.0.0.1:5173
+npm run dev
 ```
 
-生产构建 / 本地预览：
+打开 http://127.0.0.1:5173 。默认稍后启动模拟事件。生产构建：
 
-```bash
+```sh
 npm run build
-npm run preview      # http://127.0.0.1:4173
+npm run preview
 ```
 
-> 本机若 `vite build` 报 esbuild 临时文件 `Access is denied`（Windows 临时目录权限/杀软锁定），把 `TEMP`/`TMP` 指向项目内目录再构建即可：
-> `$env:TEMP="$(pwd)\.tmp"; $env:TMP=$env:TEMP`
+构建脚本自动使用项目内 `.tmp/build`，避免本机 Windows 公共临时目录的 esbuild 文件锁问题。需要 Node.js 22 或更新版本。
 
----
+## 操作
 
-## 交互
+- Play / Pause / Resume：模拟播放、冻结所有机构及回放时钟、继续。
+- Stop：停止输入并清空待织队列，保留已织图样和累计计数。
+- 0.5× / 1× / 2×：同步调整机械与事件时钟。
+- Read / Edit / Write / Bash / Search，或数字 1–5：手动注入一次事件。
+- Detail / Full view：1.65 倍细节观察与全景。
+- 空格暂停 / 继续，M 静音。
 
-| 操作 | 说明 |
-|---|---|
-| `Play / Pause / Stop / Resume` | 启动 / 暂停（冻结） / 停止（机构回零） / 继续 |
-| `0.5× / 1× / 2×` | 动画与事件节奏倍率 |
-| `Read / Edit / Write / Bash / Search` 按钮、键盘 `1–5` | 手动注入一次工具事件 |
-| 空格 | 暂停 / 继续 |
-| `M` | 静音 / 取消静音 |
-| `?static=1` | 静态渲染（用于截图，不自动播放） |
-| `?noauto=1` | 不自动播放，保持 idle |
-| `?ui=0` | 隐藏 DOM 控制层，仅保留画布（用于美术审核） |
+参数：`?noauto=1` 保持待机；`?replay=1` 回放 `public/replay/loom-session.json`；`?ui=0` 隐藏界面；`?static=1` 仅渲染静帧，用于自动截图。
 
-模拟事件序列：idle → single → burst（3–7 连发）→ think → …；连续调用会提升转速、张力和密度，并随空闲自然衰减。事件系统与动画系统解耦：`AgentSimulator` 只是 `ToolEvent` 的一个来源，未来接 Codex / Claude Code / OpenCode 时替换事件源即可。
+## 事件与机械
 
----
+每个事件进入 FIFO 队列，完成一次 1.65 秒织造周期。开口 → 引纬 → 闭口 → 打纬 → 卷取；每次打纬提交一行，Read 也成为一行记录。工具种类决定纬线颜色。初始菱形组织是展示底布，PICKS 从零开始，仅统计后续完成的真实事件。连发排队，不跳过或合并事件。
 
-## 事件 → 机械反馈
+192 根经线分成 16 组纱色，双综框交替开口；皮带采用 3:1 轮径关系，24:16 齿轮反向联动。前经线遮挡梭子，织物在打纬后平滑移入卷布辊。机构是艺术化的运动学表达，并非可制造的工程仿真。
 
-| 事件 | 织机反馈 |
-|---|---|
-| **Read** | 光学扫描头沿经线扫过（青绿扫描带）、转速小幅提升、读数计数 +1 |
-| **Edit** | 综框 A/B 相位交替、梭子横向引纬、钢筘打纬一次、织入一行深蓝组织、花纹图样更新 |
-| **Write** | 与 Edit 类似但张力/转速更高、青绿纬线、梭子引纬并留下青绿尾线 |
-| **Bash** | 飞轮冲量（转速尖峰）、打纬重击、粒子/火花、织入一行深色组织、声音为低频 clack |
-| **Search** | 钢筘横向扫动 + 青绿脉冲、张力轻推、织入一行灰绿组织 |
+原有 `ToolEvent`、`EventBus`、`LoomEngine`、模拟器和回放入口保留。外部输入示例：
 
-累计效果：每行织物写入布面并向上堆叠（40 行基础布 + 事件行），超过容量后卷布辊方向滚动；工具计数、速率曲线、事件账本、花纹图样（DRAFT / PEG PLAN）同步累积。
-
----
-
-## 视觉系统
-
-- **画布**：固定设计稿 1472×1008，按视口等比缩放；Pixi 渲染 + Canvas2D 织物层（106 根经线，间距 4.2 px，超采样 2×）。
-- **层次**（从后到前）：纸面网格/大刻度盘 → 投影 → 机架/横梁 → 机械附件（后梁、绞杆、综框、提综线、张力重锤、踏杆、卷布辊）→ 经线/布面 → 钢筘/梭子/传动 → 右侧遥测面板 → 左下控制台/花纹图样 → 粒子 → HUD。
-- **机械**：飞轮（10 辐条 + 配重 + 螺栓）、两级齿轮、凸轮、皮带、驱动电机、连杆、综框、钢筘（106 齿）、梭子、卷布辊、绞杆、张力重锤、踏杆组、油杯、角板、铆钉。
-- **动效**：自研弹簧积分器（stiffness/damping/mass）驱动转速、综框、打纬、梭子、张力、仪表指针；曲柄角积分驱动飞轮/齿轮/凸轮；事件注入冲量，连续事件形成累积节奏。
-- **品牌色**：深蓝用于结构/刻度/文字；青绿只用于事件、运动部件、关键反馈和少量强调；经线保持低饱和多色（不是全青绿）。
-- **材质**：纸面颗粒、软投影、暖灰细线、分层透明度；无位图贴图（除程序生成的纸纹/噪声）。
-
----
-
-## 代码结构
-
-```
-kunlun-loom/
-├─ src/
-│  ├─ App.tsx                 # React 外壳 + HUD/控制层
-│  ├─ engine/
-│  │  ├─ index.ts             # LoomEngine：Pixi App、缩放、ticker、事件/音频/状态
-│  │  ├─ theme.ts             # 品牌色、经线色板、字体
-│  │  ├─ layout.ts            # 1472×1008 设计稿布局与机械尺寸
-│  │  ├─ audio.ts             # WebAudio 合成（click/clack/whir）
-│  │  ├─ anim/spring.ts       # 弹簧积分器
-│  │  ├─ events/{types,simulator}.ts
-│  │  └─ loom/
-│  │     ├─ scene.ts          # 组装、事件反应、每帧电机/机构更新
-│  │     ├─ backdrop.ts       # 图纸边框、点阵、大刻度盘、标题栏
-│  │     ├─ frame.ts          # 机架、横梁、卷布辊、底部标尺
-│  │     ├─ bobbins.ts        # 经轴纱筒/色卡
-│  │     ├─ warpField.ts      # Canvas2D：106 经线 + 布面 + 扫描/张力效果
-│  │     ├─ heddleReed.ts     # 综框、钢筘、梭子
-│  │     ├─ drive.ts          # 飞轮、齿轮、凸轮、皮带、电机
-│  │     ├─ instruments.ts    # 遥测面板（3 仪表/计数/工具分布/速率/账本）+ 左下控制台
-│  │     ├─ extras.ts         # 后梁、绞杆、提综线、重锤、踏杆、标注、卷布辊
-│  │     ├─ draft.ts          # 花纹图样 / peg plan
-│  │     ├─ particles.ts      # 打纬尘埃/火花/脉冲环
-│  │     ├─ shadows.ts        # 程序化软投影
-│  │     └─ geometry.ts       # 齿轮/螺栓/虚线/尺寸标注等基元
-├─ scripts/
-│  ├─ serve.mjs               # 静态服务器（截图用）
-│  └─ capture.mjs             # Edge CDP 无头截图/GIF 帧采集
-└─ shots/                     # 实际运行截图与录屏
+```js
+await window.__loom.ready;
+window.__loom.inject({ id: 1, type: 'Write', detail: 'agent completed a file', at: performance.now() });
 ```
 
----
+单独注入不会启动模拟事件。暂停时注入的事件进入队列，恢复后处理。`window.__loom.getStatus()` 返回原有状态；新增 `getMechanism()` 返回织造阶段、已织行数、队列和主轴相位。`tick(dt)` 保留为确定性测试接口。
 
-## 已实现 & 已验证
+## 验证与证据
 
-- 可运行 Web Demo（Vite dev / build / preview 均已验证）。
-- 静态画面：`shots/hero.png`（含 HUD）、`shots/hero-art.png`（纯画布）、`shots/static.png`（idle）。
-- 动画录屏：`shots/loom-recording.gif`（40 帧 @10 fps，由无头浏览器逐帧截取）。
-- 与参考的并排对照：`shots/comparison.png`。
-- 事件驱动：单次 / 连发 / 停止 / 暂停 / 恢复均可验证；仪表、计数、速率曲线、账本、布面、图样均随事件变化。
-- TypeScript 严格模式通过；无控制台报错（截图时诊断 `err: null`）。
+```sh
+npm test
+npm run build
+npm run review:atelier
+```
 
----
+最后一个命令在 Windows Edge 中运行浏览器验证、生成 1472×1008 / 1920×1080 / 768×1024 截图，并用 Canvas MediaRecorder 录制约 25 秒真实播放。可通过 `EDGE_PATH` 指定 Chromium 系浏览器路径。默认使用硬件 WebGL；设置 `LOOM_SOFTWARE=1` 可验证 SwiftShader。机器性能会影响录屏帧率。
 
-## 与参考的差距（诚实清单）
+- `review/atelier/before.png` / `after-idle.png`：同尺寸改造前后。
+- `review/atelier/comparison.png`：参考、旧版和新版并排。
+- `review/atelier/detail.png`：实际 1.65× 放大视图。
+- `review/atelier/loom-live.webm` / `loom-live.mp4`：实际画布录屏，无合成补帧。
+- `review/atelier/verification.json`：浏览器断言和最终事件 / 织行数量。
 
-1. **构图密度**：参考的织物区域更大、更空灵，经线更细更"彩色铅笔"；本版经线更密、机架更重，整体更像工程制图而非原版的轻盈。下一版会把机架线宽再降一档、加大织物占比。
-2. **材质/光照**：参考是纸面 + 极轻阴影；本版仍以矢量线为主，缺少柔和的纸纹/环境光遮蔽（目前只有程序化噪点和径向投影）。计划引入 Canvas2D 渲染的柔和渐变与多层阴影。
-3. **机械可信度**：传动关系（飞轮→齿轮→凸轮→综框→钢筘→梭子）已经成立，但部分零件（如提综线与综框的连接、卷布辊的布面走向）仍是示意级，缺少真正的运动学求解。
-4. **动画精度**：弹簧参数是手调的，未与参考逐帧对齐；参考的 5–10 fps 采集也无法提供 100 ms 以下的曲线，本轮以"机械可信 + 节奏自然"为目标而非逐帧复刻。
-5. **音效**：目前是合成提示音（click/clack/whir），未做多轨混音与空间感。
-6. **Agent Bridge**：事件源为内置模拟器；真实 Codex/Claude Code/OpenCode 适配器、以及 Electron 封装尚未开始。
-7. **性能/兼容**：WebGL 渲染；低端设备未做降级测试；移动端只做了缩放适配（未做触控优化）。
+## 实现位置
 
----
+- `src/engine/loom/scene.ts`：Pixi 层叠、零件变换与联动。
+- `src/engine/loom/atelier/assembly.ts`：机架、纱筒、轴承、导轨、综框、筘、梭子。
+- `drawing.ts`：切面、紧固件、绕线纹理、金属加工表面。
+- `textile.ts`：192 根经线、前后遮挡、2/2 斜纹与事件纬线。
+- `mechanism.ts`：独立于渲染的排队与织造周期。
+- `src/engine/index.ts` / `events/replay.ts`：引擎生命周期、输入隔离、传输控制和实际时间推进。
 
-## 下一步
-
-1. **视觉第二轮**：把织物区扩大到画布 60%+，机架线宽分级（0.4/0.6/1.0），加入纸张纹理/环境光/柔影；对 `hero-art.png` 与参考做逐区域对照。
-2. **运动学**：用真实的偏心轮/连杆方程替换手调正弦，给综框/筘座/梭子加入惯性与回弹；逐帧导出对照 GIF。
-3. **事件协议**：定义 `ToolEvent` JSON Schema，实现 Node.js Agent Bridge（WebSocket/stdio），先接本地 `claude`/`opencode` CLI 的 stream-json。
-4. **音效**：按事件类型分轨（经线摩擦、打纬、梭子、马达），支持音量/静音/空间化。
-5. **打包**：Electron/Tauri 桌面壳 + 单文件静态构建。
-
----
-
-## 说明
-
-- 本项目为独立实现，仅借鉴参考项目的**设计语言与交互理念**，未复制其素材、字体或源码；截图中的 CrommaCode 画面仅用于内部对照，不随交付分发。
-- 品牌色与字体：使用系统字体（Bahnschrift / Consolas / Georgia）与 KunlunMeta 品牌色。
+旧图形模块仍保留在仓库，未参与当前场景构建。旧版说明和证据位于原有 `review/`、`shots/`；本轮有效证据集中在 `review/atelier/`。

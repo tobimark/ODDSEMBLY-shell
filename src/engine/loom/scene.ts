@@ -1,230 +1,98 @@
-import { Container, Graphics, Sprite, Text, TilingSprite, Texture } from 'pixi.js';
-import { FABRIC, LOOM } from '../layout';
-import { FONT, T } from '../theme';
-import { Spring } from '../anim/spring';
-import type { ToolEvent, ToolName } from '../events/types';
-import { Backdrop } from './backdrop';
-import { Frame } from './frame';
-import { Bobbins } from './bobbins';
-import { WarpField } from './warpField';
-import { Heddle, Reed, Shuttle } from './heddleReed';
-import { Drive } from './drive';
-import { Instruments, Console } from './instruments';
-import { Particles } from './particles';
-import { Extras } from './extras';
-import { Shadows } from './shadows';
-import { DraftPanel } from './draft';
+import { Container, Graphics, Sprite, Text } from 'pixi.js';
+import type { EngineStatus, ToolEvent } from '../events/types';
+import { backdrop, heddle, reed, shuttle } from './atelier/assembly';
+import { C, bearing, flywheelSprite, gearSprite, label, line, metal, surface } from './atelier/drawing';
+import { Mechanism } from './atelier/mechanism';
+import { Textile, WEAVE } from './atelier/textile';
 
+/** Original procedural assembly. Canvas creates material textures; Pixi owns
+ * compositing, part transforms and animation. No reference pixels are sampled. */
 export class LoomScene extends Container {
-  private backdrop = new Backdrop();
-  private frame = new Frame();
-  private bobbins = new Bobbins();
-  private warp = new WarpField();
-  private heddle = new Heddle();
-  private reed = new Reed();
-  private shuttle = new Shuttle();
-  private drive = new Drive();
-  private instruments = new Instruments();
-  private console = new Console();
-  private particles = new Particles();
-  private extras = new Extras();
-  private shadows = new Shadows();
-  private draft = new DraftPanel();
-  private grain!: TilingSprite;
-  private paperGlow!: Sprite;
-  private annotation = new Container();
-  private vignette = new Graphics();
-
-  private rpm = new Spring(4, { stiffness: 26, damping: 9 });
-  private beat = new Spring(0, { stiffness: 90, damping: 10 });
-  private shuttleP = new Spring(0, { stiffness: 34, damping: 8 });
-  private tension = new Spring(0.32, { stiffness: 60, damping: 11 });
-  private density = new Spring(0.18, { stiffness: 40, damping: 12 });
-  private crank = 0;
-  private t = 0;
-  private rows = 0;
-  private rpmValue = 4;
+  private mechanism = new Mechanism();
+  private textile = new Textile();
+  private wheel = flywheelSprite();
+  private gearA = gearSprite(39, 24);
+  private gearB = gearSprite(26, 16, true);
+  private shaftA = heddle();
+  private shaftB = heddle(906, true);
+  private reed = reed();
+  private shuttle = shuttle();
+  private linkage = new Graphics();
+  private weft = new Graphics();
+  private needle = new Graphics();
+  private stageLabel = new Text({ text: 'READY', style: { fontFamily: 'Consolas, monospace', fontSize: 9, fill: '#657582', letterSpacing: 1.6 } });
+  private pickLabel = new Text({ text: '0000', style: { fontFamily: 'Consolas, monospace', fontSize: 17, fill: C.navy, letterSpacing: 2 } });
+  private lastStage = '';
+  private textures: Sprite[] = [];
 
   constructor() {
     super();
-    const wf = this.warp.display;
-    for (const s of wf) {
-      s.x = FABRIC.x; s.y = FABRIC.y;
-      s.width = FABRIC.w; s.height = FABRIC.h;
-    }
-    this.addChild(this.vignette);
-    this.addChild(this.backdrop, this.shadows, this.frame, this.extras, this.bobbins, ...wf, this.heddle, this.reed, this.shuttle, this.drive, this.instruments, this.console, this.draft, this.particles, this.annotation);
-    this.buildPaperGlow();
-    this.buildGrain();
-    this.buildAnnotations();
-    this.buildVignette();
-    this.layoutFabricShadow();
+    const base = backdrop();
+    this.wheel.position.set(221, 660); this.gearA.position.set(221, 509); this.gearB.position.set(281, 509);
+    this.shaftA.position.set(307, 401); this.shaftB.position.set(307, 513);
+    this.reed.position.set(308, 606); this.shuttle.position.set(366, 675);
+    const belt = surface(200, 140, g => {
+      g.translate(-120, -486);
+      // External tangents of 102:34 pitch pulleys, matching the 3:1 drive.
+      line(g, [130, 614, 191, 494], '#4D5969', 5); line(g, [312, 614, 251, 494], '#4D5969', 5);
+      line(g, [129, 614, 190, 494], '#D1D2BF', 1); line(g, [313, 614, 252, 494], '#D1D2BF', 1);
+    });
+    belt.position.set(120, 486);
+    const race = surface(940, 52, g => {
+      g.translate(-302, -651);
+      metal(g, 326, 687, 884, 8);
+      for (const x of [322, 1216]) bearing(g, x, 680, 12);
+      for (const x of [344, 1188]) metal(g, x, 662, 7, 31, true);
+    });
+    race.position.set(302, 651);
+    this.stageLabel.position.set(1300, 487); this.pickLabel.position.set(1270, 852);
+    this.addChild(base, this.textile.cloth, this.textile.warp, this.shaftB, this.shaftA, belt, this.wheel, this.gearA, this.gearB, this.linkage, this.reed, this.weft, this.shuttle, this.textile.front, race, this.needle, this.stageLabel, this.pickLabel);
+    this.textures = [base, belt, race, this.wheel, this.gearA, this.gearB, this.shaftA, this.shaftB, this.reed, this.shuttle];
+    this.mechanism.onPick = e => { this.textile.commit(e.type); this.pickLabel.text = String(this.mechanism.picks).padStart(4, '0'); };
+    this.pose();
   }
 
-  private layoutFabricShadow(): void {
-    const g = new Graphics();
-    g.rect(FABRIC.x - 3, FABRIC.y - 2, FABRIC.w + 6, FABRIC.h + 6).stroke({ width: 0.5, color: T.navy, alpha: 0.14 });
-    // inner shadow edges
-    g.moveTo(FABRIC.x, FABRIC.y).lineTo(FABRIC.x, FABRIC.y + FABRIC.h).stroke({ width: 2.2, color: T.navy, alpha: 0.035 });
-    g.moveTo(FABRIC.x + FABRIC.w, FABRIC.y).lineTo(FABRIC.x + FABRIC.w, FABRIC.y + FABRIC.h).stroke({ width: 2.2, color: T.navy, alpha: 0.035 });
-    this.addChildAt(g, this.getChildIndex(this.warp.display[0]));
-  }
+  setStatus(_s: EngineStatus) { /* Counters stay in the quiet React transport. */ }
+  trigger(e: ToolEvent) { this.mechanism.push(e); }
+  setRunning(_on: boolean) { /* The event queue powers the shaft. */ }
+  setStopped() { this.mechanism.stop(); this.pose(); }
+  get telemetry() { return this.mechanism.snapshot(); }
+  update(dt: number, _running: boolean) { this.mechanism.update(dt); this.pose(); }
 
-  private buildVignette(): void {
-    const g = this.vignette;
-    for (let i = 0; i < 4; i++) {
-      const a = 0.012 - i * 0.002;
-      g.rect(SHEETLIKE.x + i * 8, SHEETLIKE.y + i * 8, SHEETLIKE.w - i * 16, SHEETLIKE.h - i * 16).stroke({ width: 8, color: T.navy, alpha: a });
-    }
-  }
-
-  private buildPaperGlow(): void {
-    const c = document.createElement('canvas');
-    c.width = 736; c.height = 504;
-    const x = c.getContext('2d')!;
-    const g = x.createRadialGradient(400, 300, 40, 400, 300, 520);
-    g.addColorStop(0, 'rgba(255,253,248,0.9)');
-    g.addColorStop(0.55, 'rgba(251,247,240,0.45)');
-    g.addColorStop(1, 'rgba(232,222,206,0.35)');
-    x.fillStyle = g;
-    x.fillRect(0, 0, 736, 504);
-    this.paperGlow = new Sprite(Texture.from(c));
-    this.paperGlow.width = 1472; this.paperGlow.height = 1008;
-    this.addChildAt(this.paperGlow, 0);
-  }
-
-  private buildGrain(): void {
-    const c = document.createElement('canvas');
-    c.width = 128; c.height = 128;
-    const x = c.getContext('2d')!;
-    const img = x.createImageData(128, 128);
-    let seed = 11;
-    for (let i = 0; i < img.data.length; i += 4) {
-      seed = (seed * 16807) % 2147483647;
-      const v = 120 + (seed / 2147483647) * 120;
-      img.data[i] = v; img.data[i + 1] = v; img.data[i + 2] = v;
-      img.data[i + 3] = 10 + (seed % 14);
-    }
-    x.putImageData(img, 0, 0);
-    this.grain = new TilingSprite({ texture: Texture.from(c), width: 1412, height: 956 });
-    this.grain.x = 30; this.grain.y = 26;
-    this.grain.alpha = 0.07;
-    this.grain.blendMode = 'overlay';
-    this.addChild(this.grain);
-  }
-
-  private buildAnnotations(): void {
-    const mk = (txt: string, x: number, y: number, size = 7.2, alpha = 0.5) => {
-      const t = new Text({ text: txt, style: { fontFamily: FONT.mono, fontSize: size, fill: T.navy, letterSpacing: 1.5 } });
-      t.position.set(x, y); t.alpha = alpha; this.annotation.addChild(t);
+  private pose() {
+    const m = this.mechanism;
+    const lift = m.shed * 19 * m.direction;
+    this.shaftA.y = 401 - lift; this.shaftB.y = 513 + lift;
+    this.reed.y = 606 + m.beat * 29;
+    this.shuttle.x = 366 + m.travel * 809;
+    this.shuttle.y = 675 - Math.sin(m.travel * Math.PI) * 2;
+    this.wheel.rotation = m.angle; this.gearA.rotation = m.angle * 3; this.gearB.rotation = -m.angle * 4.5 + Math.PI / 16;
+    this.textile.update(m.shed, m.direction);
+    this.textile.cloth.y = WEAVE.fell + (m.active && m.committed ? -2 + m.takeup * 2 : 0);
+    const g = this.linkage; g.clear();
+    const rod = (x: number, y: number, ex: number, ey: number, w = 6) => {
+      g.moveTo(x + 2, y + 3).lineTo(ex + 2, ey + 3).stroke({ color: 0x171C60, alpha: .16, width: w + 2 });
+      g.moveTo(x, y).lineTo(ex, ey).stroke({ color: 0x5E6D7D, width: w });
+      g.moveTo(x - .8, y - 1).lineTo(ex - .8, ey - 1).stroke({ color: 0xD8DDD7, width: w - 2 });
+      for (const [a, b] of [[x, y], [ex, ey]]) { g.circle(a, b, w + 1).fill(0xD0D6D0).stroke({ color: 0x5A697B, width: .8 }); g.circle(a, b, 2.2).fill(0x667486); }
     };
-    mk('WARP FIELD  ·  106 ENDS  ·  WEFT / PIRN  ·  EVENT SYNC', FABRIC.x, LOOM.bottomBeam + 78);
-    
-    const g = new Graphics();
-    g.moveTo(FABRIC.x, 916).lineTo(FABRIC.x + FABRIC.w, 916).stroke({ width: 0.4, color: T.navy, alpha: 0.2 });
-    this.annotation.addChild(g);
-  }
-
-  setStatus(s: import('../events/types').EngineStatus): void {
-    this.instruments.setStatus(s);
-  }
-
-  trigger(e: ToolEvent): void {
-    const type = e.type;
-    this.rows += 1;
-    if (type === 'Bash') {
-      this.beat.impulse(2.2);
-      this.rpm.impulse(26);
-      this.tension.impulse(1.6);
-      this.warp.trigger(type, this.rows);
-      this.particles.burst(FABRIC.x + FABRIC.w * 0.5, LOOM.reedY + 6, 1.2, T.teal);
-      this.particles.ring(FABRIC.x + FABRIC.w * 0.5, LOOM.reedY + 6, T.teal, 40);
-      this.shuttleP.target = this.shuttleP.target > 0.5 ? 0 : 1;
-    } else if (type === 'Write') {
-      this.beat.impulse(1.1);
-      this.rpm.impulse(14);
-      this.tension.impulse(1.1);
-      this.warp.trigger(type, this.rows);
-      this.particles.burst(FABRIC.x + FABRIC.w * 0.7, LOOM.raceY, 0.7, T.teal);
-    } else if (type === 'Edit') {
-      this.beat.impulse(0.9);
-      this.rpm.impulse(10);
-      this.tension.impulse(0.8);
-      this.warp.trigger(type, this.rows);
-      this.shuttleP.target = this.shuttleP.target > 0.5 ? 0 : 1;
-    } else if (type === 'Read') {
-      this.rpm.impulse(5);
-      this.warp.trigger(type, this.rows);
-    } else {
-      this.rpm.impulse(7);
-      this.tension.impulse(0.5);
-      this.warp.trigger(type, this.rows);
-      this.particles.ring(FABRIC.x + FABRIC.w * 0.5, LOOM.reedY - 40, T.sage, 26);
+    const cx = 221 + Math.cos(m.angle) * 66, cy = 660 + Math.sin(m.angle) * 66;
+    rod(cx, cy, 327, this.reed.y + 43, 7);
+    rod(281 + Math.cos(-m.angle * 4.5) * 11, 509 + Math.sin(-m.angle * 4.5) * 11, 322, this.shaftA.y + 18, 4);
+    rod(294, 526, 322, this.shaftB.y + 18, 4);
+    this.weft.clear();
+    if (m.active && m.phase >= .24 && m.phase < .84) {
+      const edge = m.direction > 0 ? WEAVE.x : WEAVE.x + WEAVE.w;
+      this.weft.moveTo(edge, 683).lineTo(this.shuttle.x, 678).stroke({ color: m.active.type === 'Bash' ? 0x171C60 : 0x33CBCC, width: 1.4 });
     }
-    this.density.target = Math.min(1, this.density.target + 0.22);
-    if (type !== 'Read') this.draft.addEvent();
+    const a = -1.15 + m.shed * .55 + m.beat * .2;
+    this.needle.clear().moveTo(246, 392).lineTo(246 + Math.cos(a) * 22, 392 + Math.sin(a) * 22).stroke({ color: 0x171C60, width: 1.5 }).circle(246, 392, 2.5).fill(0x171C60);
+    if (this.lastStage !== m.stage) { this.stageLabel.text = m.stage; this.lastStage = m.stage; }
   }
 
-  setRunning(on: boolean): void {
-    this.rpm.target = on ? 26 : 4;
-    this.tension.target = on ? 0.55 : 0.3;
-  }
-
-  setStopped(): void {
-    this.rpm.target = 0;
-    this.tension.target = 0.1;
-    this.density.target = 0.1;
-  }
-
-  update(dt: number, running: boolean): void {
-    this.t += dt;
-    this.rpm.step(dt);
-    this.beat.step(dt);
-    this.shuttleP.step(dt);
-    this.tension.step(dt);
-    this.density.step(dt);
-    this.rpmValue = Math.max(0, this.rpm.value);
-    const rpmNorm = Math.min(1, this.rpmValue / 70);
-    this.crank += (this.rpmValue / 60) * Math.PI * 2 * dt * 0.55;
-
-    // cam-driven heddle shafts (opposite phase)
-    const camA = Math.sin(this.crank * 0.55) * (2.4 + rpmNorm * 3.6);
-    const camB = Math.sin(this.crank * 0.55 + Math.PI) * (2.4 + rpmNorm * 3.6);
-    const vibe = Math.sin(this.t * 22) * rpmNorm * 0.25;
-    this.heddle.setOffsets(camA + vibe, camB - vibe);
-    this.heddle.drawRods(DRIVE_CAM_Y, { a: Math.sign(camA), b: Math.sign(camB) });
-
-    // sley + beat
-    const sleyDx = Math.sin(this.crank) * (2.5 + rpmNorm * 3.5);
-    this.reed.setSley(sleyDx, this.beat.value);
-    this.shuttle.setPose(FABRIC.x + 18 + this.shuttleP.value * (FABRIC.w - 36), FABRIC.x + 18, running);
-
-    // drive train
-    this.drive.update(dt, this.crank, this.rpmValue, FABRIC.x - 10 + sleyDx, LOOM.reedY - this.beat.value * 9 + 22);
-
-    // warp/cloth
-    this.warp.setShafts(camA, camB);
-    this.warp.update(dt, rpmNorm);
-
-    // instruments
-    this.instruments.update(dt, this.rpmValue, this.t);
-    this.instruments.setGaugeValue(0, rpmNorm, String(Math.round(this.rpmValue)));
-    this.instruments.setGaugeValue(1, this.tension.value, (this.tension.value * 100).toFixed(0));
-    this.instruments.setGaugeValue(2, this.density.value, (this.density.value * 100).toFixed(0));
-    this.console.setTension(this.tension.value);
-    this.console.update(dt);
-
-    this.backdrop.setDriveAngle(this.crank / (Math.PI * 2));
-    this.bobbins.update(dt, rpmNorm);
-    this.particles.update(dt);
-    this.draft.update(dt);
-
-    // natural decay
-    this.density.target = Math.max(0.12, this.density.target - dt * 0.08);
-    this.rpm.target = Math.max(running ? 24 : 4, this.rpm.target - dt * 6);
+  override destroy() {
+    this.textile.destroy();
+    for (const sprite of this.textures) sprite.texture.destroy(true);
+    super.destroy({ children: true });
   }
 }
-
-const SHEETLIKE = { x: 30, y: 26, w: 1412, h: 956 };
-const DRIVE_CAM_Y = 556;
-

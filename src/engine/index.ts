@@ -21,6 +21,12 @@ export class LoomEngine {
   private reportT = 0;
   private eventTimes: number[] = [];
   private staticMode = false;
+  private disposed = false;
+  private resizeObserver: ResizeObserver | null = null;
+  private resizeHandler = () => this.layout();
+  private autoplayTimer = 0;
+  private source: 'simulation' | 'external' = 'simulation';
+  private viewScale = 1;
   private readyResolve: (() => void) | null = null;
   readonly ready: Promise<void>;
 
@@ -41,6 +47,7 @@ export class LoomEngine {
       preference: 'webgl',
       powerPreference: 'high-performance',
     });
+    if (this.disposed) { this.app.destroy(true, { children: true }); this.app = null; return; }
     container.appendChild(this.app.canvas);
 
     this.world = new Container();
@@ -48,9 +55,9 @@ export class LoomEngine {
     this.world.addChild(this.scene);
     this.app.stage.addChild(this.world);
 
-    const resize = () => this.layout();
-    window.addEventListener('resize', resize);
-    if (typeof ResizeObserver !== 'undefined') new ResizeObserver(resize).observe(container);
+    window.addEventListener('resize', this.resizeHandler);
+    this.resizeObserver = new ResizeObserver(this.resizeHandler);
+    this.resizeObserver.observe(container);
 
     this.app.ticker.add(() => this.tick());
     this.layout();
@@ -58,7 +65,7 @@ export class LoomEngine {
     this.bus.patch({ state: 'idle' });
 
     if (opts.autoplay && !this.staticMode) {
-      window.setTimeout(() => { if (this.mode === 'idle') this.play(); }, 1600);
+      this.autoplayTimer = window.setTimeout(() => { if (this.mode === 'idle') this.play(); }, 1600);
     }
     // one rendered frame
     requestAnimationFrame(() => this.readyResolve?.());
@@ -69,7 +76,7 @@ export class LoomEngine {
     if (!this.app || !this.world) return;
     const w = this.app.screen.width;
     const h = this.app.screen.height;
-    const scale = Math.min(w / DESIGN.w, h / DESIGN.h) * 0.995;
+    const scale = Math.min(w / DESIGN.w, h / DESIGN.h) * this.viewScale;
     this.world.scale.set(scale);
     this.world.position.set((w - DESIGN.w * scale) / 2, (h - DESIGN.h * scale) / 2);
     // keep the page background identical to the canvas backdrop
@@ -78,7 +85,9 @@ export class LoomEngine {
 
   private tick(): void {
     if (!this.app || !this.scene) return;
-    const dt = Math.min(0.05, this.app.ticker.deltaMS / 1000);
+    // elapsedMS is the real interval; deltaMS is clamped by Pixi. The mechanism
+    // substeps internally, so slow renderers do not slow down the loom clock.
+    const dt = Math.min(0.5, this.app.ticker.elapsedMS / 1000);
     if (this.mode === 'paused') return;
     const running = this.mode === 'running';
     this.simulator.update(running ? dt : 0);
@@ -88,7 +97,7 @@ export class LoomEngine {
     this.reportT += dt;
     if (this.reportT > 0.25) {
       this.reportT = 0;
-      this.rpmReport = Math.min(120, this.rpmReport + (running ? 8 : -6));
+      this.rpmReport = this.scene.telemetry.active ? Math.round(60 / 1.65 * this.speed) : 0;
       const now = performance.now();
       this.eventTimes = this.eventTimes.filter((t) => now - t < 15000);
       this.bus.patch({ rpm: Math.round(this.rpmReport), rate15s: this.eventTimes.length });
@@ -102,21 +111,23 @@ export class LoomEngine {
     this.eventTimes.push(performance.now());
     this.bus.emitEvent(e);
     this.audio.play(e.type);
-    if (this.mode === 'idle') this.mode = 'running';
+    if (this.mode === 'idle' || this.mode === 'stopped') this.mode = 'running';
     this.bus.patch({ state: this.mode });
   }
 
-  play(): void {
+  play(simulate = true): void {
     this.audio.ensure();
     this.mode = 'running';
     this.scene?.setRunning(true);
-    this.simulator.start();
+    this.source = simulate ? 'simulation' : 'external';
+    if (simulate) this.simulator.start(); else this.simulator.stop();
     this.bus.patch({ state: 'running' });
   }
 
   pause(): void {
     this.mode = 'paused';
     this.simulator.pause();
+    this.audio.whir(0);
     this.bus.patch({ state: 'paused' });
   }
 
@@ -124,7 +135,7 @@ export class LoomEngine {
     this.audio.ensure();
     this.mode = 'running';
     this.scene?.setRunning(true);
-    this.simulator.resume();
+    if (this.source === 'simulation') this.simulator.resume();
     this.bus.patch({ state: 'running' });
   }
 
@@ -132,10 +143,12 @@ export class LoomEngine {
     this.mode = 'stopped';
     this.simulator.stop();
     this.scene?.setStopped();
+    this.audio.whir(0);
     this.bus.patch({ state: 'stopped', rpm: 0 });
   }
 
   setSpeed(s: number): void {
+    if (!Number.isFinite(s) || s <= 0) return;
     this.speed = s;
     this.simulator.setSpeed(s);
     this.bus.patch({ speed: s });
@@ -146,14 +159,18 @@ export class LoomEngine {
     this.bus.patch({ muted: m });
   }
 
-  inject(e: ToolEvent): void { this.handleEvent(e); }
+  inject(e: ToolEvent): void {
+    if (this.mode === 'idle' || this.mode === 'stopped') this.source = 'external';
+    this.handleEvent(e);
+  }
 
   trigger(type: ToolName): void {
     this.audio.ensure();
     if (this.mode === 'idle' || this.mode === 'stopped') {
+      this.source = 'external';
       this.mode = 'running';
       this.scene?.setRunning(true);
-      this.simulator.start();
+      // Manual input must not silently enable an unrelated simulated feed.
       this.bus.patch({ state: 'running' });
     }
     const detailPool: Record<ToolName, string> = {
@@ -175,8 +192,22 @@ export class LoomEngine {
   }
 
   get status(): EngineStatus { return this.bus.status; }
+  get mechanism() { return this.scene?.telemetry; }
+  setView(detail: boolean): void {
+    this.viewScale = detail ? 1.65 : 1;
+    document.body.dataset.loomDetail = String(detail);
+    this.layout();
+  }
 
   destroy(): void {
+    this.disposed = true;
+    clearTimeout(this.autoplayTimer);
+    window.removeEventListener('resize', this.resizeHandler);
+    this.resizeObserver?.disconnect();
+    this.simulator.stop();
+    this.audio.destroy();
+    // An async init owns its Application until it has resolved.
+    if (!this.scene) return;
     try { this.app?.destroy(true, { children: true }); } catch { /* noop */ }
     this.app = null;
   }

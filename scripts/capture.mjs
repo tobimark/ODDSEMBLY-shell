@@ -13,7 +13,7 @@ const shots = path.resolve(dir, '..', 'shots');
 fs.mkdirSync(shots, { recursive: true });
 const mode = process.argv[2] || 'static';
 const EDGE = process.env.EDGE_PATH || 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
-const PORT = 9333;
+const PORT = 9337;
 const URL_BASE = 'http://127.0.0.1:4178';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -52,8 +52,7 @@ class CDP {
 
 async function main() {
   const server = await startServer(4178);
-  const profile = path.resolve(dir, '..', '.tmp-edge-profile');
-  fs.rmSync(profile, { recursive: true, force: true });
+  const profile = fs.mkdtempSync(path.resolve(dir, '..', '.tmp', 'capture-'));
   const edge = spawn(EDGE, [
     '--headless=new',
     `--remote-debugging-port=${PORT}`,

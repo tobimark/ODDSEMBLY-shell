@@ -15,7 +15,7 @@ export class LoomAudio {
     if (!Ctx) return;
     this.ctx = new Ctx();
     this.master = this.ctx.createGain();
-    this.master.gain.value = 0.5;
+    this.master.gain.value = this.muted ? 0 : 0.5;
     this.master.connect(this.ctx.destination);
 
     this.whirOsc = this.ctx.createOscillator();
@@ -37,7 +37,7 @@ export class LoomAudio {
 
   whir(rpmNorm: number): void {
     if (!this.ctx || !this.whirGain || !this.whirOsc) return;
-    this.whirGain.gain.setTargetAtTime(0.012 + rpmNorm * 0.035, this.ctx.currentTime, 0.08);
+    this.whirGain.gain.setTargetAtTime(rpmNorm > 0 ? 0.012 + rpmNorm * 0.035 : 0, this.ctx.currentTime, 0.08);
     this.whirOsc.frequency.setTargetAtTime(42 + rpmNorm * 46, this.ctx.currentTime, 0.1);
   }
 
@@ -62,6 +62,12 @@ export class LoomAudio {
       this.noise(now, 0.07, 0.05, 2200, 500);
       this.tone(now, 340, 0.05, 0.03, 'sine');
     }
+  }
+
+  destroy(): void {
+    this.whirOsc?.stop();
+    if (this.ctx) void this.ctx.close();
+    this.ctx = null; this.master = null; this.whirOsc = null; this.whirGain = null;
   }
 
   private tone(t: number, hz: number, dur: number, gain: number, type: OscillatorType): void {

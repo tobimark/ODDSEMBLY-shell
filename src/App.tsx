@@ -12,6 +12,7 @@ export default function App() {
   const [speed, setSpeed] = useState(1);
   const [muted, setMuted] = useState(false);
   const [fatal, setFatal] = useState<string | null>(null);
+  const [detail, setDetail] = useState(false);
 
   useEffect(() => {
     const el = stageRef.current;
@@ -22,12 +23,15 @@ export default function App() {
     const params = new URLSearchParams(location.search);
     const staticMode = params.has('static');
     const replayMode = params.has('replay');
+    let disposed = false;
+    let cancelReplay: (() => void) | undefined;
     engine.init(el, { autoplay: !staticMode && !params.has('noauto') && !replayMode, static: staticMode }).then(async () => {
       if (replayMode) {
         try {
           const replay = await fetchReplay();
-          engine.play();
-          scheduleReplay(replay, (e) => engine.inject(e));
+          if (disposed) return;
+          engine.play(false);
+          cancelReplay = scheduleReplay(replay, (e) => engine.inject(e), () => engine.status);
         } catch (e) { console.error('replay failed', e); }
       }
     }).catch((err) => {
@@ -44,6 +48,8 @@ export default function App() {
       setSpeed: (s: number) => engine.setSpeed(s),
       getStatus: () => engine.status,
       tick: (dt: number) => engine.manualTick(dt),
+      getMechanism: () => engine.mechanism,
+      setView: (detail: boolean) => engine.setView(detail),
       inject: (e: { id: number; type: ToolName; detail: string; at: number }) => engine.inject(e),
       ready: engine.ready,
     };
@@ -60,6 +66,8 @@ export default function App() {
     };
     window.addEventListener('keydown', onKey);
     return () => {
+      disposed = true;
+      cancelReplay?.();
       window.removeEventListener('keydown', onKey);
       unsub();
       engine.destroy();
@@ -88,10 +96,10 @@ export default function App() {
           </span>
           <div>
             <h1>KUNLUNMETA</h1>
-            <p>AGENT VISUAL ENGINE</p>
+            <p>MECHANICAL ARTS / SERIES 01</p>
           </div>
         </div>
-        <div className="brand-sub">LOOM 01 — PROCEDURAL WEAVE</div>
+        <div className="brand-sub">Loom<span>把思考织成经纬</span></div>
       </header>)}
 
       {!hideUi && (<aside className="telemetry">
@@ -107,6 +115,7 @@ export default function App() {
 
       {!hideUi && (<footer className="console">
         <div className="transport">
+          <span className="transport-label">{new URLSearchParams(location.search).has('replay') ? 'SESSION REPLAY' : 'LIVE WEAVE'}</span>
           {s?.state === 'running'
             ? <button onClick={() => engineRef.current?.pause()}>Pause</button>
             : s?.state === 'paused'
@@ -121,6 +130,7 @@ export default function App() {
           <button className={muted ? 'on' : ''} onClick={() => { const v = !muted; setMuted(v); engineRef.current?.setMuted(v); }}>
             {muted ? 'Sound off' : 'Sound on'}
           </button>
+          <button className={detail ? 'on' : ''} onClick={() => { setDetail(!detail); engineRef.current?.setView(!detail); }}>{detail ? 'Full view' : 'Detail'}</button>
         </div>
         <div className="tools">
           {TOOLS.map((t, i) => (
@@ -130,7 +140,7 @@ export default function App() {
             </button>
           ))}
         </div>
-        <div className="hint">模拟 Agent 事件 · 空格暂停 · 1–5 手动触发 · M 静音</div>
+        <div className="hint"><span>{s?.lastEvent ? `${s.lastEvent.type.toUpperCase()} / ${s.lastEvent.detail}` : '等待事件 · 每一次调用，织入一道纬线'}</span><span>SPACE 暂停 · 1–5 触发 · M 静音</span></div>
       </footer>)}
     </div>
   );
