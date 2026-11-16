@@ -3,7 +3,7 @@
 本轮把 Loom 左侧的大型事件刻度机构从「静态读数窗」做成可回滚的动态转盘：
 
 - **会动的是 12 槽索引鼓**（`ringPhase`，每个新工具组前进 30°；180 ms `easeInOutCubic`）。
-- **读数器结构上不可旋转**：轴对齐矩形面板，装在转盘内鼓面的加工面板上（40° 固定读头旁），类型里没有 rotation 字段。
+- **读数器结构上不可旋转**：轴对齐 180×92 面板，悬架在 40° 读头旁的盘面上；类型里没有 rotation 字段，只显示工具 / ×N / 槽位。
 - **颜色=当前工具**：统一 `ToolPalette`（取原版运行时实测色）。
 - **动效参数来自原版实测**：105 ms 显示延迟 → 70–200 ms 换卡过渡放大为 180 ms → 单卡 ≈2 s 停留；同工具事件合并为 `×N`，不转轮。
 - 原版依据与逐条差异：`CrommaCode-Loom事件转盘-研究.md`（研究）§6、§8、§9。
@@ -25,24 +25,19 @@
 
 ```
 EventDial.body (在织机后面)                 EventDial.front (压在织机上)
-├── statorSprite   环带/滚花/蓝弧/内鼓/夹块   ├── controlBoxSprite
-├── rotor          12 个环扇卡窗 + 5° 刻度    ├── queueUnitSprite + queueText
-│   └── slotTint   当前卡窗的工具色叠色       ├── harness (箱→队列牌→面板)
-├── accent         彩色基准弧段（当前工具）    └── readout (★ 固定读数器)
-├── pointer        固定读头 + 螺栓座              ├── panelSprite（烘焙外壳）
-└── plumbing       读头 → 控制箱导管              ├── typeText 26px bold
-                                                  ├── multText ×N（右对齐）
-                                                  ├── stepText Sxx/12
-                                                  ├── detailText（事件 detail）
-                                                  ├── ageText
-                                                  ├── chip + rule（工具色）
-                                                  └── flash（更新高亮 150 ms）
+├── statorSprite   环带/滚花/蓝弧/内鼓/夹块   └── readout (★ 盘面悬架读数器)
+├── rotor          12 个环扇卡窗 + 5° 刻度        ├── panelSprite（bezel + 安装轨）
+│   └── slotTint   当前卡窗的细小色边/叠色        ├── typeText 30px bold
+├── accent         37°–43° 工具色弧段             ├── multText ×N（右对齐）
+├── pointer        固定读头（座/臂/读数窗口）      └── stepText Sxx / 12
+└── mount          蓝弧两点夹具 + 读头短连杆
 ```
 
 不变量：
 
 1. **任何 `Text` 都不在 rotor 子树里**（水平文字只能出现在不旋转层；反向旋转会发虚）。
-2. **`ReadoutPanel` 几何没有 rotation/parent-rotor 字段**；构造期定位在盘面 (8,30)，尺寸 190×126，全部落在内鼓面内（四角 r ≤ 972 < 蓝弧 980）。
+2. **`ReadoutPanel` 几何没有 rotation/parent-rotor 字段**；构造期定位在 `(85,175)`、180×92，
+   由固定蓝弧上的两个夹具与一根短连杆悬挂；它允许压在卡窗上方，但绝不随盘旋转。
 3. 所有旋转件姿态 = `f(state.angleDeg)` 的纯投影；模型是纯函数，可 node 直测。
 4. 「固定」指**设计空间**固定（1472×1008 等比缩放），不是 DOM 浮层。
 
@@ -81,23 +76,29 @@ IDLE ──event──► ARMING(105 ms) ──► MOVING(180 ms) ──► HOLD
 `textile.ts` 的纬线色是另一套纱线材质色板，本轮**未合并**（避免改动织物外观）。
 
 
-## 读数器装配（2026-11-16 修正）
+## 视觉减法（2026-11-17）
 
-按最新评审要求，读数器从「共享底座左下的远程面板」改为**装在转盘内鼓面上的固定读数器**：
+按最新评审，本轮不增加机械件，只做减法与重新构图：
 
-- 面板 rect `x=8, y=30, 190×126`，四角均在内鼓面内（r ≤ 972 < 980），不覆盖卡窗；
-- 面板背后是一块**加工 bezel 板**（外扩 7 px、四颗边螺栓），面板四周有阴影，形成“嵌入盘面”的厚度感；
-- 下方两只支脚螺栓固定在内鼓面；右侧一根**细信号线**（带 3 个线夹）接到 40° 读头的臂上；
-- 读头改为：外壳 `r=1224` 螺栓座 → 上抬读臂（带投影）→ `r≈1082` 的固定读数窗口（白色孔 + 深色针 + 叉形窗口）→ `r≈1136` 的固定定位缺口（在 1128/1140 的 4 px 间隙中）；
-- 固定夹块全部移到 `r=1220–1290` 的外壳区，并在卡窗外沿与旋转分度环之间保留固定导环与 4–8 px 视觉间隙；
-- 工具色弧段从 22°–58° 缩短为 **37°–43°**（只标记“当前读数位”），真正的工具色留在当前卡窗叠色与读数器 chip；
-- 分隔线改为中性灰；面板字号：TYPE 22、×N 13、Sxx/12 8.2、detail 8、age 7.4；去掉 `12-SLOT INDEX` 装饰说明，改为 `READ HEAD · 40°`；
-- 卡窗刻度带/外圈细纹对比度降低约 25–35%，固定夹块与转子明确分层。
+- **恢复 Loom 主体**：`MOUNT` 从 `{x:235, y:30, scale:.92}` 回到 `{x:0, y:0, scale:1}`；
+  织机回到原始尺寸/重心，转盘退到织机背后并被遮挡。
+- **删除左下控制箱与队列牌**：连同箱脚、接线盒、箱→队列线、读头→控制箱导管一起删除；
+  事件引擎与 queue 遥测保留，只是不再有可见外壳。共享床身缩到织机下方（x≈300–1405）。
+- **读数器重做**：`x=85, y=175, 180×92`，只保留 `TYPE / ×N / Sxx / 12` + 固定标题
+  `EVENT / 01`；文件路径、detail、age、chip、动态分隔线删除。字号 TYPE 30 / ×N 16 / step 9。
+- **悬架**：不再用长线缆。固定蓝弧上 30°/44° 两处夹具 + 两根短杆托住面板，右下再以
+  一根短连杆接到读头臂；面板有 bezel、投影与底部安装轨。
+- **弱化卡窗**：卡窗填充 alpha 0.62、描边 1.1→0.8；当前槽只保留 `alpha .025` 的极浅叠色
+  + 外沿 2.4 px 工具色短边；不再出现一整块醒目的蓝色玻璃板。
+- **转盘减负**：外圈细纹步长 0.45°、索引楔只保留 12 个、去掉外圈螺栓阵与轮缘接缝；
+  滚花步长 0.5°；内鼓去掉检查槽与密集径向线，只留 3 条同心导环 + 3 条径向缝；
+  固定夹块只保留 30°/57° 两处，缩小并降低对比度。
+- **读头简化**：一个外壳螺栓座 + 一根上抬臂 + 一个读数窗口（白孔/针）+ 一个
+  `r≈1136` 的短定位缺口；删除叉形窗口、长导管和多余支架。
 
-动态验证：`review/event-dial/recording/dial-readout-fixed.mp4`（30 fps，11 s，330 帧）包含
-READ→BASH→BASH×N（不推轮）→EDIT/WRITE/SEARCH→12 组整圈→READ；读数器位置在整段中不变。
-逐帧截图为 `review/event-dial/recording/frames/`（可重建），静态图为 `static-full-2x.png` /
-`static-dial-2x.png`。
+动态验证：`review/event-dial/recording/dial-readout-fixed.mp4`（30 fps，11 s，330 帧）
+包含 READ→BASH→BASH×N（不推轮）→EDIT/WRITE/SEARCH→12 组整圈→READ；读数器位置不变。
+前后对比：`review/event-dial/visual-subtraction/comparison-before-after.png`。
 
 ## 遥测 / 调试
 
@@ -130,21 +131,24 @@ npm run shot:dial-motion    # 180 ms 步进逐帧
 
 - 转子/卡窗/刻度用 **Pixi Graphics 一次性建几何**，运行时只改 `rotation`；不再有 `setAngle()` 每帧 `clear()` 重画。
 - 定子纹理从全画布 1472×1008（≈23.8 MB）裁到可见 bbox 700×820（≈9 MB）。
-- `EventDial.destroy()` 显式销毁 4 张 CanvasTexture（旧实现漏销毁 ≈25 MB / reset）。
-- idle 时 `apply()` 只做读值比较，无每帧文本重排；`ageText` 每 200 ms 更新一次。
+- `EventDial.destroy()` 显式销毁 2 张 CanvasTexture（stator + readout；旧实现漏销毁 ≈25 MB / reset）。
+- idle 时 `apply()` 只做读值比较，无每帧文本重排；读数器只有 3 个 Text。
 
 
 ## 外部评审标注
 
-给 ChatGPT / 设计评审用的区域标注图集中在 [review/event-dial/annotation/](../review/event-dial/annotation/README.md)：
+最新版（视觉减法/盘面悬架读数器）的评审图在
+[review/event-dial/visual-subtraction/](../review/event-dial/visual-subtraction/)：
+`comparison-before-after.png`、`after-full.png`、`after-dial-2x.png`、`after-readout-2x.png`。
+旧区域标注图集中在 [review/event-dial/annotation/](../review/event-dial/annotation/README.md)（已过期）：
 `annotated-overview.png`（1–12 总览）、`annotated-dial.png`（D1–D13 细部）、
 `annotated-console.png`（C1–C5）、`annotated-readout.png`（R1–R11）、
 `04-hold-s01.annotated.png`（原尺寸编号版）。直接可粘贴的评审说明见
 [review-brief.md](../review/event-dial/annotation/review-brief.md)。
 
-> 注：`annotation/` 下的旧标注图对应“底部远程读数器”版本（2026-11-16 22:00 之前）；
-> 盘面安装版请使用 `review/event-dial/recording/static-full-2x.png` 与
-> `review/event-dial/11-dial-detail-2x.png`。
+> 注：`annotation/` 下的旧标注图对应“底部远程读数器”版本（2026-11-16 22:00 之前），
+> 已不再代表当前版本；最新版请使用 `review/event-dial/visual-subtraction/` 下的
+> `after-full.png`、`comparison-before-after.png`。
 
 ## 与原实现的关系 / 回滚
 

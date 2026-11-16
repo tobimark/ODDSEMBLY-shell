@@ -93,29 +93,24 @@ function statorBody(): Sprite {
     g.strokeStyle = '#D8D1C0'; g.lineWidth = 1.4; g.stroke(); g.restore();
 
     // ---- outer fine-ruled band: dense hairlines, index wedges, screws
-    for (let d = 12; d <= 70; d += 0.16) {
+    for (let d = 12; d <= 70; d += 0.45) {
       const a = polar(DIAL.knurlOut + 2, d); const b = polar(DIAL.outerOut - 3, d);
-      line(g, [a[0], a[1], b[0], b[1]], '#8F88783D', 0.55);
+      line(g, [a[0], a[1], b[0], b[1]], '#8F887826', 0.5);
     }
-    for (let d = 15; d <= 65; d += 9) {
+    for (let d = 15; d <= 65; d += 30) {
       const a = polar(DIAL.knurlOut + 14, d); const b = polar(DIAL.outerOut - 14, d);
-      line(g, [a[0], a[1], b[0], b[1]], '#7E8288', 1.15);
+      line(g, [a[0], a[1], b[0], b[1]], '#9DA0A2', 0.9);
     }
-    for (let d = 14; d <= 67; d += 4) {
-      const [x, y] = polar(DIAL.outerOut - 12, d);
-      bolt(g, x, y, 2.5);
-    }
-    for (const r of [DIAL.knurlOut + 30, DIAL.knurlOut + 56, DIAL.outerOut - 26]) {
-      g.save(); g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.strokeStyle = '#8F88784D'; g.lineWidth = 0.8; g.stroke(); g.restore();
-    }
+    g.save(); g.beginPath(); g.arc(cx, cy, DIAL.knurlOut + 40, 0, Math.PI * 2);
+    g.strokeStyle = '#8F88782E'; g.lineWidth = 0.7; g.stroke(); g.restore();
 
     // ---- knurled grip band: dense diagonal ridges
-    for (let d = 12; d <= 70; d += 0.22) {
+    for (let d = 12; d <= 70; d += 0.5) {
       const a = polar(DIAL.tickOut + 2, d - 0.45); const b = polar(DIAL.knurlOut - 2, d + 0.45);
       const strong = Math.round(d * 10) % 4 === 0;
-      line(g, [a[0], a[1], b[0], b[1]], strong ? '#ADA58F' : '#D6CFBE', strong ? 1.2 : 0.85);
+      line(g, [a[0], a[1], b[0], b[1]], strong ? '#BDB5A0' : '#DCD6C7', strong ? 0.9 : 0.7);
       const a2 = polar(DIAL.tickOut + 2, d + 0.1); const b2 = polar(DIAL.knurlOut - 2, d + 0.1);
-      line(g, [a2[0], a2[1], b2[0], b2[1]], '#FFFFFF66', 0.6);
+      line(g, [a2[0], a2[1], b2[0], b2[1]], '#FFFFFF54', 0.55);
     }
     for (const r of [DIAL.tickOut, DIAL.knurlOut - 1]) {
       g.save(); g.beginPath(); g.arc(cx, cy, r, (12 * Math.PI) / 180, (70 * Math.PI) / 180); g.strokeStyle = '#B4AC9A'; g.lineWidth = 0.9; g.stroke(); g.restore();
@@ -127,7 +122,7 @@ function statorBody(): Sprite {
 
     // ---- stationary screws on the plain face band; the long index marks and
     //      card windows belong to the rotating ring (see dialRotor()).
-    for (let d = 13; d <= 67; d += 4) {
+    for (let d = 13; d <= 67; d += 8) {
       const [x, y] = polar(DIAL.faceOut - 16, d);
       circle(g, x, y, 2.4, '#EFE9DB', '#A79E88', 0.7);
       line(g, [x - 1.6, y + 0.6, x + 1.6, y - 0.6], '#8F8878', 0.6);
@@ -144,32 +139,23 @@ function statorBody(): Sprite {
     g.strokeStyle = '#7888A060'; g.lineWidth = 1.1; g.stroke();
     g.restore();
 
+    // ---- a few quiet face guides anchor the suspended readout: three
+    //      concentric rings and three radial seams, low contrast on purpose.
+    for (const r of [430, 720, 930]) {
+      g.save(); g.beginPath(); g.arc(cx, cy, r, (10 * Math.PI) / 180, (74 * Math.PI) / 180);
+      g.strokeStyle = '#8F88781F'; g.lineWidth = 0.7; g.stroke(); g.restore();
+    }
+    for (const d of [18, 34, 50]) {
+      const a = polar(170, d); const b = polar(DIAL.blue - 14, d);
+      line(g, [a[0], a[1], b[0], b[1]], '#8F88781C', 0.7);
+    }
+
     // ---- inner drum: panel seams, concentric guides, inspection slots
     for (const r of [300, 520, 760, 930]) {
       g.save(); g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.strokeStyle = '#8F88781F'; g.lineWidth = 0.8; g.stroke(); g.restore();
     }
-    for (let d = 15; d <= 70; d += 3.5) {
-      const a = polar(140, d); const b = polar(DIAL.blue - 16, d);
-      line(g, [a[0], a[1], b[0], b[1]], '#8F887812', 0.7);
-    }
-    for (const [deg, r, w, h] of [[27, 872, 150, 46], [41, 906, 132, 40]] as const) {
-      const [x, y] = polar(r, deg);
-      g.save(); g.translate(x, y); g.rotate(((deg + 90) * Math.PI) / 180);
-      g.beginPath(); g.roundRect(-w / 2, -h / 2, w, h, h / 2);
-      g.fillStyle = '#EAE4D6'; g.fill();
-      g.strokeStyle = '#C6BFAE'; g.lineWidth = 1; g.stroke();
-      g.beginPath(); g.roundRect(-w / 2 + 4, -h / 2 + 4, w - 8, h - 8, (h - 8) / 2);
-      g.strokeStyle = '#FFFFFFAA'; g.lineWidth = 0.8; g.stroke();
-      g.restore();
-    }
     g.save(); g.beginPath(); g.arc(cx, cy, DIAL.lipOut + 2, 0, Math.PI * 2); g.strokeStyle = '#FFFFFFAA'; g.lineWidth = 1.2; g.stroke(); g.restore();
 
-    // rim joint segments along the outer lip
-    for (let d = 12; d <= 70; d += 6) {
-      const a0 = ((d - 1.8) * Math.PI) / 180; const a1 = ((d + 1.8) * Math.PI) / 180;
-      g.save(); g.beginPath(); g.arc(cx, cy, DIAL.lipOut - 8, a0, a1); g.strokeStyle = '#B4AC9A'; g.lineWidth = 5; g.stroke();
-      g.beginPath(); g.arc(cx, cy, DIAL.lipOut - 8, a0, a1); g.strokeStyle = '#E7E1D4'; g.lineWidth = 3; g.stroke(); g.restore();
-    }
 
     // ---- fixed clearance ring between the rotating card windows (r ≤ 1128)
     //      and the rotating separator (r ≥ 1140): the stator keeps a visible
@@ -183,16 +169,16 @@ function statorBody(): Sprite {
 
     // ---- fixed clamps now live entirely on the stationary outer housing
     //      (r 1220–1290); nothing fixed intrudes into the rotating bands.
-    for (const [deg, r] of [[23, 1244], [30, 1240], [48, 1240], [57, 1248]] as const) {
+    for (const [deg, r] of [[30, 1240], [57, 1248]] as const) {
       const [x, y] = polar(r, deg);
       g.save(); g.translate(x, y); g.rotate(((deg + 90) * Math.PI) / 180);
       // shadow of the clamp foot on the housing
       g.save(); g.translate(1.5, 2.2);
       rect(g, -25, -18, 50, 36, '#2A241614', 4);
       g.restore();
-      rect(g, -25, -18, 50, 36, '#F6F1E5', 4, '#B4AC9A');
-      rect(g, -19, -12, 38, 24, '#FBF9F6', 3, '#BFC2BA');
-      bolt(g, -14, -7, 2.1); bolt(g, 14, -7, 2.1); bolt(g, -14, 7, 2.1); bolt(g, 14, 7, 2.1);
+      rect(g, -22, -16, 44, 32, '#F6F1E5', 4, '#B4AC9A');
+      rect(g, -16, -10, 32, 20, '#FBF9F6', 3, '#BFC2BA');
+      bolt(g, -11, -6, 1.9); bolt(g, 11, -6, 1.9); bolt(g, -11, 6, 1.9); bolt(g, 11, 6, 1.9);
       // short standoff toward the fixed guide ring (never crosses the card band)
       const [ix, iy] = polar(r - 22, deg);
       line(g, [0, -18, ix - x, iy - y], '#B4AC9A', 2.2);
@@ -232,8 +218,8 @@ function dialRotor(): Container {
   for (let k = 0; k < 12; k++) {
     const centre = cardSlotDeg(1) + k * DIAL_SLOT_PITCH;
     const pts = cardWindowPoints(centre);
-    const paper = k % 2 === 0 ? '#FDFBF4' : '#F8F4EA';
-    cards.poly(pts, true).fill({ color: paper, alpha: 0.97 }).stroke({ color: '#AFB5B3', width: 1.05 });
+    const paper = k % 2 === 0 ? '#FBF9F6' : '#F7F4EC';
+    cards.poly(pts, true).fill({ color: paper, alpha: 0.62 }).stroke({ color: '#C4C6BE', width: 0.8 });
     const a = (centre * Math.PI) / 180;
     const tx = -Math.sin(a); const ty = Math.cos(a);
     // recessed inner lip: reads as a window rather than a printed label
@@ -247,8 +233,8 @@ function dialRotor(): Container {
     cards.circle(Math.cos(a) * pipR, Math.sin(a) * pipR, 1.8).fill({ color: '#9A9E9E', alpha: 0.9 });
   }
 
-  for (let d = 0; d < 360; d += 1) {
-    if (d % 5 === 0) continue;
+  for (let d = 0; d < 360; d += 15) {
+    if (d % 30 === 0) continue;
     const a = (d * Math.PI) / 180;
     const len = 7;
     minor.moveTo(Math.cos(a) * tickR, Math.sin(a) * tickR)
@@ -256,14 +242,14 @@ function dialRotor(): Container {
   }
   minor.stroke({ color: '#A79E88', width: 0.55 });
 
-  for (let d = 0; d < 360; d += 5) {
+  for (let d = 0; d < 360; d += 15) {
     if (d % 30 === 0) continue;
     const a = (d * Math.PI) / 180;
     const len = 15;
     mid.moveTo(Math.cos(a) * tickR, Math.sin(a) * tickR)
       .lineTo(Math.cos(a) * (tickR - len), Math.sin(a) * (tickR - len));
   }
-  mid.stroke({ color: '#4E5157', width: 0.9 });
+  mid.stroke({ color: '#7C8085', width: 0.75 });
 
   for (let d = 0; d < 360; d += 30) {
     const a = (d * Math.PI) / 180;
@@ -277,124 +263,26 @@ function dialRotor(): Container {
     // where a card window is partially cropped by the sheet edge
     major.circle(Math.cos(a) * 1146, Math.sin(a) * 1146, 2.2).fill({ color: '#5C6168', alpha: 0.9 });
   }
-  major.stroke({ color: '#23272E', width: 2 });
+  major.stroke({ color: '#3B4046', width: 1.5 });
 
   rotor.addChild(cards, minor, mid, major);
   rotor.position.set(DIAL.cx, DIAL.cy);
   return rotor;
 }
 
-/** Fixed compact readout shell, baked once; text stays live and horizontal. */
+/** Fixed compact readout shell (180×92): header, neutral rule, mounting rail. */
 function readoutPanel(w: number, h: number): Sprite {
   return surface(w, h, g => {
-    g.save(); g.shadowColor = '#2A24162A'; g.shadowBlur = 2.4; g.shadowOffsetX = .8; g.shadowOffsetY = 1.5;
-    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 7); g.fillStyle = F.enamel; g.fill(); g.restore();
-    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 7); g.strokeStyle = F.edge; g.lineWidth = 1.1; g.stroke();
-    rect(g, 7, 7, w - 14, h - 14, F.paper, 4, F.fine);
-    for (const [x, y] of [[10, 10], [w - 10, 10], [10, h - 10], [w - 10, h - 10]] as const) bolt(g, x, y, 2.1);
-    label(g, 'EVENT READOUT', 11, 16.5, 6.2, F.muted);
-    line(g, [10, 21.5, w - 10, 21.5], F.fine, 0.6);
-    line(g, [10, h - 19, w - 10, h - 19], F.fine, 0.6);
-    label(g, 'READ HEAD · 40°', 11, h - 8, 5.4, '#A39C89');
-    // two lugs bolt the panel to the inner drum face
-    for (const x of [w / 2 - 28, w / 2 + 12]) {
-      g.beginPath(); g.roundRect(x, h - 15, 16, 10, 2); g.fillStyle = F.steel; g.fill();
-      g.strokeStyle = F.edge; g.lineWidth = 0.6; g.stroke();
-      bolt(g, x + 8, h - 10, 1.8);
-    }
-  });
-}
-
-/** Control box: coil module, gauge, knobs, key row, punch-card connectors. */
-function controlBox(): Sprite {
-  const { w, h } = DIAL.box;
-  return surface(w, h, g => {
-    g.save(); g.shadowColor = '#2A241620'; g.shadowBlur = 1; g.shadowOffsetY = 1;
-    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 12); g.fillStyle = '#FBF9F6'; g.fill(); g.restore();
-    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 12);
-    g.strokeStyle = '#B4AC9A'; g.lineWidth = 1.2; g.stroke();
-    g.beginPath(); g.roundRect(7, 7, w - 14, h - 14, 9);
-    g.strokeStyle = '#E2DCCD'; g.lineWidth = 0.8; g.stroke();
-    for (const [x, y] of [[13, 13], [w - 13, 13], [13, h - 13], [w - 13, h - 13]] as const) bolt(g, x, y, 2.8);
-
-    // coil / transformer module
-    rect(g, 14, 18, 104, 66, '#EFE9DC', 4, '#AEB3AE');
-    rect(g, 18, 22, 96, 10, '#FDFBF4', 2, '#D4CDBD');
-    line(g, [22, 27, 104, 27], '#BFC2BA', 0.7);
-    for (const x0 of [24, 66]) {
-      rect(g, x0, 42, 24, 28, '#F7F3E9', 2, '#A79F8B');
-      for (let i = 0; i < 6; i++) line(g, [x0 + 2, 46 + i * 4, x0 + 22, 46 + i * 4], '#8F8878', 0.8);
-      rect(g, x0, 42, 24, 6, '#DCD5C4', 2, '#A79F8B');
-      rect(g, x0, 64, 24, 6, '#DCD5C4', 2, '#A79F8B');
-    }
-    rect(g, 56, 42, 8, 28, '#E8E8E0', 2, '#A79F8B');
-    line(g, [18, 76, 114, 76], '#AEB3AE', 0.8); line(g, [18, 72, 114, 72], '#BFC2BA', 0.6);
-
-    // gauge with a baked, fixed needle (no second rotation state to drift)
-    const gx = 182; const gy = 52; const gr = 28;
-    circle(g, gx, gy, gr + 4, '#E7E1D4', '#B4AC9A', 0.9);
-    circle(g, gx, gy, gr, '#FDFBF4', '#A79F8B', 1);
-    for (let i = 0; i <= 10; i++) {
-      const a = (-220 + i * 26) * Math.PI / 180;
-      line(g, [gx + Math.cos(a) * (gr - 8), gy + Math.sin(a) * (gr - 8), gx + Math.cos(a) * (gr - 3), gy + Math.sin(a) * (gr - 3)], '#5C6168', 0.8);
-    }
-    line(g, [gx, gy, gx + Math.cos(-1.05) * (gr - 8), gy + Math.sin(-1.05) * (gr - 8)], '#23283A', 1.8);
-    circle(g, gx, gy, 2.2, '#30343C');
-
-    // knobs
-    for (const x0 of [158, 182, 206]) {
-      circle(g, x0, 92, 5.6, '#EFE9DC', '#A79F8B', 0.8);
-      line(g, [x0 - 3, 91, x0 + 3, 93], '#6F6A5B', 0.8);
-    }
-
-    // key grille
-    rect(g, 132, 104, 100, 40, '#F1EBDF', 5, '#B4AC9A');
-    for (let i = 0; i < 9; i++) {
-      rect(g, 138 + i * 10.4, 109, 6.4, 30, '#FBF9F6', 2, '#BFC2BA');
-    }
-
-    // inscription slot
-    rect(g, 14, 92, 104, 28, '#F6F1E5', 4, '#AEB3AE');
-    rect(g, 20, 98, 62, 7, '#FDFBF4', 2, '#D4CDBD');
-    line(g, [22, 101, 76, 101], '#BFC2BA', 0.6);
-    bolt(g, 106, 106, 2.2);
-    line(g, [20, 112, 96, 112], '#D8D1C0', 0.6);
-
-    // vents
-    for (let i = 0; i < 3; i++) {
-      line(g, [136, 154 + i * 8, 226, 154 + i * 8], '#B4AC9A', 0.7);
-      line(g, [136, 154 + i * 8, 136, 158 + i * 8], '#B4AC9A', 0.7);
-      line(g, [226, 154 + i * 8, 226, 158 + i * 8], '#B4AC9A', 0.7);
-    }
-
-    // punch-card connector row
-    rect(g, 14, 128, 112, 28, '#EFE9DC', 4, '#B4AC9A');
-    for (let i = 0; i < 10; i++) {
-      rect(g, 19 + i * 10.6, 132, 8, 20, i % 2 ? '#E2DCCD' : '#FBF9F6', 1.5, '#BFC2BA');
-      bolt(g, 23 + i * 10.6, 142, 1.1);
-    }
-    circle(g, 116, 142, 3.4, '#D9D3C2', '#8F8878', 0.7);
-
-    // conduit collar at the top of the box
-    rect(g, 112, 1, 26, 8, '#C7C0B0', 2, '#8F8878');
-    label(g, 'EVENT SCALE / 事件刻度 · KH-00', 14, h - 9, 4.8, '#A39C89');
-  });
-}
-
-/** Queue coupler plate that sits against the loom's left base. */
-function queueUnit(): Sprite {
-  const { w, h } = DIAL.queue;
-  return surface(w, h, g => {
-    g.save(); g.shadowColor = '#2A241618'; g.shadowBlur = 1; g.shadowOffsetY = 1;
-    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 7); g.fillStyle = '#FBF9F6'; g.fill(); g.restore();
-    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 7);
-    g.strokeStyle = '#A79F8B'; g.lineWidth = 1; g.stroke();
-    label(g, 'QUEUE', 10, 22, 8, '#5C6168');
-    line(g, [46, 14, 46, h - 12], '#BFC2BA', 0.7);
-    // spool coupler on top of the plate
-    rect(g, 60, 6, 12, 22, '#CFC8B6', 3, '#8F8878');
-    rect(g, 63, 9, 6, 16, '#E7E1D4', 2, '#B4AC9A');
-    bolt(g, 126, 18, 2.2);
+    g.save(); g.shadowColor = '#2A241626'; g.shadowBlur = 2.2; g.shadowOffsetX = .7; g.shadowOffsetY = 1.4;
+    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 6); g.fillStyle = F.enamel; g.fill(); g.restore();
+    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 6); g.strokeStyle = F.edge; g.lineWidth = 1.1; g.stroke();
+    rect(g, 6, 6, w - 12, h - 12, F.paper, 3, F.fine);
+    label(g, 'EVENT / 01', 9, 14, 6, F.muted);
+    line(g, [8, 20, w - 8, 20], F.fine, 0.6);
+    line(g, [8, 57, w - 8, 57], F.fine, 0.6);
+    // mounting rail at the bottom edge, bolted to the suspension bracket
+    rect(g, w / 2 - 27, h - 12, 54, 6, F.steel, 2, F.edge);
+    bolt(g, w / 2 - 16, h - 9, 1.8); bolt(g, w / 2 + 16, h - 9, 1.8);
   });
 }
 
@@ -414,9 +302,9 @@ function formatAge(ms: number): string {
 }
 
 export class EventDial {
-  /** Behind the loom (stator + rotor + accent + read-head plumbing). */
+  /** Behind the loom (stator + rotor + accent + simplified read head). */
   readonly body = new Container();
-  /** In front of the loom: control box, queue plate, harness, fixed readout. */
+  /** In front of the loom: the fixed face-mounted readout only. */
   readonly front = new Container();
 
   private cfg: DialConfig;
@@ -426,25 +314,15 @@ export class EventDial {
   private readonly accent = new Graphics();
   private readonly pointer = new Graphics();
   private readonly mount = new Graphics();
-  private readonly plumbing = new Graphics();
-  private readonly harness = new Graphics();
   private readonly readout = new Container();
   private readonly readoutPanelSprite: Sprite;
   private readonly typeText: Text;
   private readonly multText: Text;
   private readonly stepText: Text;
-  private readonly detailText: Text;
-  private readonly ageText: Text;
-  private readonly chip = new Graphics();
-  private readonly rule = new Graphics();
-  private readonly flash = new Graphics();
-  private readonly queueCount: Text;
   private readonly textures: Sprite[] = [];
   private lastReadout: ReadoutModel | null = null;
   private lastTintSlot = -1;
-  private flashStartMs = -1e9;
   private queueValue = -1;
-  private ageUpdatedAt = -1e9;
 
   constructor(cfg: DialConfig = DIAL_CONFIG) {
     this.cfg = cfg;
@@ -453,14 +331,8 @@ export class EventDial {
     const stator = statorBody();
     this.rotor = dialRotor();
     this.rotor.addChild(this.slotTint);
-    this.body.addChild(stator, this.rotor, this.accent, this.pointer, this.mount, this.plumbing);
+    this.body.addChild(stator, this.rotor, this.accent, this.pointer, this.mount);
     this.textures.push(stator);
-
-    const box = controlBox();
-    box.position.set(DIAL.box.x, DIAL.box.y);
-    const queue = queueUnit();
-    queue.position.set(DIAL.queue.x, DIAL.queue.y);
-    this.textures.push(box, queue);
 
     this.readoutPanelSprite = readoutPanel(panel.w, panel.h);
     this.textures.push(this.readoutPanelSprite);
@@ -468,46 +340,27 @@ export class EventDial {
 
     this.typeText = new Text({
       text: 'IDLE',
-      style: { fontFamily: SANS, fontSize: 22, fontWeight: '700', fill: '#8B9398', letterSpacing: 1.4 },
+      style: { fontFamily: SANS, fontSize: 30, fontWeight: '700', fill: '#8B9398', letterSpacing: 1.2 },
     });
-    this.typeText.position.set(10, 25);
+    this.typeText.position.set(9, 22);
     this.multText = new Text({
       text: '',
-      style: { fontFamily: SANS, fontSize: 13, fontWeight: '700', fill: '#1E2330', letterSpacing: 0.7 },
+      style: { fontFamily: SANS, fontSize: 16, fontWeight: '700', fill: '#1E2330', letterSpacing: 0.6 },
     });
     this.multText.anchor.set(1, 0);
-    this.multText.position.set(panel.w - 10, 28);
+    this.multText.position.set(panel.w - 9, 26);
     this.stepText = new Text({
       text: '',
-      style: { fontFamily: MONO, fontSize: 8.2, fill: '#67624F', letterSpacing: 1 },
+      style: { fontFamily: MONO, fontSize: 9, fill: '#67624F', letterSpacing: 1.1 },
     });
-    this.stepText.position.set(10, 57);
-    this.detailText = new Text({
-      text: '',
-      style: { fontFamily: MONO, fontSize: 8, fill: '#78818A', letterSpacing: 0.2 },
-    });
-    this.detailText.position.set(10, 70);
-    this.ageText = new Text({
-      text: '',
-      style: { fontFamily: MONO, fontSize: 7.4, fill: '#98A0A6', letterSpacing: 0.5 },
-    });
-    this.ageText.position.set(10, 84);
+    this.stepText.position.set(9, 63);
 
-    this.readout.addChild(this.rule, this.chip, this.typeText, this.multText, this.stepText, this.detailText, this.ageText, this.flash);
+    this.readout.addChild(this.typeText, this.multText, this.stepText);
     this.readout.position.set(panel.x, panel.y);
-
-    this.queueCount = new Text({
-      text: '0',
-      style: { fontFamily: '"Arial Narrow", "Segoe UI", sans-serif', fontSize: 15, fill: '#23283A', letterSpacing: 1 },
-    });
-    this.queueCount.position.set(DIAL.queue.x + 88, DIAL.queue.y + 9);
-
-    this.front.addChild(box, queue, this.harness, this.queueCount, this.readout);
+    this.front.addChild(this.readout);
 
     this.drawPointer();
     this.drawMount();
-    this.drawPlumbing();
-    this.drawHarness();
     this.update(0);
   }
 
@@ -528,7 +381,6 @@ export class EventDial {
   setQueue(n: number): void {
     if (n === this.queueValue) return;
     this.queueValue = n;
-    this.queueCount.text = String(n);
   }
 
   /** Engine's reduced-motion preference; collapses the index step (research §9.3). */
@@ -556,16 +408,6 @@ export class EventDial {
       this.syncReadout(ro);
       this.lastReadout = ro;
     }
-
-    // age label is refreshed a few times per second, never per frame
-    if (!ro.empty && this.state.clockMs - this.ageUpdatedAt >= 200) {
-      this.ageUpdatedAt = this.state.clockMs;
-      this.ageText.text = formatAge(ro.ageMs);
-    }
-
-    const since = this.state.clockMs - this.flashStartMs;
-    const k = since < 0 ? 0 : Math.max(0, 1 - since / 150);
-    this.flash.alpha = k;
   }
 
   private readoutChanged(a: ReadoutModel, b: ReadoutModel): boolean {
@@ -573,22 +415,16 @@ export class EventDial {
       || a.type !== b.type
       || a.count !== b.count
       || (a.step?.index ?? -1) !== (b.step?.index ?? -1)
-      || (a.step?.total ?? -1) !== (b.step?.total ?? -1)
-      || a.detail !== b.detail
-      || a.color !== b.color;
+      || (a.step?.total ?? -1) !== (b.step?.total ?? -1);
   }
 
   private syncReadout(ro: ReadoutModel): void {
-    this.readout.alpha = ro.empty ? 0.82 : 1;
+    this.readout.alpha = ro.empty ? 0.8 : 1;
     if (ro.empty) {
       this.typeText.text = 'IDLE';
       this.typeText.style.fill = '#8B9398';
       this.multText.text = '';
       this.stepText.text = '';
-      this.detailText.text = '';
-      this.ageText.text = '';
-      this.paintChip(DEFAULT_TOOL_COLOR, 0.35);
-      this.paintRule();
       this.paintTint(DEFAULT_TOOL_COLOR, 0, 0);
       this.paintAccent(DEFAULT_TOOL_COLOR);
       return;
@@ -597,62 +433,41 @@ export class EventDial {
     this.typeText.text = ro.type ? ro.type.toUpperCase() : '—';
     this.typeText.style.fill = '#1E2330';
     this.multText.text = `×${ro.count}`;
-    this.stepText.text = ro.step ? `S${pad2(ro.step.index)}/${ro.step.total}` : 'S—/—';
-    this.detailText.text = truncate(ro.detail, 28);
-    this.ageText.text = formatAge(ro.ageMs);
-    this.paintChip(ro.color, 1);
-    this.paintRule();
+    this.stepText.text = ro.step ? `S${pad2(ro.step.index)} / ${ro.step.total}` : 'S— / —';
     this.paintTint(ro.color, slot, 1);
     this.paintAccent(ro.color);
-    this.flashStartMs = this.state.clockMs;
-    this.paintFlash(ro.color);
   }
 
-  private paintChip(color: string, alpha: number): void {
-    const g = this.chip;
-    g.clear();
-    g.roundRect(DIAL.panel.w - 31, 11, 14, 7, 2).fill({ color, alpha }).stroke({ color: '#FFFFFF', width: 0.5, alpha: 0.7 });
-  }
-
-  /** Neutral divider under the type row; colour is carried by the chip only. */
-  private paintRule(): void {
-    const g = this.rule;
-    g.clear();
-    g.roundRect(10, 51, DIAL.panel.w - 20, 1.6, 0.8).fill({ color: '#BFC2BA', alpha: 0.85 });
-  }
-
-  /** Translucent tool tint on the card window currently under the read head. */
+  /** Very light tool tint on the current card window; the information lives in
+   *  the readout, so the window must stay a quiet mechanical surface. */
   private paintTint(color: string, slot: number, alpha: number): void {
     if (slot === this.lastTintSlot && alpha === 0) return;
     this.lastTintSlot = slot;
     const g = this.slotTint;
     g.clear();
     if (slot < 1 || alpha <= 0) return;
-    const pts = cardWindowPoints(cardSlotDeg(slot));
-    g.poly(pts, true).fill({ color, alpha: 0.18 }).stroke({ color, width: 2, alpha: 0.85 });
+    const centre = cardSlotDeg(slot);
+    const pts = cardWindowPoints(centre);
+    g.poly(pts, true).fill({ color, alpha: 0.025 }).stroke({ color, width: 1.1, alpha: 0.2 });
+    // one short coloured edge strip on the current window: colour without area
+    const a0 = ((centre - 11) * Math.PI) / 180;
+    const a1 = ((centre + 11) * Math.PI) / 180;
+    g.arc(0, 0, DIAL.card.rOut - 4, a0, a1).stroke({ color, width: 2.4, alpha: 0.55 });
   }
 
-  /** One coloured segment of the blue reference arc = the current tool. */
+  /** One short coloured segment of the blue reference arc = current tool. */
   private paintAccent(color: string): void {
     const g = this.accent;
     g.clear();
     const { cx, cy } = DIAL;
     const a0 = (ACCENT.fromDeg * Math.PI) / 180;
     const a1 = (ACCENT.toDeg * Math.PI) / 180;
-    g.arc(cx, cy, DIAL.blue, a0, a1).stroke({ color, width: 9 });
-    g.arc(cx, cy, DIAL.blue - 7, a0, a1).stroke({ color: '#FFFFFF', width: 1.4, alpha: 0.55 });
-    g.arc(cx, cy, DIAL.blue + 6, a0, a1).stroke({ color, width: 1.4, alpha: 0.45 });
+    g.arc(cx, cy, DIAL.blue, a0, a1).stroke({ color, width: 7 });
+    g.arc(cx, cy, DIAL.blue - 5, a0, a1).stroke({ color: '#FFFFFF', width: 1.2, alpha: 0.5 });
   }
 
-  private paintFlash(color: string): void {
-    const g = this.flash;
-    const { w, h } = DIAL.panel;
-    g.clear();
-    g.roundRect(1.5, 1.5, w - 3, h - 3, 8).stroke({ color, width: 2 });
-  }
-
-  /** Fixed read head: bolted mount on the outer housing, an elevated arm that
-   *  clears the rotor, and a small read aperture + locating notch at r≈1080. */
+  /** Fixed read head: one bolted mount, one elevated arm, one aperture and a
+   *  short locating notch. No fork, no conduit, no extra brackets. */
   private drawPointer(): void {
     const g = this.pointer;
     const deg = DIAL.headDeg;
@@ -661,164 +476,84 @@ export class EventDial {
     const tx = -Math.sin(a); const ty = Math.cos(a);
     const P = (r: number, t = 0): [number, number] =>
       [DIAL.cx + nx * r + tx * t, DIAL.cy + ny * r + ty * t];
-    const arm = (r0: number, r1: number, t: number, color: number, width: number, alpha = 1, ox = 0, oy = 0) => {
-      const [x0, y0] = P(r0, t); const [x1, y1] = P(r1, t);
-      g.moveTo(x0 + ox, y0 + oy).lineTo(x1 + ox, y1 + oy)
-        .stroke({ color, width, alpha, cap: 'round' });
-    };
 
-    // 1) shadow proves the arm is above the rotating card face
-    arm(1196, 1070, 1.5, 0x2a2416, 7, 0.17, 3.2, 4);
-    // 2) main elevated arm from the fixed outer housing to the read aperture
-    arm(1196, 1076, 0, 0x6b7075, 6.4);
-    arm(1196, 1076, 0, 0xb9bcb8, 2.8);
-    arm(1196, 1076, 0, 0xffffff, 1.1);
-    // 3) bolted mount on the stationary outer band (r≈1224)
+    // arm shadow shows it passes above the rotor
+    const [sx0, sy0] = P(1196); const [sx1, sy1] = P(1074);
+    g.moveTo(sx0 + 3, sy0 + 4).lineTo(sx1 + 3, sy1 + 4).stroke({ color: 0x2a2416, width: 6, alpha: 0.16 });
+    // arm
+    g.moveTo(sx0, sy0).lineTo(sx1, sy1).stroke({ color: 0x6b7075, width: 5.2, cap: 'round' });
+    g.moveTo(sx0, sy0).lineTo(sx1, sy1).stroke({ color: 0xc9cbc5, width: 2.2, cap: 'round' });
+    g.moveTo(sx0, sy0).lineTo(sx1, sy1).stroke({ color: 0xffffff, width: 0.8, cap: 'round' });
+
+    // mount plate on the fixed outer housing
     const [mx, my] = P(1224);
-    const corners: number[] = [];
-    for (const [u, v] of [[-29, -18], [29, -18], [29, 18], [-29, 18]] as const) {
-      corners.push(mx + tx * u + nx * v, my + ty * u + ny * v);
+    const plate: number[] = [];
+    for (const [u, v] of [[-26, -16], [26, -16], [26, 16], [-26, 16]] as const) {
+      plate.push(mx + tx * u + nx * v, my + ty * u + ny * v);
     }
-    g.poly(corners, true).fill(0xf6f1e5).stroke({ color: 0xb4ac9a, width: 1.1 });
-    for (const [u, v] of [[-19, -9], [19, -9], [-19, 9], [19, 9]] as const) {
-      g.circle(mx + tx * u + nx * v, my + ty * u + ny * v, 2.2)
+    g.poly(plate, true).fill(0xf6f1e5).stroke({ color: 0xb4ac9a, width: 1 });
+    for (const [u, v] of [[-16, 0], [16, 0]] as const) {
+      g.circle(mx + tx * u + nx * v, my + ty * u + ny * v, 2.1)
         .fill(0xefe9db).stroke({ color: 0xa79e88, width: 0.7 });
     }
-    // 4) fixed read aperture straddling the current card window edge
+
+    // aperture + needle
     const [apx, apy] = P(1082);
-    g.circle(apx, apy, 6.2).fill(0xfdfbf4).stroke({ color: 0x6b7075, width: 1.2 });
-    const bar0 = P(1092, -18); const bar1 = P(1092, 18);
-    g.moveTo(bar0[0], bar0[1]).lineTo(bar1[0], bar1[1]).stroke({ color: 0x23283a, width: 1.8, cap: 'round' });
-    for (const t of [-18, 18]) {
-      const [lx, ly] = P(1092, t); const [ix, iy] = P(1074, t);
-      g.moveTo(lx, ly).lineTo(ix, iy).stroke({ color: 0x23283a, width: 1.5, cap: 'round' });
-    }
-    const [cxr, cyr] = P(1082);
-    g.circle(cxr, cyr, 2.1).fill(0x23283a);
-    // 5) needle tip inside the aperture
-    const [t0x, t0y] = P(1078); const [t1x, t1y] = P(1062, -4); const [t2x, t2y] = P(1062, 4);
+    g.circle(apx, apy, 5.6).fill(0xfdfbf4).stroke({ color: 0x6b7075, width: 1.1 });
+    g.circle(apx, apy, 1.9).fill(0x23283a);
+    const [t0x, t0y] = P(1078); const [t1x, t1y] = P(1066, -3.2); const [t2x, t2y] = P(1066, 3.2);
     g.poly([t0x, t0y, t1x, t1y, t2x, t2y], true).fill(0x23283a);
-    // 6) fixed locating bracket in the 4 px clearance gap between the card
-    //    windows (outer r=1128) and the rotating separator (inner r=1140)
-    const [nb0x, nb0y] = P(1136, -9); const [nb1x, nb1y] = P(1136, 9);
-    g.moveTo(nb0x, nb0y).lineTo(nb1x, nb1y).stroke({ color: 0x171c60, width: 1.5, alpha: 0.8 });
-    for (const t of [-9, 9]) {
-      const [lx, ly] = P(1136, t); const [ix, iy] = P(1128, t);
-      g.moveTo(lx, ly).lineTo(ix, iy).stroke({ color: 0x171c60, width: 1.2, alpha: 0.7 });
-    }
+
+    // short locating mark in the clearance gap (fixed, never rotates)
+    const [n0x, n0y] = P(1136, -8); const [n1x, n1y] = P(1136, 8);
+    g.moveTo(n0x, n0y).lineTo(n1x, n1y).stroke({ color: 0x171c60, width: 1.3, alpha: 0.75 });
   }
 
-  /** Fixed bracket/feet that mount the readout on the inner drum, plus a thin
-   *  signal cable to the read-head mount on the outer housing. */
+  /** Suspended readout: two clamps on the fixed blue arc carry the panel, and
+   *  a short link ties it to the read-head arm. The arc is the visible datum. */
   private drawMount(): void {
     const g = this.mount;
     const p = DIAL.panel;
-    // machined bezel plate bolted to the inner drum face; the readout sits in it
-    const bx = p.x - 7; const by = p.y - 7; const bw = p.w + 14; const bh = p.h + 14;
-    g.roundRect(bx + 2, by + 3, bw, bh, 9).fill({ color: '#2A2416', alpha: 0.18 });
-    g.roundRect(bx, by, bw, bh, 9).fill(0xe8e8e0).stroke({ color: 0x9a9e9e, width: 1.2 });
-    g.roundRect(bx + 2.5, by + 2.5, bw - 5, bh - 5, 7).stroke({ color: 0xffffff, width: 0.8, alpha: 0.55 });
-    for (const [x, y] of [[bx + 4, by + bh / 2], [bx + bw - 4, by + bh / 2], [bx + bw / 2, by + 4], [bx + bw / 2, by + bh - 4]] as const) {
-      g.circle(x, y, 2.1).fill(0xefe9db).stroke({ color: 0xa79e88, width: 0.6 });
-    }
-    // panel shadow cast onto the bezel
-    g.roundRect(p.x + 4, p.y + 5, p.w - 4, p.h - 4, 7).fill({ color: '#2A2416', alpha: 0.14 });
-    // two feet bolted to the drum face
-    for (const fx of [p.x + 20, p.x + p.w - 22]) {
-      const fy = p.y + p.h;
-      g.roundRect(fx - 8, fy - 3, 16, 16, 3).fill(0xd9d3c2).stroke({ color: 0x8f8878, width: 0.9 });
-      g.circle(fx, fy + 9, 2.1).fill(0xefe9db).stroke({ color: 0xa79e88, width: 0.6 });
-      g.moveTo(fx, fy + 4).lineTo(fx, fy + 13).stroke({ color: 0xffffff, width: 0.8, alpha: 0.6 });
-    }
-    // thin signal cable: readout → read-head arm (one read assembly). It ends
-    // on a clamp attached to the arm, so the readout and head share a mount.
-    const [ax, ay] = polar(1156, DIAL.headDeg);
-    const path: Array<[number, number]> = [
-      [p.x + p.w - 8, p.y + p.h - 6],
-      [212, 196],
-      [244, 258],
-      [266, 314],
-      [ax, ay],
-    ];
-    const flat = path.flat();
-    const strand = (pts: number[], color: string, width: number, dx = 0, dy = 0) => {
-      g.moveTo(pts[0] + dx, pts[1] + dy);
-      for (let i = 2; i < pts.length; i += 2) g.lineTo(pts[i] + dx, pts[i + 1] + dy);
-      g.stroke({ color, width, cap: 'round', join: 'round' });
-    };
-    strand(flat, '#2A2416', 2.6, 1.8, 2.2);
-    strand(flat, F.edge, 2.0);
-    strand(flat, F.enamel, 0.9);
-    for (const [x, y] of path.slice(1, -1)) {
-      g.roundRect(x - 7, y - 2.2, 14, 4.4, 2).fill(0xd9d3c2).stroke({ color: 0x6f7a78, width: 0.7 });
-    }
-    // clamp where the cable meets the arm
-    const [tx, ty] = [Math.cos(((DIAL.headDeg + 90) * Math.PI) / 180), Math.sin(((DIAL.headDeg + 90) * Math.PI) / 180)];
-    const clamp: number[] = [];
-    for (const [u, v] of [[-10, -5], [10, -5], [10, 5], [-10, 5]] as const) {
-      clamp.push(ax + tx * u + Math.cos((DIAL.headDeg * Math.PI) / 180) * v,
-                 ay + ty * u + Math.sin((DIAL.headDeg * Math.PI) / 180) * v);
-    }
-    g.poly(clamp, true).fill(0xd9d3c2).stroke({ color: 0x8f8878, width: 0.8 });
-    g.circle(ax, ay, 2).fill(0x6f7a78);
-  }
+    const bx = p.x - 6; const by = p.y - 6; const bw = p.w + 12; const bh = p.h + 12;
+    g.roundRect(bx + 2, by + 3, bw, bh, 6).fill({ color: '#2A2416', alpha: 0.15 });
+    g.roundRect(bx, by, bw, bh, 6).fill(0xe8e8e0).stroke({ color: 0x9a9e9e, width: 1.1 });
+    g.roundRect(bx + 2, by + 2, bw - 4, bh - 4, 4).stroke({ color: 0xffffff, width: 0.7, alpha: 0.5 });
 
-  /** Static read-head feed: mount → control-box collar. */
-  private drawPlumbing(): void {
-    const g = this.plumbing;
-    const [sx, sy] = polar(1224, DIAL.headDeg);
-    const path: Array<[number, number]> = [
-      [sx, sy],
-      [352, 470],
-      [250, 520],
-      [214, DIAL.box.y + 2],
-    ];
-    const flat = path.flat();
-    const strand = (pts: number[], color: string, width: number) => {
-      g.moveTo(pts[0], pts[1]);
-      for (let i = 2; i < pts.length; i += 2) g.lineTo(pts[i], pts[i + 1]);
-      g.stroke({ color, width, cap: 'round', join: 'round' });
+    // clamp plate on the fixed blue arc, oriented tangentially
+    const clamp = (deg: number, len: number, depth: number) => {
+      const [x, y] = polar(DIAL.blue, deg);
+      const a = (deg * Math.PI) / 180;
+      const nx = Math.cos(a); const ny = Math.sin(a);
+      const tx = -Math.sin(a); const ty = Math.cos(a);
+      const c: number[] = [];
+      for (const [u, v] of [[-len, -depth], [len, -depth], [len, depth], [-len, depth]] as const) {
+        c.push(x + tx * u + nx * v, y + ty * u + ny * v);
+      }
+      g.poly(c, true).fill(0xd9d3c2).stroke({ color: 0x8f8878, width: 0.9 });
+      for (const u of [-len + 5, len - 5]) {
+        g.circle(x + tx * u, y + ty * u, 1.8).fill(0xefe9db).stroke({ color: 0xa79e88, width: 0.6 });
+      }
     };
-    strand(flat, F.edge, 6);
-    for (let i = -2; i <= 2; i++) {
-      const off = i * 1.3;
-      const pts: number[] = [];
-      path.forEach(([x, y], k) => pts.push(x + off * (k < 2 ? 1 : 0.4), y + off * (k < 2 ? 0 : 1)));
-      strand(pts, i === 0 ? '#E2DDD0' : '#B9B2A2', i === 0 ? 1.5 : 0.8);
-    }
-    strand(flat, '#FFFFFF', 0.8);
-    for (const [x, y] of path.slice(1, -1)) {
-      g.roundRect(x - 9, y - 3, 18, 6, 2).fill(0xd9d3c2).stroke({ color: 0x6f7a78, width: 0.8 });
-      g.rect(x - 9, y - 5, 18, 1.2).fill({ color: 0xffffff, alpha: 0.67 });
-    }
-    g.roundRect(DIAL.box.x + 112, DIAL.box.y - 14, 36, 16, 4).fill(0xefe9dc).stroke({ color: 0x8f8878, width: 1 });
-    for (let i = 0; i < 3; i++) g.rect(DIAL.box.x + 116, DIAL.box.y - 11 + i * 3.6, 28, 1).fill(0xb4ac9a);
-  }
 
-  /** Static harness: control box → junction block → queue coupler; the readout
-   *  no longer sits on the bed, so its old panel links are gone. */
-  private drawHarness(): void {
-    const g = this.harness;
-    const bx = DIAL.box.x; const by = DIAL.box.y; const bw = DIAL.box.w; const bh = DIAL.box.h;
-    const q = DIAL.queue;
-    const strand = (pts: number[], color: string, width: number) => {
-      g.moveTo(pts[0], pts[1]);
-      for (let i = 2; i < pts.length; i += 2) g.lineTo(pts[i], pts[i + 1]);
-      g.stroke({ color, width, cap: 'round', join: 'round' });
+    // top clamp at arc 30° → panel top-right; bottom clamp at arc 44° → panel bottom-left
+    const [t1x, t1y] = polar(DIAL.blue, 30);
+    const [b1x, b1y] = polar(DIAL.blue, 44);
+    clamp(30, 11, 6); clamp(44, 11, 6);
+    const link = (x0: number, y0: number, x1: number, y1: number) => {
+      g.moveTo(x0 + 2, y0 + 3).lineTo(x1 + 2, y1 + 3).stroke({ color: 0x2a2416, width: 5, alpha: 0.12 });
+      g.moveTo(x0, y0).lineTo(x1, y1).stroke({ color: 0x9a9e9e, width: 4.8, cap: 'round' });
+      g.moveTo(x0, y0).lineTo(x1, y1).stroke({ color: 0xe8e8e0, width: 2.8, cap: 'round' });
+      g.moveTo(x0, y0).lineTo(x1, y1).stroke({ color: 0xffffff, width: 0.7, cap: 'round' });
     };
-    const boxLink = [bx + bw - 24, by + bh - 4, bx + bw - 24, 806, 360, 806, 360, 818];
-    strand(boxLink, F.edge, 4.5); strand(boxLink, F.enamel, 2.4);
-    const queueLink = [360, 818, 392, 826, q.x + 34, q.y + 4];
-    strand(queueLink, F.edge, 4.5); strand(queueLink, F.enamel, 2.4);
-    strand([q.x + q.w - 18, q.y + q.h - 2, q.x + q.w - 18, 876], F.edge, 3.6);
-    strand([q.x + q.w - 18, q.y + q.h - 2, q.x + q.w - 18, 876], F.enamel, 1.9);
-    // junction block on the bed between the control box and the queue plate
-    g.roundRect(340, 806, 44, 22, 4).fill(F.steel).stroke({ color: F.muted, width: 0.8 });
-    g.roundRect(345, 811, 34, 12, 2).fill(F.enamel).stroke({ color: F.fine, width: 0.6 });
-    for (let i = 0; i < 3; i++) g.rect(349 + i * 9, 815, 5, 5).fill(F.fine);
-    for (const [x, y] of [[bx + bw - 24, by + bh - 4], [360, 818], [q.x + 34, q.y + 4], [q.x + q.w - 18, 876]]) {
-      g.roundRect(x - 5, y - 5, 10, 10, 2).fill(F.steel).stroke({ color: F.muted, width: 0.6 });
-      for (let i = -2; i <= 2; i += 2) g.moveTo(x + i, y - 4).lineTo(x + i, y + 4).stroke({ color: F.fine, width: 0.5 });
+    link(t1x, t1y, p.x + p.w - 22, p.y);
+    link(b1x, b1y, p.x + 16, p.y + p.h);
+
+    // short link to the read-head arm (r≈1152)
+    const [hx, hy] = polar(1152, DIAL.headDeg);
+    const sx = p.x + p.w - 16; const sy = p.y + p.h - 2;
+    link(sx, sy, hx, hy);
+    for (const [x, y] of [[t1x, t1y], [b1x, b1y], [sx, sy], [hx, hy]] as const) {
+      g.circle(x, y, 2.4).fill(0xd9d3c2).stroke({ color: 0x8f8878, width: 0.7 });
     }
   }
 
