@@ -1,10 +1,11 @@
 import { Container, Graphics, Sprite, Text } from 'pixi.js';
 import type { EngineStatus, ToolEvent } from '../../core/types';
-import { backdrop, heddle, reed, shuttle } from './atelier/assembly';
+import { sheetBase, loomPlate, heddle, reed, shuttle } from './atelier/assembly';
 import { C, bearing, flywheelSprite, gearSprite, label, line, metal, surface } from './atelier/drawing';
 import { Mechanism } from './atelier/mechanism';
 import { solveLinkage } from './atelier/linkage';
 import { Textile, WEAVE } from './atelier/textile';
+import { EventDial } from './atelier/eventDial';
 
 /** Original procedural assembly. Canvas creates material textures; Pixi owns
  * compositing, part transforms and animation. No reference pixels are sampled. */
@@ -25,10 +26,15 @@ export class LoomScene extends Container {
   private pickLabel = new Text({ text: '0000', style: { fontFamily: 'Consolas, monospace', fontSize: 17, fill: C.navy, letterSpacing: 2 } });
   private lastStage = '';
   private textures: Sprite[] = [];
+  private readonly world = new Container();
+  private readonly dial = new EventDial();
 
   constructor(private readonly onBeat: (e: ToolEvent) => void = () => {}) {
     super();
-    const base = backdrop();
+    const sheet = sheetBase();
+    const base = loomPlate();
+    this.world.scale.set(0.92);
+    this.world.position.set(235, 30);
     this.wheel.position.set(221, 660); this.gearA.position.set(221, 509); this.gearB.position.set(281, 509);
     this.shaftA.position.set(307, 401); this.shaftB.position.set(307, 513);
     this.reed.position.set(308, 606); this.shuttle.position.set(366, 675);
@@ -46,9 +52,10 @@ export class LoomScene extends Container {
       for (const x of [344, 1188]) metal(g, x, 662, 7, 31, true);
     });
     race.position.set(302, 651);
-    this.stageLabel.position.set(1350, 487); this.pickLabel.position.set(1270, 852);
-    this.addChild(base, this.textile.cloth, this.textile.warp, this.shaftB, this.shaftA, belt, this.wheel, this.gearA, this.gearB, this.linkage, this.reed, this.weft, this.shuttle, this.textile.front, race, this.needle, this.stageLabel, this.pickLabel);
-    this.textures = [base, belt, race, this.wheel, this.gearA, this.gearB, this.shaftA, this.shaftB, this.reed, this.shuttle];
+    this.stageLabel.position.set(1250, 487); this.pickLabel.position.set(1270, 852);
+    this.world.addChild(base, this.textile.cloth, this.textile.warp, this.shaftB, this.shaftA, belt, this.wheel, this.gearA, this.gearB, this.linkage, this.reed, this.weft, this.shuttle, this.textile.front, race, this.needle, this.stageLabel, this.pickLabel);
+    this.addChild(sheet, this.dial.body, this.world, this.dial.front);
+    this.textures = [sheet, base, belt, race, this.wheel, this.gearA, this.gearB, this.shaftA, this.shaftB, this.reed, this.shuttle];
     this.mechanism.onPick = e => { this.textile.commit(e.type); this.onBeat(e); this.pickLabel.text = String(this.mechanism.picks).padStart(4, '0'); };
     this.pose();
   }
@@ -97,6 +104,7 @@ export class LoomScene extends Container {
   }
 
   override destroy() {
+    this.dial.destroy();
     this.textile.destroy();
     for (const sprite of this.textures) sprite.texture.destroy(true);
     super.destroy({ children: true });

@@ -15,7 +15,9 @@ function bobbin(g: Pen, x: number, y: number, color: string, n: number) {
   label(g, String(n + 1).padStart(2, '0'), x, y + 74, 7, '#73818A', 'center');
 }
 
-export function backdrop() {
+/** Exhibition sheet: paper, registration marks and catalogue captions only.
+ *  The machine itself lives on loomPlate() so it can be moved by the camera. */
+export function sheetBase() {
   return surface(1472, 1008, g => {
     rect(g, 0, 0, 1472, 1008, C.paper);
     // Restrained registration marks: the machine sits on an exhibition sheet.
@@ -24,6 +26,19 @@ export function backdrop() {
     line(g, [40, 924, 1432, 924], '#AAB1B251', .7);
     label(g, 'FIG. 01', 42, 142, 10, '#8B9398');
     label(g, 'THE EVENT', 42, 163, 9, '#8B9398'); label(g, 'BECOMES THREAD.', 42, 177, 9, '#8B9398');
+    // Bottom catalogue captions stay fixed to the sheet as the machine pans.
+    label(g, '112 ENDS', 354, 905, 9, '#73828B');
+    label(g, '2 / 2 BROKEN TWILL', 770, 905, 9, '#73828B', 'center');
+    label(g, 'EVENT-DRIVEN / SERIES 01', 1234, 905, 9, '#73828B', 'right');
+    label(g, '00 / EVENT SCALE', 42, 882, 8, '#8B9398');
+    line(g, [40, 888, 168, 888], '#B5BEBC66', .6);
+  });
+}
+
+/** The loom machine only (transparent): baked at design coordinates, moved by
+ *  the scene camera to make room for the event-scale instrument on the left. */
+export function loomPlate() {
+  return surface(1472, 1008, g => {
     // Contact shadows are bound to the footprint and return faces.
     g.save(); g.filter = 'blur(15px)'; rect(g, 282, 877, 1010, 13, '#171C6021', 15); g.restore();
     g.save(); g.filter = 'blur(8px)'; rect(g, 326, 264, 932, 620, '#171C6017', 8); g.restore();
@@ -92,12 +107,7 @@ export function backdrop() {
     rect(g, 680, 856, 167, 16, C.navy, 2);
     label(g, 'K U N L U N M E T A', 764, 867, 8, '#EEEFE9', 'center');
     for (const [y, name] of [[489, 'SERVO A'], [601, 'SERVO B'], [719, 'SERVO R']] as const) label(g, name, 1300, y + 4, 6.5, '#8B969A');
-    // Quiet service notation outside the machine envelope.
-    label(g, '01 / CREEL', 1300, 205, 9, '#8B969A'); line(g, [1256, 201, 1290, 201], '#B5BEBC', .6);
-    label(g, '02 / SHED', 1350, 468, 9, '#8B969A'); line(g, [1305, 464, 1340, 464], '#B5BEBC', .6);
-    label(g, '03 / CLOTH', 1300, 780, 9, '#8B969A'); line(g, [1256, 776, 1290, 776], '#B5BEBC', .6);
     label(g, 'PICKS', 1271, 842, 7, '#8A959A');
-    label(g, '112 ENDS', 354, 905, 9, '#73828B'); label(g, '2 / 2 BROKEN TWILL', 770, 905, 9, '#73828B', 'center'); label(g, 'EVENT-DRIVEN / SERIES 01', 1234, 905, 9, '#73828B', 'right');
   });
 }
 
