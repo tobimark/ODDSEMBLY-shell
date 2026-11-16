@@ -1,0 +1,68 @@
+{
+  "checkedAt": "2026-11-16T03:02:33.761Z",
+  "method": "headless Edge + SwiftShader, ?static=1, 12 queued events, 1/60 s manual ticks",
+  "rows": [
+    {
+      "mark": "idle",
+      "equal": true,
+      "baseline": "8cb6a90b65d8",
+      "v2": "8cb6a90b65d8",
+      "bytes": "425966/425966"
+    },
+    {
+      "mark": "shed",
+      "equal": true,
+      "baseline": "5fb03746bb93",
+      "v2": "5fb03746bb93",
+      "bytes": "513926/513926"
+    },
+    {
+      "mark": "pick",
+      "equal": true,
+      "baseline": "71c4f1a1b0a2",
+      "v2": "71c4f1a1b0a2",
+      "bytes": "512609/512609"
+    },
+    {
+      "mark": "beat",
+      "equal": true,
+      "baseline": "715075d337d4",
+      "v2": "715075d337d4",
+      "bytes": "428296/428296"
+    },
+    {
+      "mark": "takeup",
+      "equal": true,
+      "baseline": "57e5d75f8e7e",
+      "v2": "57e5d75f8e7e",
+      "bytes": "516600/516600"
+    },
+    {
+      "mark": "mid",
+      "equal": true,
+      "baseline": "4115f7a23c7b",
+      "v2": "4115f7a23c7b",
+      "bytes": "483006/483006"
+    },
+    {
+      "mark": "after",
+      "equal": true,
+      "baseline": "b7f23adff094",
+      "v2": "b7f23adff094",
+      "bytes": "438469/438469"
+    }
+  ],
+  "pickCounts": {
+    "baseline": 12,
+    "v2": 12
+  },
+  "stages": {
+    "baseline": "READY",
+    "v2": "READY"
+  },
+  "exceptions": {
+    "baseline": 0,
+    "v2": 0
+  },
+  "pass": true
+}

@@ -3,18 +3,23 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'dist');
+const defaultRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'dist');
 const types = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.json': 'application/json',
   '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
   '.svg': 'image/svg+xml',
   '.woff2': 'font/woff2',
+  '.txt': 'text/plain; charset=utf-8',
 };
 
-export function startServer(port = 4178) {
+export function startServer(port = 4178, rootDir = defaultRoot) {
+  const root = path.resolve(rootDir);
   const server = http.createServer((req, res) => {
     const url = decodeURIComponent((req.url || '/').split('?')[0]);
     let file = path.join(root, url === '/' ? 'index.html' : url);
@@ -29,5 +34,6 @@ export function startServer(port = 4178) {
 
 if (process.argv[1] && process.argv[1].endsWith('serve.mjs')) {
   const port = Number(process.argv[2] || 4178);
-  startServer(port).then(() => console.log(`serving dist on http://127.0.0.1:${port}`));
+  const root = process.argv[3] ? path.resolve(process.argv[3]) : defaultRoot;
+  startServer(port, root).then(() => console.log(`serving ${root} on http://127.0.0.1:${port}`));
 }
