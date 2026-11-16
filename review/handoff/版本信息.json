@@ -1,0 +1,10 @@
+{
+  "commit": "3a778b9ad7a747ce71700e1b94684cd1c34359f2",
+  "excluded": [
+    "node_modules",
+    "caches",
+    ".git",
+    "historical evidence",
+    "raw WebM (MP4 contains same live audio/video)"
+  ]
+}
