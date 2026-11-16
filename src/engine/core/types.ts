@@ -3,7 +3,7 @@
 export type ToolName = 'Read' | 'Edit' | 'Write' | 'Bash' | 'Search';
 export const TOOL_NAMES: readonly ToolName[] = ['Read', 'Edit', 'Write', 'Bash', 'Search'] as const;
 
-export type ModeId = 'loom' | 'chips' | 'westworld';
+export type ModeId = 'loom';
 export type EngineState = 'idle' | 'running' | 'paused' | 'stopped';
 
 /** One real agent tool call, already normalised by the host bridge. */

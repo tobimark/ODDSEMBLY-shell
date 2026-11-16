@@ -228,7 +228,7 @@ export class VisualEngine {
     }
     this.activeId = id;
     this.audio.whir(0);
-    this.bus.patch({ modeId: id, modeLabel: MODE_META[id].title, hud: next.hud(), state: this.mode });
+    this.bus.patch({ modeId: id, modeLabel: (MODE_META as Record<string, { title: string }>)[id]?.title ?? 'LOOM', hud: next.hud(), state: this.mode });
     this.publish(true);
   }
 
@@ -477,7 +477,7 @@ export class VisualEngine {
       }
       if (ev.key === 'm' || ev.key === 'M') { this.setMuted(!this.bus.status.muted); }
       if (ev.key === '[' || ev.key === ']') {
-        const order: ModeId[] = ['loom', 'chips', 'westworld'];
+        const order: ModeId[] = ['loom'];
         const i = order.indexOf(this.activeId);
         const n = ev.key === ']' ? (i + 1) % order.length : (i + order.length - 1) % order.length;
         this.setMode(order[n]);

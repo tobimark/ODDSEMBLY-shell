@@ -49,23 +49,13 @@ export interface VisualMode {
 export type ModeFactory = () => VisualMode;
 
 import { LoomMode } from '../modes/loom';
-import { ChipsMode } from '../modes/chips';
-import { WestworldMode } from '../modes/westworld';
 
-export const MODE_ORDER: ModeId[] = ['loom', 'chips', 'westworld'];
+export const MODE_ORDER: ModeId[] = ['loom'];
 
 export const MODE_META: Record<ModeId, ModeMeta> = {
   loom: {
     id: 'loom', index: '01', title: 'Loom', subtitle: '把思考织成经纬',
     tagline: 'Every tool call is one pick. Shed, shuttle, beat, cloth.',
-  },
-  chips: {
-    id: 'chips', index: '02', title: 'Chips', subtitle: '把手牌押给下一手',
-    tagline: 'Tool calls are dealt as cards. Five cards make a hand; skill settles the pot.',
-  },
-  westworld: {
-    id: 'westworld', index: '03', title: 'Westworld', subtitle: '让机器记住压力',
-    tagline: 'A pressure plant: every call charges the plant, every threshold releases it.',
   },
 };
 
@@ -73,8 +63,6 @@ interface RegistryEntry { meta: ModeMeta; factory: ModeFactory }
 
 const REGISTRY: Record<ModeId, RegistryEntry> = {
   loom: { meta: MODE_META.loom, factory: () => new LoomMode() },
-  chips: { meta: MODE_META.chips, factory: () => new ChipsMode() },
-  westworld: { meta: MODE_META.westworld, factory: () => new WestworldMode() },
 };
 
 export function modeMetas(): ModeMeta[] {

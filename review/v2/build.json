@@ -1,0 +1,11 @@
+{
+  "root": "dist",
+  "treeSha256": "93ed18b7e3d3e635a4f31b548e9448da49c393e28d26b51b2ca55c0fc9e4e22e",
+  "files": 13,
+  "sizeBytes": 768399,
+  "builtAt": "2026-11-16T04:13:57.090Z",
+  "entry": "index.html",
+  "modeIds": [
+    "loom"
+  ]
+}

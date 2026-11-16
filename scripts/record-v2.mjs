@@ -3,11 +3,12 @@
  * driven by the real replay transport on the wall clock (no manual ticks), then
  * converted to MP4 with ffmpeg when an ffmpeg binary is available.
  *
- *   node scripts/record-v2.mjs                        # all modes, dist/, ~25 s each
- *   node scripts/record-v2.mjs --modes=loom           # single world
- *   node scripts/record-v2.mjs --root-chips=.tmp/dist-chips
+ * FINAL DELIVERY SCOPE = Loom only (Chips/Westworld archived). Defaults to Loom.
+ *
+ *   node scripts/record-v2.mjs                        # Loom, dist/, ~25 s
  *   node scripts/record-v2.mjs --tail=18000           # shorter settle tail
  *   node scripts/record-v2.mjs --no-mp4
+ *   node scripts/record-v2.mjs --modes=chips --root-chips=ARCHIVE_DIST  # archived replay
  *
  * Per mode: loads `?mode=<id>&noauto=1&ui=0`, starts
  * canvas.captureStream(30) + engine.audio.recordingStream audio track in
@@ -39,7 +40,7 @@ if (argv.help) {
 }
 const mainRoot = path.resolve(root, argv.root || 'dist');
 const outDir = path.resolve(argv.out || path.join(root, 'review', 'v2', 'recordings'));
-const modes = String(argv.modes || 'loom,chips,westworld').split(',').map((s) => s.trim()).filter(Boolean);
+const modes = String(argv.modes || (argv.archived ? 'loom,chips,westworld' : 'loom')).split(',').map((s) => s.trim()).filter(Boolean);
 const basePort = Number(argv.port || 4530);
 const tailMs = Number(argv.tail || 20000);
 const fps = Number(argv.fps || 30);

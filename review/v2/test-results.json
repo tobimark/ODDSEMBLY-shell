@@ -1,8 +1,10 @@
 {
   "schema": "kunlunmeta-v2-node-tests/1",
-  "generatedAt": "2026-11-16T03:52:08.482Z",
+  "generatedAt": "2026-11-16T04:15:51.460Z",
   "command": "node scripts/test-modes.mjs",
   "node": "v22.22.2",
+  "scope": "loom-final",
+  "archivedModes": "Chips/Westworld pure-logic tests were run before the scope change; that 51-check snapshot is preserved under review/v2/archive/. They are intentionally excluded here.",
   "filter": null,
   "groups": [
     {
@@ -109,7 +111,7 @@
       "group": "loom/linkage",
       "checks": [
         {
-          "name": "4002 pose sweep keeps fixed 75 px rod / 25 px crank",
+          "name": "4002 pose sweep keeps fixed 75 px rod / 25 px crank (12,006 constraints)",
           "status": "pass"
         },
         {
@@ -122,7 +124,7 @@
       "group": "fixtures/replay",
       "checks": [
         {
-          "name": "public/replay/loom-session.json exists",
+          "name": "public/replay/loom-session.json exists (final delivery session)",
           "status": "pass"
         },
         {
@@ -130,158 +132,20 @@
           "status": "pass"
         },
         {
-          "name": "chips-session.json: 12 events, valid types, monotonic times, non-empty details",
-          "status": "pass"
-        },
-        {
           "name": "loom-session.json: 12 events, valid types, monotonic times, non-empty details",
-          "status": "pass"
-        },
-        {
-          "name": "westworld-session.json: 12 events, valid types, monotonic times, non-empty details",
-          "status": "pass"
-        },
-        {
-          "name": "chips-session.json: ReplayPlayer reads 12 events in order",
-          "status": "pass"
-        },
-        {
-          "name": "westworld-session.json: ReplayPlayer reads 12 events in order",
-          "status": "pass"
-        }
-      ]
-    },
-    {
-      "group": "chips/logic",
-      "checks": [
-        {
-          "name": "src/engine/modes/chips/audio.ts: transpiles and imports without Pixi",
-          "status": "pass"
-        },
-        {
-          "name": "src/engine/modes/chips/audio.ts: exports [ChipsAudio]",
-          "status": "info"
-        },
-        {
-          "name": "src/engine/modes/chips/cards.ts: transpiles and imports without Pixi",
-          "status": "pass"
-        },
-        {
-          "name": "src/engine/modes/chips/cards.ts: exports [COMBOS, FAMILIES, RankDeck, TOOL_CHIPS, TOOL_NOTES, editionLabel, evaluateHand, handQuota, projectedChips]",
-          "status": "info"
-        },
-        {
-          "name": "src/engine/modes/chips/layout.ts: transpiles and imports without Pixi",
-          "status": "pass"
-        },
-        {
-          "name": "src/engine/modes/chips/layout.ts: exports [CARD_STOCK, LAYOUT, handSlot]",
-          "status": "info"
-        },
-        {
-          "name": "cards: RankDeck draws are deterministic for a fixed seed",
-          "status": "pass"
-        },
-        {
-          "name": "cards: RankDeck covers ranks 1..9, reshuffles after 45 and peek does not consume",
-          "status": "pass"
-        },
-        {
-          "name": "cards: evaluateHand classifies all ten combo tiers",
-          "status": "pass"
-        },
-        {
-          "name": "cards: tool effects (edit mult / write chips / bash overheat) and score formula",
-          "status": "pass"
-        },
-        {
-          "name": "cards: handQuota rises within an ante and between antes",
-          "status": "pass"
-        },
-        {
-          "name": "cards: projectedChips grows with dealt cards and matches full-hand score",
-          "status": "pass"
-        },
-        {
-          "name": "cards: combo table ordering, tool family table and edition labels",
-          "status": "pass"
-        },
-        {
-          "name": "layout: hand fan is deterministic, symmetric and monotonic",
-          "status": "pass"
-        },
-        {
-          "name": "layout: design-space boxes stay inside 1472x1008 and stock colours are valid",
-          "status": "pass"
-        }
-      ]
-    },
-    {
-      "group": "westworld/logic",
-      "checks": [
-        {
-          "name": "src/engine/modes/westworld/audio.ts: transpiles and imports without Pixi",
-          "status": "pass"
-        },
-        {
-          "name": "src/engine/modes/westworld/audio.ts: exports [WestworldAudio]",
-          "status": "info"
-        },
-        {
-          "name": "src/engine/modes/westworld/layout.ts: transpiles and imports without Pixi",
-          "status": "pass"
-        },
-        {
-          "name": "src/engine/modes/westworld/layout.ts: exports [DIAL, PIPE_PATHS, PLANT, SIDE, pressureAngle]",
-          "status": "info"
-        },
-        {
-          "name": "src/engine/modes/westworld/machine.ts: transpiles and imports without Pixi",
-          "status": "pass"
-        },
-        {
-          "name": "src/engine/modes/westworld/machine.ts: exports [FAMILY_SPEC, PURGE_EVERY, RELEASE_EVERY, WestworldMachine]",
-          "status": "info"
-        },
-        {
-          "name": "machine: 12 events are deterministic and release twice (5-call cycle)",
-          "status": "pass"
-        },
-        {
-          "name": "machine: each tool family actuates its own subsystem with distinct effects",
-          "status": "pass"
-        },
-        {
-          "name": "machine: 20 calls => 4 releases + 1 full purge; ticket ledger capped",
-          "status": "pass"
-        },
-        {
-          "name": "machine: reset() restores a fresh deterministic plant",
-          "status": "pass"
-        },
-        {
-          "name": "machine: fx events are consumed once and include release/purge marks",
-          "status": "pass"
-        },
-        {
-          "name": "layout: dial needle maps pressure 0..1 monotonically and clamps",
-          "status": "pass"
-        },
-        {
-          "name": "layout: plant tanks/valves/pipes stay inside the 1472x1008 design space",
           "status": "pass"
         }
       ]
     }
   ],
   "summary": {
-    "groups": 8,
-    "checks": 51,
-    "pass": 51,
+    "groups": 6,
+    "checks": 25,
+    "pass": 25,
     "fail": 0,
     "skip": 0,
     "passAll": true,
-    "finishedAt": "2026-11-16T03:52:08.684Z",
-    "durationSeconds": 0.202
+    "finishedAt": "2026-11-16T04:15:51.590Z",
+    "durationSeconds": 0.13
   }
 }

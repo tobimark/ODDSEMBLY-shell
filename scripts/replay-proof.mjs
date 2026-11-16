@@ -3,11 +3,13 @@
  * virtual clock in two *fresh browser sessions*, must produce byte-identical
  * screenshots (PNG SHA-256) and identical mode telemetry.
  *
- *   node scripts/replay-proof.mjs                       # all modes, dist/
- *   node scripts/replay-proof.mjs --modes=loom          # quick proof
- *   node scripts/replay-proof.mjs --root-chips=.tmp/dist-chips
+ * FINAL DELIVERY SCOPE = Loom only (Chips/Westworld archived). Defaults to Loom.
+ *
+ *   node scripts/replay-proof.mjs                       # Loom proof, dist/
+ *   node scripts/replay-proof.mjs --modes=loom          # explicit
  *   node scripts/replay-proof.mjs --software            # SwiftShader (extra stability)
- *   node scripts/replay-proof.mjs --marks=2,5,8         # virtual-time marks (seconds)
+ *   node scripts/replay-proof.mjs --marks=2,8,21        # virtual-time marks (seconds)
+ *   node scripts/replay-proof.mjs --modes=chips --root-chips=ARCHIVE_DIST  # archived replay
  *
  * Per mode it loads `?mode=<id>&deterministic=1&replay=1&ui=0`, waits for the
  * replay file, calls audio.ensure() so beat marks are collected, then batches
@@ -17,8 +19,8 @@
  *
  * Session selection: replay/<mode>-session.json when that file exists in the
  * build root, otherwise the mode-agnostic loom session via
- * `?session=replay/loom-session.json` (the engine fetch ignores mode for an
- * explicit URL). The substitution is recorded in the report — not hidden.
+ * `?replay=1&session=replay/loom-session.json` (the engine fetch ignores mode
+ * for an explicit URL). The substitution is recorded in the report — not hidden.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -36,7 +38,7 @@ if (argv.help) {
 }
 const mainRoot = path.resolve(root, argv.root || 'dist');
 const outDir = path.resolve(argv.out || path.join(root, 'review', 'v2', 'replay'));
-const modes = String(argv.modes || 'loom,chips,westworld').split(',').map((s) => s.trim()).filter(Boolean);
+const modes = String(argv.modes || (argv.archived ? 'loom,chips,westworld' : 'loom')).split(',').map((s) => s.trim()).filter(Boolean);
 const marksOverride = argv.marks ? String(argv.marks).split(',').map(Number).filter((n) => Number.isFinite(n) && n > 0) : null;
 /**
  * Virtual-time marks per mode (seconds). The last mark is the settle point used

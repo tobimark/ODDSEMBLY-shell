@@ -1,7 +1,7 @@
 {
   "schema": "kunlunmeta-v2-replay-determinism/1",
-  "generatedAt": "2026-11-16T03:21:17.935Z",
-  "command": "node scripts/replay-proof.mjs --port=4522",
+  "generatedAt": "2026-11-16T04:15:38.994Z",
+  "command": "node scripts/replay-proof.mjs --modes=loom --port=4602",
   "method": "headless Edge, ?deterministic=1&replay=1&ui=0, fixed 1/60 s manual tick batches, two fresh browser sessions, PNG SHA-256 equality",
   "dtSeconds": 0.016666666666666666,
   "marksSeconds": {
@@ -9,16 +9,6 @@
       2,
       8,
       21
-    ],
-    "chips": [
-      2,
-      8,
-      16
-    ],
-    "westworld": [
-      2,
-      8,
-      16
     ]
   },
   "softwareRendering": false,
@@ -256,7 +246,7 @@
         {
           "id": "beat marks cover eventIds 1..12",
           "ok": true,
-          "detail": "[1,2,3,4,5,6,7,8,9,10,11,12]"
+          "detail": "[1,2,3,4,5,6,7,8,9,10,11,12] (bookkeeping marks: [])"
         },
         {
           "id": "Loom: 12 picks = 12 cloth commits",
@@ -270,402 +260,21 @@
         }
       ],
       "notes": []
-    },
-    "chips": {
-      "mode": "chips",
-      "root": "dist",
-      "session": {
-        "query": "&replay=1&session=replay/loom-session.json",
-        "file": "replay/loom-session.json",
-        "modeSpecific": false
-      },
-      "marksSeconds": [
-        2,
-        8,
-        16
-      ],
-      "status": "partial",
-      "runs": {
-        "a": {
-          "marks": {
-            "2s": {
-              "file": "review/v2/replay/chips-a-2s.png",
-              "sha256": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc"
-            },
-            "8s": {
-              "file": "review/v2/replay/chips-a-8s.png",
-              "sha256": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc"
-            },
-            "16s": {
-              "file": "review/v2/replay/chips-a-16s.png",
-              "sha256": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc"
-            }
-          },
-          "facts": {
-            "replay": {
-              "loaded": true,
-              "cursor": 12,
-              "total": 12,
-              "done": true
-            },
-            "events": 12,
-            "engineTime": 16.000000000000373,
-            "state": "running",
-            "modeTelemetry": {
-              "mode": "chips",
-              "stub": true
-            },
-            "audioState": "running",
-            "beatEventIds": [],
-            "beatCount": 0,
-            "stub": true
-          },
-          "errors": {
-            "exceptions": [],
-            "consoleErrors": [],
-            "logErrors": [],
-            "total": 0
-          },
-          "environment": {
-            "renderer": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
-            "software": false
-          }
-        },
-        "b": {
-          "marks": {
-            "2s": {
-              "file": "review/v2/replay/chips-a-2s.png",
-              "sha256": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc"
-            },
-            "8s": {
-              "file": "review/v2/replay/chips-a-8s.png",
-              "sha256": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc"
-            },
-            "16s": {
-              "file": "review/v2/replay/chips-a-16s.png",
-              "sha256": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc"
-            }
-          },
-          "facts": {
-            "replay": {
-              "loaded": true,
-              "cursor": 12,
-              "total": 12,
-              "done": true
-            },
-            "events": 12,
-            "engineTime": 16.000000000000373,
-            "state": "running",
-            "modeTelemetry": {
-              "mode": "chips",
-              "stub": true
-            },
-            "audioState": "running",
-            "beatEventIds": [],
-            "beatCount": 0,
-            "stub": true
-          },
-          "errors": {
-            "exceptions": [],
-            "consoleErrors": [],
-            "logErrors": [],
-            "total": 0
-          },
-          "environment": {
-            "renderer": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
-            "software": false
-          }
-        }
-      },
-      "comparison": [
-        {
-          "mark": "2s",
-          "equal": true,
-          "hashA": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc",
-          "hashB": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc",
-          "sizeA": 6420,
-          "sizeB": 6420
-        },
-        {
-          "mark": "8s",
-          "equal": true,
-          "hashA": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc",
-          "hashB": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc",
-          "sizeA": 6420,
-          "sizeB": 6420
-        },
-        {
-          "mark": "16s",
-          "equal": true,
-          "hashA": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc",
-          "hashB": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc",
-          "sizeA": 6420,
-          "sizeB": 6420
-        }
-      ],
-      "checks": [
-        {
-          "id": "mark 2s: pixel-identical across fresh sessions",
-          "ok": true,
-          "detail": "sha256 4d36490fb9304551…/4d36490fb9304551… sizes 6420/6420"
-        },
-        {
-          "id": "mark 8s: pixel-identical across fresh sessions",
-          "ok": true,
-          "detail": "sha256 4d36490fb9304551…/4d36490fb9304551… sizes 6420/6420"
-        },
-        {
-          "id": "mark 16s: pixel-identical across fresh sessions",
-          "ok": true,
-          "detail": "sha256 4d36490fb9304551…/4d36490fb9304551… sizes 6420/6420"
-        },
-        {
-          "id": "replay cursor 12/12 in both runs",
-          "ok": true,
-          "detail": "A={\"loaded\":true,\"cursor\":12,\"total\":12,\"done\":true} B={\"loaded\":true,\"cursor\":12,\"total\":12,\"done\":true}"
-        },
-        {
-          "id": "engine received exactly 12 replay events",
-          "ok": true,
-          "detail": "A=12 B=12"
-        },
-        {
-          "id": "virtual clock identical",
-          "ok": true,
-          "detail": "A=16.000000000000373 B=16.000000000000373"
-        },
-        {
-          "id": "mode telemetry identical",
-          "ok": true,
-          "detail": "{\"mode\":\"chips\",\"stub\":true}"
-        },
-        {
-          "id": "audio beat eventId sequence identical",
-          "ok": true,
-          "detail": "A=[] B=[]"
-        },
-        {
-          "id": "no uncaught exceptions in either run",
-          "ok": true,
-          "detail": "{\"a\":[],\"b\":[]}"
-        },
-        {
-          "id": "no console errors in either run",
-          "ok": true,
-          "detail": "{\"a\":[],\"b\":[]}"
-        }
-      ],
-      "notes": [
-        "no replay/chips-session.json in build root; used the shared loom session via ?session=replay/loom-session.json (engine replay fetch is mode-agnostic for explicit URLs)",
-        "mode telemetry reports stub:true — visual pixel determinism is engine-level only (stub world has no visuals); mode-specific pick/beat assertions SKIPPED"
-      ]
-    },
-    "westworld": {
-      "mode": "westworld",
-      "root": "dist",
-      "session": {
-        "query": "&replay=1&session=replay/loom-session.json",
-        "file": "replay/loom-session.json",
-        "modeSpecific": false
-      },
-      "marksSeconds": [
-        2,
-        8,
-        16
-      ],
-      "status": "partial",
-      "runs": {
-        "a": {
-          "marks": {
-            "2s": {
-              "file": "review/v2/replay/westworld-a-2s.png",
-              "sha256": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc"
-            },
-            "8s": {
-              "file": "review/v2/replay/westworld-a-8s.png",
-              "sha256": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc"
-            },
-            "16s": {
-              "file": "review/v2/replay/westworld-a-16s.png",
-              "sha256": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc"
-            }
-          },
-          "facts": {
-            "replay": {
-              "loaded": true,
-              "cursor": 12,
-              "total": 12,
-              "done": true
-            },
-            "events": 12,
-            "engineTime": 16.000000000000373,
-            "state": "running",
-            "modeTelemetry": {
-              "mode": "westworld",
-              "stub": true
-            },
-            "audioState": "running",
-            "beatEventIds": [],
-            "beatCount": 0,
-            "stub": true
-          },
-          "errors": {
-            "exceptions": [],
-            "consoleErrors": [],
-            "logErrors": [],
-            "total": 0
-          },
-          "environment": {
-            "renderer": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
-            "software": false
-          }
-        },
-        "b": {
-          "marks": {
-            "2s": {
-              "file": "review/v2/replay/westworld-a-2s.png",
-              "sha256": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc"
-            },
-            "8s": {
-              "file": "review/v2/replay/westworld-a-8s.png",
-              "sha256": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc"
-            },
-            "16s": {
-              "file": "review/v2/replay/westworld-a-16s.png",
-              "sha256": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc"
-            }
-          },
-          "facts": {
-            "replay": {
-              "loaded": true,
-              "cursor": 12,
-              "total": 12,
-              "done": true
-            },
-            "events": 12,
-            "engineTime": 16.000000000000373,
-            "state": "running",
-            "modeTelemetry": {
-              "mode": "westworld",
-              "stub": true
-            },
-            "audioState": "running",
-            "beatEventIds": [],
-            "beatCount": 0,
-            "stub": true
-          },
-          "errors": {
-            "exceptions": [],
-            "consoleErrors": [],
-            "logErrors": [],
-            "total": 0
-          },
-          "environment": {
-            "renderer": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
-            "software": false
-          }
-        }
-      },
-      "comparison": [
-        {
-          "mark": "2s",
-          "equal": true,
-          "hashA": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc",
-          "hashB": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc",
-          "sizeA": 6420,
-          "sizeB": 6420
-        },
-        {
-          "mark": "8s",
-          "equal": true,
-          "hashA": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc",
-          "hashB": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc",
-          "sizeA": 6420,
-          "sizeB": 6420
-        },
-        {
-          "mark": "16s",
-          "equal": true,
-          "hashA": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc",
-          "hashB": "4d36490fb9304551fa1abe2bd03780e6f4df0e4b766bcbc2440b146cd7932fbc",
-          "sizeA": 6420,
-          "sizeB": 6420
-        }
-      ],
-      "checks": [
-        {
-          "id": "mark 2s: pixel-identical across fresh sessions",
-          "ok": true,
-          "detail": "sha256 4d36490fb9304551…/4d36490fb9304551… sizes 6420/6420"
-        },
-        {
-          "id": "mark 8s: pixel-identical across fresh sessions",
-          "ok": true,
-          "detail": "sha256 4d36490fb9304551…/4d36490fb9304551… sizes 6420/6420"
-        },
-        {
-          "id": "mark 16s: pixel-identical across fresh sessions",
-          "ok": true,
-          "detail": "sha256 4d36490fb9304551…/4d36490fb9304551… sizes 6420/6420"
-        },
-        {
-          "id": "replay cursor 12/12 in both runs",
-          "ok": true,
-          "detail": "A={\"loaded\":true,\"cursor\":12,\"total\":12,\"done\":true} B={\"loaded\":true,\"cursor\":12,\"total\":12,\"done\":true}"
-        },
-        {
-          "id": "engine received exactly 12 replay events",
-          "ok": true,
-          "detail": "A=12 B=12"
-        },
-        {
-          "id": "virtual clock identical",
-          "ok": true,
-          "detail": "A=16.000000000000373 B=16.000000000000373"
-        },
-        {
-          "id": "mode telemetry identical",
-          "ok": true,
-          "detail": "{\"mode\":\"westworld\",\"stub\":true}"
-        },
-        {
-          "id": "audio beat eventId sequence identical",
-          "ok": true,
-          "detail": "A=[] B=[]"
-        },
-        {
-          "id": "no uncaught exceptions in either run",
-          "ok": true,
-          "detail": "{\"a\":[],\"b\":[]}"
-        },
-        {
-          "id": "no console errors in either run",
-          "ok": true,
-          "detail": "{\"a\":[],\"b\":[]}"
-        }
-      ],
-      "notes": [
-        "no replay/westworld-session.json in build root; used the shared loom session via ?session=replay/loom-session.json (engine replay fetch is mode-agnostic for explicit URLs)",
-        "mode telemetry reports stub:true — visual pixel determinism is engine-level only (stub world has no visuals); mode-specific pick/beat assertions SKIPPED"
-      ]
     }
   },
   "summary": {
     "statuses": {
-      "loom": "pass",
-      "chips": "partial",
-      "westworld": "partial"
+      "loom": "pass"
     },
-    "checks": 34,
+    "checks": 14,
     "failures": 0,
     "failureIds": [],
     "pass": true,
-    "partial": true,
-    "finishedAt": "2026-11-16T03:21:39.691Z",
-    "durationSeconds": 21.756
+    "partial": false,
+    "finishedAt": "2026-11-16T04:15:51.027Z",
+    "durationSeconds": 12.033
   },
   "limitations": [
-    "Stub modes have no world visuals yet: their pixel equality is engine-level only and marked partial, never passed.",
     "PNG equality is measured within this machine/driver/browser build; it proves replay determinism, not cross-machine rendering parity."
   ]
 }

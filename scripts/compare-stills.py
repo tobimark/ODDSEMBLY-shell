@@ -114,26 +114,23 @@ def main():
     pairs = [
         ('loom',
          os.path.join(REF_DIR, 'Loom_canvas_1472x1008.png'),
-         newest([os.path.join(V2, 'shots', 'loom-burst.png'),
-                 os.path.join(V2, 'wip-combined', 'shots', 'loom-burst.png')]),
-         'Loom — reference camera still vs v2 deterministic burst (12 events, t=8s)'),
-        ('chips',
-         os.path.join(REF_DIR, 'Chips_canvas_1472x1008.png'),
-         newest([os.path.join(V2, 'shots', 'chips-settled.png'),
-                 os.path.join(V2, 'wip-chips-1147', 'shots', 'chips-settled.png'),
-                 os.path.join(V2, 'wip', 'shots', 'chips-settled.png')]),
-         'Chips — reference camera still vs v2 settled state after 12 events (newest evidence)'),
-        ('westworld',
-         os.path.join(REF_DIR, 'Westworld_canvas_1472x1008.png'),
-         newest([os.path.join(V2, 'shots', 'westworld-settled.png'),
-                 os.path.join(V2, 'wip-westworld', 'shots', 'westworld-settled.png')]),
-         'Westworld — reference camera still vs v2 settled state after 12 events (newest evidence)'),
+         newest([os.path.join(V2, 'shots', 'loom-burst.png')]),
+         'Loom — reference camera still vs v2 deterministic burst (12 events, t=8s); FINAL delivery scope = Loom only'),
+    ]
+    archived = [
+        ('chips', os.path.join(REF_DIR, 'Chips_canvas_1472x1008.png'), os.path.join(V2, 'archive', 'comparisons-all-modes', 'chips-vs-reference.png')),
+        ('westworld', os.path.join(REF_DIR, 'Westworld_canvas_1472x1008.png'), os.path.join(V2, 'archive', 'comparisons-all-modes', 'westworld-vs-reference.png')),
     ]
     results = [compose(*p) for p in pairs]
+    archived_rows = [
+        {'mode': mode, 'reference': ref, 'archivedComparison': path if os.path.exists(path) else None,
+         'note': 'archived experiment — not part of the final Loom-only delivery'}
+        for mode, ref, path in archived
+    ]
     index_path = os.path.join(out_idx or os.path.join(V2, 'comparisons'), 'index.json')
     os.makedirs(os.path.dirname(index_path), exist_ok=True)
     with open(index_path, 'w', encoding='utf-8') as fh:
-        json.dump({'schema': 'kunlunmeta-v2-reference-comparisons/1', 'pairs': results}, fh, ensure_ascii=False, indent=2)
+        json.dump({'schema': 'kunlunmeta-v2-reference-comparisons/1', 'scope': 'loom-final', 'pairs': results, 'archived': archived_rows}, fh, ensure_ascii=False, indent=2)
     for row in results:
         print(('OK  ' if row['referenceAvailable'] and row['evidenceAvailable'] else 'PART'), row['output'])
     print('index:', os.path.relpath(index_path, ROOT).replace('\\', '/'))

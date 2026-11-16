@@ -1,21 +1,25 @@
 /**
- * V2 independent verification harness for the multi-mode KunlunMeta engine.
+ * V2 independent verification harness for the KunlunMeta engine.
  *
- *   node scripts/verify-v2.mjs                          # all modes from dist/
- *   node scripts/verify-v2.mjs --modes=loom             # fast Loom regression
- *   node scripts/verify-v2.mjs --root-chips=.tmp/dist-chips   # verify WIP build
- *   node scripts/verify-v2.mjs --no-ui                  # canvas pass only
+ * FINAL DELIVERY SCOPE = Loom only (user decision 2026-11-16): Chips and
+ * Westworld were archived as experiments and do not ship. The per-mode profiles
+ * for them are kept only for replaying archived evidence with explicit
+ * `--modes=chips,westworld` (never part of the final report).
+ *
+ *   node scripts/verify-v2.mjs                          # Loom final pass from dist/
+ *   node scripts/verify-v2.mjs --modes=loom --no-ui      # canvas pass only
+ *   node scripts/verify-v2.mjs --modes=chips --root-chips=ARCHIVE_DIST  # archive replay
  *   node scripts/verify-v2.mjs --strict                 # non-pass => exit 1
  *
- * What it proves (per mode, on a deterministic manual clock):
+ * What it proves (Loom):
  *   - boots with exactly one canvas and no uncaught/page errors
  *   - idle screenshot at 1472x1008
  *   - 12-event burst screenshot (mid-animation) + settled screenshot
- *   - engine telemetry: 12 events seen, queue drained, mode counters sane
+ *   - engine telemetry: 12 events seen, queue drained, 12 picks, beats 1..12
  *   - audio: AudioContext running + ordered beat marks for the 12 events
  *   - responsive 1920x1080 and 768x1024 screenshots (canvas resize + no overflow)
- *   - mode switching through the actual React tab buttons (when UI pass enabled),
- *     verifying status.modeId changes and each world renders
+ *   - final UI: single-mode header (brand/caption/telemetry/transport/tools) OR
+ *     mode tabs when a multi-mode build is being inspected, plus screenshots
  * Writes review/v2/verification.json plus review/v2/shots/*.png.
  *
  * Honest reporting: a mode whose telemetry reports `stub: true` is marked
@@ -24,6 +28,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { launch, fileHash, sleep } from './lib/browser.mjs';
 import { DESIGN_W, DESIGN_H, EVENTS_12 } from './lib/fixtures.mjs';
 
@@ -43,7 +48,7 @@ const basePort = Number(argv.port || 4510);
 const outRoot = path.resolve(argv.out || path.join(root, 'review', 'v2'));
 const shotsDir = path.join(outRoot, 'shots');
 const mainRoot = path.resolve(root, argv.root || 'dist');
-const requestedModes = String(argv.modes || 'loom,chips,westworld').split(',').map((m) => m.trim()).filter(Boolean);
+const requestedModes = String(argv.modes || (argv.archived ? 'loom,chips,westworld' : 'loom')).split(',').map((m) => m.trim()).filter(Boolean);
 
 function rootFor(mode) {
   const key = `root-${mode}`;
@@ -147,6 +152,28 @@ async function batchTicks(browser, seconds, dt = DT) {
 async function shot(browser, file) {
   await browser.screenshot(file);
   return { file: path.relative(root, file).replaceAll('\\', '/'), sha256: await fileHash(file) };
+}
+
+/** Deterministic SHA-256 over the served build tree (rel path + bytes, sorted). */
+function hashTree(rootDir) {
+  const files = [];
+  (function walk(dir) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, entry.name);
+      if (entry.isDirectory()) walk(p);
+      else if (entry.isFile()) files.push(p);
+    }
+  })(rootDir);
+  files.sort();
+  const hash = crypto.createHash('sha256');
+  for (const f of files) {
+    hash.update(path.relative(rootDir, f).replaceAll('\\', '/'));
+    hash.update('\0');
+    hash.update(fs.readFileSync(f));
+    hash.update('\0');
+  }
+  const newest = Math.max(...files.map((f) => fs.statSync(f).mtimeMs));
+  return { treeSha256: hash.digest('hex'), files: files.length, sizeBytes: files.reduce((a, f) => a + fs.statSync(f).size, 0), builtAt: new Date(newest).toISOString() };
 }
 
 function makeChecks() {
@@ -332,21 +359,53 @@ async function verifyUiSwitching(modes, port) {
     await browser.goto('?deterministic=1&noauto=1', { settle: 600 });
     const mark = browser.mark();
     result.environment = { renderer: await browser.renderer(), viewport: `${W}x${H}` };
-    const tabs = JSON.parse(await browser.evaluate(`JSON.stringify(Array.from(document.querySelectorAll('.mode-tab')).map(b=>({text:b.textContent.trim(),active:b.classList.contains('active')})))`));
-    add('three mode tabs rendered', tabs.length === 3, JSON.stringify(tabs.map((t) => t.text)));
-    add('initial tab active is Loom (default mode)', tabs.find((t) => t.active)?.text?.includes('Loom') ?? false, JSON.stringify(tabs));
+    const header = JSON.parse(await browser.evaluate(`JSON.stringify({
+      brand: !!document.querySelector('.brand h1'),
+      brandText: document.querySelector('.brand h1')?.textContent?.trim() ?? null,
+      tabs: document.querySelectorAll('.mode-tab').length,
+      tabTexts: Array.from(document.querySelectorAll('.mode-tab')).map(b=>b.textContent.trim()),
+      captionTitle: document.querySelector('.mode-caption-title')?.textContent?.trim() ?? null,
+      telemetryPill: document.querySelector('.telemetry .pill')?.textContent?.trim() ?? null,
+      telemetryFields: document.querySelectorAll('.telemetry dl > div').length,
+      transportButtons: Array.from(document.querySelectorAll('.transport button')).map(b=>b.textContent.trim()),
+      toolButtons: document.querySelectorAll('.tools .tool').length,
+      hint: document.querySelector('.hint')?.textContent?.trim() ?? null,
+      modeId: window.__engine.getMode(),
+    })`));
+    result.header = header;
+    const tabCount = header.tabs;
+    result.singleModeHeader = tabCount === 0;
+    add('header: KUNLUNMETA brand rendered', header.brand && /KUNLUNMETA/i.test(header.brandText ?? ''), `brand=${header.brandText}`);
+    add('header: Loom caption rendered', /loom/i.test(header.captionTitle ?? ''), `caption=${header.captionTitle}`);
+    add('telemetry panel present (state pill + >=3 fields)', !!header.telemetryPill && header.telemetryFields >= 3, `pill=${header.telemetryPill} fields=${header.telemetryFields}`);
+    add('transport controls present', header.transportButtons.some((t) => /play|pause|resume/i.test(t)) && header.transportButtons.includes('Stop'), JSON.stringify(header.transportButtons));
+    add('five tool trigger buttons', header.toolButtons === 5, `tools=${header.toolButtons}`);
+    add('hint line present', typeof header.hint === 'string' && header.hint.length > 0, header.hint ?? '');
+    if (tabCount === 0) {
+      add('single-mode header: no mode tabs', true, '0 .mode-tab elements (Loom-only delivery)');
+      add('single-mode view: engine mode is loom', header.modeId === 'loom', `modeId=${header.modeId}`);
+    } else {
+      add('mode tabs rendered', tabCount >= 1, `tabs=${JSON.stringify(header.tabTexts)}`);
+      add('initial tab active is Loom (default mode)', /loom/i.test(header.tabTexts.find((t, i) => i === 0) ?? ''), JSON.stringify(header.tabTexts));
+    }
 
     for (const mode of modes) {
       const profile = PROFILES[mode];
-      const click = await browser.evaluate(`(()=>{
-        const tabs=Array.from(document.querySelectorAll('.mode-tab'));
-        const target=tabs.find(b=>b.querySelector('.mode-name')?.textContent?.trim().toLowerCase()===${JSON.stringify(mode)});
-        if(!target) return {clicked:false, labels:tabs.map(b=>b.textContent.trim())};
-        target.click();
-        return {clicked:true, label:target.textContent.trim()};
-      })()`);
-      const switched = !!click.clicked && !!(await browser.waitFor(`window.__engine.getMode() === ${JSON.stringify(mode)}`, 5000));
-      // advance the deterministic clock so the 0.42 s cross-fade completes and renders
+      let switched = false;
+      let click = null;
+      if (tabCount > 0) {
+        click = await browser.evaluate(`(()=>{
+          const tabs=Array.from(document.querySelectorAll('.mode-tab'));
+          const target=tabs.find(b=>b.querySelector('.mode-name')?.textContent?.trim().toLowerCase()===${JSON.stringify(mode)});
+          if(!target) return {clicked:false, labels:tabs.map(b=>b.textContent.trim())};
+          target.click();
+          return {clicked:true, label:target.textContent.trim()};
+        })()`);
+        switched = !!click.clicked && !!(await browser.waitFor(`window.__engine.getMode() === ${JSON.stringify(mode)}`, 5000));
+      } else {
+        switched = header.modeId === mode;
+      }
+      // advance the deterministic clock so any cross-fade completes and renders
       await batchTicks(browser, 0.7);
       const state = JSON.parse(await browser.evaluate(`JSON.stringify({
         status: window.__engine.getStatus(),
@@ -356,8 +415,12 @@ async function verifyUiSwitching(modes, port) {
         tel: window.__engine.getModeTelemetry(${JSON.stringify(mode)}),
       })`));
       result.tabClicks.push({ mode, click, statusModeId: state.status.modeId, activeTab: state.activeTab, caption: state.caption, stub: isStub(state.tel) ? true : null });
-      add(`tab click switches to ${mode}`, switched && state.status.modeId === mode, `modeId=${state.status.modeId}`);
-      add(`${mode} tab marked active`, (state.activeTab ?? '').toLowerCase().includes(profile.label.toLowerCase()), `active=${state.activeTab}`);
+      if (tabCount > 0) {
+        add(`tab click switches to ${mode}`, switched && state.status.modeId === mode, `modeId=${state.status.modeId}`);
+        add(`${mode} tab marked active`, (state.activeTab ?? '').toLowerCase().includes(profile.label.toLowerCase()), `active=${state.activeTab}`);
+      } else {
+        add(`single-mode view: ${mode} active`, switched && state.status.modeId === mode, `modeId=${state.status.modeId}`);
+      }
       add(`${mode} still one canvas`, state.canvases === 1, `canvases=${state.canvases}`);
 
       const name = `switch-${mode}`;
@@ -381,8 +444,8 @@ async function verifyUiSwitching(modes, port) {
       }
     }
 
-    // --- Loom -> Chips -> Westworld -> Loom: accumulated state must persist across switches
-    if (modes.includes('loom')) {
+    // --- multi-mode state persistence (only meaningful when >=2 switchable modes exist)
+    if (modes.includes('loom') && tabCount >= 2) {
       const clickTab = async (m) => {
         const click = await browser.evaluate(`(()=>{
           const tabs=Array.from(document.querySelectorAll('.mode-tab'));
@@ -443,8 +506,8 @@ async function verifyUiSwitching(modes, port) {
       add('sequence: engine event log unchanged by switching', back.events === 12, `events=${back.events}`);
     }
 
-    // --- Chips -> Loom -> Chips: accumulated table state must survive switching (deterministic)
-    if (modes.includes('chips')) {
+    // --- Chips -> Loom -> Chips persistence (archived experiment; only if explicitly requested)
+    if (modes.includes('chips') && tabCount >= 2) {
       const clickTab = async (m) => {
         const click = await browser.evaluate(`(()=>{
           const tabs=Array.from(document.querySelectorAll('.mode-tab'));
@@ -487,10 +550,14 @@ async function verifyUiSwitching(modes, port) {
       }
     }
 
+    if (tabCount < 2) {
+      skip('multi-mode state persistence across tab switching', 'single-mode delivery: no mode tabs, switch-persistence not applicable; Loom accumulation is covered by the canvas pass and replay determinism proof');
+    }
+
     const errors = browser.errorsSince(mark);
     result.errors = errors;
-    add('tab switching: zero uncaught exceptions', errors.exceptions.length === 0, JSON.stringify(errors.exceptions.slice(0, 3)));
-    add('tab switching: zero console errors', errors.consoleErrors.length === 0, JSON.stringify(errors.consoleErrors.slice(0, 3)));
+    add('UI pass: zero uncaught exceptions', errors.exceptions.length === 0, JSON.stringify(errors.exceptions.slice(0, 3)));
+    add('UI pass: zero console errors', errors.consoleErrors.length === 0, JSON.stringify(errors.consoleErrors.slice(0, 3)));
     result.status = checks.every((c) => c.ok) ? 'pass' : 'fail';
   } catch (err) {
     checks.push({ id: 'ui pass completed', ok: false, detail: String(err?.stack || err).slice(0, 800) });
@@ -509,6 +576,10 @@ const report = {
   generatedAt: startedAt.toISOString(),
   node: process.version,
   command: `node scripts/verify-v2.mjs ${process.argv.slice(2).join(' ')}`.trim(),
+  report: {
+    scope: requestedModes.length === 1 && requestedModes[0] === 'loom' ? 'loom-final' : 'multi-mode',
+    archivedModesNote: 'Chips and Westworld are archived experiments and not part of the final Loom-only delivery; passing snapshots for them live under review/v2/archive/.',
+  },
   roots: Object.fromEntries(requestedModes.map((m) => [m, path.relative(root, rootFor(m)).replaceAll('\\', '/') || '.'])),
   fixture: { events: GENERIC_EVENTS, types: EVENTS_12.map((e) => e.type), tickDt: DT, viewport: `${W}x${H}` },
   modes: {},
@@ -518,15 +589,18 @@ const report = {
 };
 
 let portCursor = basePort;
+const buildHashes = {};
 for (const mode of requestedModes) {
   const profile = PROFILES[mode];
   if (!profile) { report.modes[mode] = { mode, status: 'skipped', notes: ['unknown mode id'] }; continue; }
-  console.log(`[verify-v2] canvas pass: ${mode} (root=${report.roots[mode]})`);
+  buildHashes[mode] = hashTree(rootFor(mode));
+  console.log(`[verify-v2] canvas pass: ${mode} (root=${report.roots[mode]}, build=${buildHashes[mode].treeSha256.slice(0, 12)}…)`);
   report.modes[mode] = await verifyModeCanvas(mode, profile, portCursor);
   portCursor += 2;
   const r = report.modes[mode];
   console.log(`[verify-v2]   -> ${r.status.toUpperCase()} (${r.checks.filter((c) => c.ok).length}/${r.checks.length} checks)`);
 }
+report.buildHashes = buildHashes;
 if (!argv['no-ui']) {
   console.log('[verify-v2] UI pass: tab switching + responsive HUD');
   report.uiSwitching = await verifyUiSwitching(requestedModes, portCursor);

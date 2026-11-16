@@ -7,7 +7,7 @@ const TOOLS: readonly ToolName[] = TOOL_NAMES;
 function readOptions(): EngineOptions {
   const params = new URLSearchParams(location.search);
   const rawMode = params.get('mode');
-  const valid: ModeId[] = ['loom', 'chips', 'westworld'];
+  const valid: ModeId[] = ['loom'];
   const mode = valid.includes(rawMode as ModeId) ? (rawMode as ModeId) : 'loom';
   return {
     mode,
@@ -154,19 +154,27 @@ export default function App() {
             </div>
           </div>
 
-          <nav className="mode-nav" aria-label="visual modes">
-            {modeMetas().map((m) => (
-              <button
-                key={m.id}
-                className={`mode-tab ${s?.modeId === m.id ? 'active' : ''}`}
-                onClick={() => setMode(m.id)}
-                title={m.tagline}
-              >
-                <span className="mode-index">{m.index}</span>
-                <span className="mode-name">{m.title}</span>
-              </button>
-            ))}
-          </nav>
+          {modeMetas().length > 1 ? (
+            <nav className="mode-nav" aria-label="visual modes">
+              {modeMetas().map((m) => (
+                <button
+                  key={m.id}
+                  className={`mode-tab ${s?.modeId === m.id ? 'active' : ''}`}
+                  onClick={() => setMode(m.id)}
+                  title={m.tagline}
+                >
+                  <span className="mode-index">{m.index}</span>
+                  <span className="mode-name">{m.title}</span>
+                </button>
+              ))}
+            </nav>
+          ) : (
+            <div className="mode-plaque" aria-label="current exhibition">
+              <span className="mode-index">01</span>
+              <span className="mode-name">LOOM</span>
+              <span className="mode-plaque-note">EXHIBITION 01 · 112 ENDS</span>
+            </div>
+          )}
 
           <div className="mode-caption">
             <span className="mode-caption-title">{meta.title}</span>

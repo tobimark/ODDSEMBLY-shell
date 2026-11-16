@@ -5,8 +5,6 @@ export interface ReplayFile { name: string; mode?: ModeId; events: ReplayEvent[]
 
 const DEFAULT_FILE: Record<ModeId, string> = {
   loom: 'replay/loom-session.json',
-  chips: 'replay/chips-session.json',
-  westworld: 'replay/westworld-session.json',
 };
 
 export async function fetchReplay(mode: ModeId, url?: string): Promise<ReplayFile> {
