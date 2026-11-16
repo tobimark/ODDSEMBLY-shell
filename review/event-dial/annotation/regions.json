@@ -1,0 +1,779 @@
+{
+  "image": "review/event-dial/04-hold-s01.png",
+  "capture": "review/event-dial/annotation/base-2x.png",
+  "state": {
+    "phase": "holding",
+    "type": "Read",
+    "count": 1,
+    "slot": 1,
+    "stepTotal": 12,
+    "angleDeg": 30,
+    "ageMs": 666.7,
+    "queue": 0
+  },
+  "designSpace": [
+    1472,
+    1008
+  ],
+  "capturePixels": [
+    2944,
+    2016
+  ],
+  "regions": [
+    {
+      "id": 1,
+      "zh": "内鼓面（静止）",
+      "en": "inner drum face · stator",
+      "layer": "stator",
+      "anchor": [
+        110,
+        150
+      ],
+      "geom": [
+        "disc",
+        0,
+        975,
+        13,
+        74
+      ],
+      "note": "蓝弧以内的静止鼓面：同心导环、径向细线、两个椭圆检视窗；不属于旋转件。"
+    },
+    {
+      "id": 2,
+      "zh": "蓝弧 + 工具色弧段",
+      "en": "blue reference arc + tool accent",
+      "layer": "stator",
+      "anchor": [
+        239,
+        100
+      ],
+      "geom": [
+        "annulus",
+        972,
+        988,
+        23,
+        72
+      ],
+      "note": "r=980 的基准弧固定不动；22°–58° 彩色段随当前工具变色（此处 READ 蓝）。"
+    },
+    {
+      "id": 3,
+      "zh": "12 槽卡窗索引鼓（会转）",
+      "en": "12-window index drum · rotor",
+      "layer": "rotor",
+      "anchor": [
+        390,
+        70
+      ],
+      "geom": [
+        "annulus",
+        1012,
+        1128,
+        20,
+        74
+      ],
+      "note": "12 个环扇卡窗，每格 30°；新工具事件前进一格（180 ms）。此帧环相 30°。"
+    },
+    {
+      "id": 4,
+      "zh": "固定读头",
+      "en": "fixed read head · pointer + mount",
+      "layer": "stator",
+      "anchor": [
+        258,
+        338
+      ],
+      "geom": [
+        "line",
+        [
+          1002,
+          1168
+        ],
+        40
+      ],
+      "note": "40° 处的针+箭头+螺栓座，固定不动；卡窗转到其下标为“读数”。"
+    },
+    {
+      "id": 5,
+      "zh": "读头导管",
+      "en": "read-head conduit",
+      "layer": "stator",
+      "fill": false,
+      "open": true,
+      "anchor": [
+        300,
+        505
+      ],
+      "geom": [
+        "poly",
+        [
+          [
+            312,
+            384
+          ],
+          [
+            352,
+            470
+          ],
+          [
+            250,
+            520
+          ],
+          [
+            214,
+            587
+          ]
+        ]
+      ],
+      "note": "读头 → 控制箱的静态波纹导管，暗示信号/机械耦合。"
+    },
+    {
+      "id": 6,
+      "zh": "固定夹块",
+      "en": "fixed clamp blocks",
+      "layer": "stator",
+      "anchor": [
+        346,
+        171
+      ],
+      "geom": [
+        "point",
+        [
+          346,
+          171
+        ]
+      ],
+      "note": "4 块可见夹块把固定外壳锁在盘面上，不随鼓转动。"
+    },
+    {
+      "id": 7,
+      "zh": "固定读数器",
+      "en": "fixed readout panel",
+      "layer": "readout",
+      "anchor": [
+        18,
+        796
+      ],
+      "geom": [
+        "rect",
+        24,
+        812,
+        320,
+        150
+      ],
+      "note": "轴对齐矩形面板，装在共享底座上；TYPE / ×N / Sxx/12 / detail / age + 工具色 chip/rule。"
+    },
+    {
+      "id": 8,
+      "zh": "控制箱",
+      "en": "control box",
+      "layer": "front",
+      "anchor": [
+        70,
+        568
+      ],
+      "geom": [
+        "rect",
+        88,
+        585,
+        245,
+        205
+      ],
+      "note": "线圈模块、张力表、旋钮、按键、穿卡排；波纹导管接入顶端。"
+    },
+    {
+      "id": 9,
+      "zh": "队列牌",
+      "en": "queue coupler + count",
+      "layer": "front",
+      "anchor": [
+        505,
+        852
+      ],
+      "geom": [
+        "rect",
+        353,
+        834,
+        138,
+        36
+      ],
+      "note": "织机 FIFO 队列长度（此帧 0）；与转盘“组”语义不同。"
+    },
+    {
+      "id": 10,
+      "zh": "共享底座 + 安装鞍座",
+      "en": "shared chassis bed + saddle",
+      "layer": "stator",
+      "fill": false,
+      "anchor": [
+        700,
+        855
+      ],
+      "geom": [
+        "rect",
+        79,
+        840,
+        1326,
+        30
+      ],
+      "note": "转盘外壳与织机共用的床身；40° 处有切向鞍座，把固定外壳锁到机架。"
+    },
+    {
+      "id": 11,
+      "zh": "织机（非转盘）",
+      "en": "loom machine · context",
+      "layer": "context",
+      "fill": false,
+      "anchor": [
+        900,
+        500
+      ],
+      "geom": [
+        "rect",
+        513,
+        139,
+        866,
+        690
+      ],
+      "note": "主轴、综框、筘、梭、织物；由 Mechanism 驱动，与转盘只共享事件与底座。"
+    },
+    {
+      "id": 12,
+      "zh": "图纸底 / 标注",
+      "en": "exhibition sheet + captions",
+      "layer": "context",
+      "anchor": [
+        1180,
+        955
+      ],
+      "geom": [
+        "point",
+        [
+          1180,
+          955
+        ]
+      ],
+      "note": "1472×1008 图纸、注册点、FIG.01 与底部目录标注；不是机械件。"
+    }
+  ],
+  "dialParts": [
+    {
+      "id": 1,
+      "zh": "内鼓面（静止）",
+      "en": "inner drum face",
+      "layer": "stator",
+      "anchor": [
+        110,
+        150
+      ],
+      "geom": [
+        "disc",
+        0,
+        975,
+        13,
+        74
+      ]
+    },
+    {
+      "id": 2,
+      "zh": "蓝弧（固定基准 r=980）",
+      "en": "blue reference arc",
+      "layer": "stator",
+      "anchor": [
+        239,
+        100
+      ],
+      "geom": [
+        "annulus",
+        972,
+        988,
+        23,
+        72
+      ]
+    },
+    {
+      "id": 3,
+      "zh": "工具色弧段 22°–58°",
+      "en": "tool accent segment",
+      "layer": "stator",
+      "anchor": [
+        276,
+        22
+      ],
+      "geom": [
+        "annulus",
+        972,
+        988,
+        22,
+        58
+      ]
+    },
+    {
+      "id": 4,
+      "zh": "12 环扇卡窗（旋转）",
+      "en": "12 card windows · rotor",
+      "layer": "rotor",
+      "anchor": [
+        424,
+        52
+      ],
+      "geom": [
+        "annulus",
+        1012,
+        1128,
+        20,
+        74
+      ]
+    },
+    {
+      "id": 5,
+      "zh": "当前卡窗叠色（工具色）",
+      "en": "current-slot tint",
+      "layer": "rotor",
+      "anchor": [
+        330,
+        118
+      ],
+      "geom": [
+        "annulus",
+        1012,
+        1128,
+        28,
+        52
+      ]
+    },
+    {
+      "id": 6,
+      "zh": "分度隔圈 + 12 索引销",
+      "en": "separator ring + 12 pips",
+      "layer": "rotor",
+      "anchor": [
+        372,
+        232
+      ],
+      "geom": [
+        "annulus",
+        1140,
+        1152,
+        18,
+        74
+      ]
+    },
+    {
+      "id": 7,
+      "zh": "5° 刻度带（旋转）",
+      "en": "5° engraved scale",
+      "layer": "rotor",
+      "anchor": [
+        411,
+        176
+      ],
+      "geom": [
+        "annulus",
+        1152,
+        1182,
+        17,
+        74
+      ]
+    },
+    {
+      "id": 8,
+      "zh": "滚花握持带（固定）",
+      "en": "knurled grip band",
+      "layer": "stator",
+      "anchor": [
+        475,
+        116
+      ],
+      "geom": [
+        "annulus",
+        1182,
+        1212,
+        17,
+        74
+      ]
+    },
+    {
+      "id": 9,
+      "zh": "外圈细纹带（固定）",
+      "en": "fine-ruled outer band",
+      "layer": "stator",
+      "anchor": [
+        523,
+        138
+      ],
+      "geom": [
+        "annulus",
+        1212,
+        1296,
+        17,
+        74
+      ]
+    },
+    {
+      "id": 10,
+      "zh": "外唇 / 接缝（固定）",
+      "en": "outer lip + rim joints",
+      "layer": "stator",
+      "anchor": [
+        600,
+        50
+      ],
+      "geom": [
+        "annulus",
+        1296,
+        1312,
+        17,
+        74
+      ]
+    },
+    {
+      "id": 11,
+      "zh": "固定夹块 ×4 可见",
+      "en": "fixed clamps",
+      "layer": "stator",
+      "anchor": [
+        63,
+        545
+      ],
+      "geom": [
+        "point",
+        [
+          63,
+          545
+        ]
+      ]
+    },
+    {
+      "id": 12,
+      "zh": "固定读头（针+箭头+座）",
+      "en": "fixed read head",
+      "layer": "stator",
+      "anchor": [
+        262,
+        336
+      ],
+      "geom": [
+        "poly",
+        [
+          [
+            157,
+            254
+          ],
+          [
+            285,
+            361
+          ],
+          [
+            312,
+            384
+          ],
+          [
+            157,
+            254
+          ]
+        ]
+      ]
+    },
+    {
+      "id": 13,
+      "zh": "读头波纹导管",
+      "en": "read-head conduit",
+      "layer": "stator",
+      "anchor": [
+        300,
+        505
+      ],
+      "geom": [
+        "poly",
+        [
+          [
+            312,
+            384
+          ],
+          [
+            352,
+            470
+          ],
+          [
+            250,
+            520
+          ],
+          [
+            214,
+            587
+          ]
+        ]
+      ]
+    }
+  ],
+  "consoleParts": [
+    {
+      "id": 1,
+      "zh": "固定读数器面板",
+      "en": "fixed readout panel (320×150)",
+      "layer": "readout",
+      "anchor": [
+        18,
+        796
+      ],
+      "geom": [
+        "rect",
+        24,
+        812,
+        320,
+        150
+      ]
+    },
+    {
+      "id": 2,
+      "zh": "控制箱",
+      "en": "control box",
+      "layer": "front",
+      "anchor": [
+        70,
+        568
+      ],
+      "geom": [
+        "rect",
+        88,
+        585,
+        245,
+        205
+      ]
+    },
+    {
+      "id": 3,
+      "zh": "箱→面板短连线",
+      "en": "box → panel console link",
+      "layer": "front",
+      "anchor": [
+        210,
+        800
+      ],
+      "geom": [
+        "line",
+        [
+          210,
+          790,
+          210,
+          812
+        ]
+      ]
+    },
+    {
+      "id": 4,
+      "zh": "面板→队列短连线",
+      "en": "panel → queue console link",
+      "layer": "front",
+      "anchor": [
+        350,
+        846
+      ],
+      "geom": [
+        "line",
+        [
+          344,
+          846,
+          353,
+          852
+        ]
+      ]
+    },
+    {
+      "id": 5,
+      "zh": "队列牌 QUEUE n",
+      "en": "queue plate + count",
+      "layer": "front",
+      "anchor": [
+        505,
+        852
+      ],
+      "geom": [
+        "rect",
+        353,
+        834,
+        138,
+        36
+      ]
+    }
+  ],
+  "readoutItems": [
+    {
+      "id": 1,
+      "zh": "面板外壳 / 四角螺钉",
+      "en": "enamel shell + 4 corner screws",
+      "geom": [
+        "rect",
+        4,
+        4,
+        312,
+        142
+      ],
+      "anchor": [
+        24,
+        18
+      ]
+    },
+    {
+      "id": 2,
+      "zh": "标题 EVENT READOUT",
+      "en": "7.5 px header",
+      "geom": [
+        "rect",
+        14,
+        12,
+        78,
+        16
+      ],
+      "anchor": [
+        80,
+        28
+      ]
+    },
+    {
+      "id": 3,
+      "zh": "工具色 chip",
+      "en": "18×9 colour chip",
+      "geom": [
+        "rect",
+        270,
+        14,
+        20,
+        10
+      ],
+      "anchor": [
+        280,
+        20
+      ]
+    },
+    {
+      "id": 4,
+      "zh": "TYPE 26 px bold",
+      "en": "primary readout line",
+      "geom": [
+        "rect",
+        16,
+        42,
+        110,
+        34
+      ],
+      "anchor": [
+        90,
+        60
+      ]
+    },
+    {
+      "id": 5,
+      "zh": "×N 20 px bold（右对齐）",
+      "en": "multiplier, right aligned",
+      "geom": [
+        "rect",
+        250,
+        46,
+        40,
+        30
+      ],
+      "anchor": [
+        280,
+        62
+      ]
+    },
+    {
+      "id": 6,
+      "zh": "颜色分隔线（工具色）",
+      "en": "tool-colour rule",
+      "geom": [
+        "rect",
+        16,
+        76,
+        288,
+        3
+      ],
+      "anchor": [
+        160,
+        78
+      ]
+    },
+    {
+      "id": 7,
+      "zh": "Sxx/12 10 px mono",
+      "en": "slot / total",
+      "geom": [
+        "rect",
+        16,
+        88,
+        60,
+        16
+      ],
+      "anchor": [
+        60,
+        96
+      ]
+    },
+    {
+      "id": 8,
+      "zh": "detail 9 px mono",
+      "en": "event detail line",
+      "geom": [
+        "rect",
+        16,
+        106,
+        205,
+        16
+      ],
+      "anchor": [
+        150,
+        114
+      ]
+    },
+    {
+      "id": 9,
+      "zh": "age 8 px mono",
+      "en": "event age",
+      "geom": [
+        "rect",
+        16,
+        130,
+        55,
+        14
+      ],
+      "anchor": [
+        55,
+        137
+      ]
+    },
+    {
+      "id": 10,
+      "zh": "12-SLOT INDEX 说明",
+      "en": "fixed caption 6.2 px",
+      "geom": [
+        "rect",
+        226,
+        130,
+        68,
+        12
+      ],
+      "anchor": [
+        260,
+        136
+      ]
+    },
+    {
+      "id": 11,
+      "zh": "安装耳 + 螺栓",
+      "en": "mounting tab",
+      "geom": [
+        "rect",
+        134,
+        136,
+        52,
+        12
+      ],
+      "anchor": [
+        160,
+        142
+      ]
+    }
+  ]
+}

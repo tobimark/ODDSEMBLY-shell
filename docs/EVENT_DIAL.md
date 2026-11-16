@@ -114,6 +114,15 @@ npm run shot:dial-motion    # 180 ms 步进逐帧
 - `EventDial.destroy()` 显式销毁 4 张 CanvasTexture（旧实现漏销毁 ≈25 MB / reset）。
 - idle 时 `apply()` 只做读值比较，无每帧文本重排；`ageText` 每 200 ms 更新一次。
 
+
+## 外部评审标注
+
+给 ChatGPT / 设计评审用的区域标注图集中在 [review/event-dial/annotation/](../review/event-dial/annotation/README.md)：
+`annotated-overview.png`（1–12 总览）、`annotated-dial.png`（D1–D13 细部）、
+`annotated-console.png`（C1–C5）、`annotated-readout.png`（R1–R11）、
+`04-hold-s01.annotated.png`（原尺寸编号版）。直接可粘贴的评审说明见
+[review-brief.md](../review/event-dial/annotation/review-brief.md)。
+
 ## 与原实现的关系 / 回滚
 
 旧静态实现（`c6d93db` 引入、`b15dd9a` 最终形态）保留在 tag `pre-dynamic-dial` 与分支

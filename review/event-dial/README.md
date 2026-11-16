@@ -22,6 +22,11 @@
 `motion/contact-sheet.png`：一次 180 ms 索引步进的 6 帧拼图（2×，帧文件可由
 `npm run shot:dial-motion` 重新生成，已 gitignore）。
 
+## 评审标注
+
+给 ChatGPT / 设计评审的区域标注与说明稿：[annotation/README.md](annotation/README.md)，
+可直接粘贴的评审请求：[annotation/review-brief.md](annotation/review-brief.md)。
+
 ## 复现
 
 ```bash
