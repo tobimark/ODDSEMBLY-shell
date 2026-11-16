@@ -39,8 +39,9 @@ if (argv.help) {
   process.exit(0);
 }
 const mainRoot = path.resolve(root, argv.root || 'dist');
-const outDir = path.resolve(argv.out || path.join(root, 'review', 'v2', 'recordings'));
 const modes = String(argv.modes || (argv.archived ? 'loom,chips,westworld' : 'loom')).split(',').map((s) => s.trim()).filter(Boolean);
+const loomOnly = modes.length === 1 && modes[0] === 'loom';
+const outDir = path.resolve(argv.out || path.join(root, 'review', 'v2', loomOnly ? 'loom' : 'recordings'));
 const basePort = Number(argv.port || 4530);
 const tailMs = Number(argv.tail || 20000);
 const fps = Number(argv.fps || 30);
@@ -251,7 +252,8 @@ async function recordMode(mode, port) {
       chunks.push(Buffer.from(await browser.evaluate(`window.__encoded.slice(${i},${i + 524288})`), 'base64'));
     }
     const webm = Buffer.concat(chunks);
-    const webmFile = path.join(outDir, `${mode}-live.webm`);
+    const base = loomOnly ? 'live' : `${mode}-live`;
+    const webmFile = path.join(outDir, `${base}.webm`);
     fs.writeFileSync(webmFile, webm);
     result.recording = { webm: rel(webmFile), webmBytes: webm.length, webmSha256: await fileHash(webmFile), mime: facts.mime, mp4: null, ffmpeg: null };
     add('WebM recording produced', webm.length > 10 * 1024, `${(webm.length / 1024).toFixed(0)} KB`);
@@ -265,7 +267,7 @@ async function recordMode(mode, port) {
     const ffmpeg = getFfmpeg();
     if (ffmpeg) {
       const frameAt = Math.max(0.5, Math.min(durationMs - 1500, session.lastAt + tailMs * 0.75)) / 1000;
-      const frameFile = path.join(outDir, `${mode}-frame.png`);
+      const frameFile = path.join(outDir, `${base}-frame.png`);
       const grab = spawnSync(ffmpeg.command, ['-y', '-hide_banner', '-loglevel', 'error', '-ss', String(frameAt.toFixed(2)), '-i', webmFile, '-frames:v', '1', frameFile], { encoding: 'utf8', windowsHide: true, timeout: 120000 });
       if (grab.status === 0 && fs.existsSync(frameFile)) {
         result.recording.frame = { file: rel(frameFile), atSeconds: Number(frameAt.toFixed(2)), sha256: await fileHash(frameFile) };
@@ -280,7 +282,7 @@ async function recordMode(mode, port) {
         add('MP4 conversion skipped (ffmpeg unavailable)', true, 'explicitly skipped, not faked');
         result.notes.push('ffmpeg unavailable: review/v2/recordings/<mode>-live.webm only; set FFMPEG_PATH to enable MP4');
       } else {
-        const mp4File = path.join(outDir, `${mode}-live.mp4`);
+        const mp4File = path.join(outDir, `${base}.mp4`);
         const conv = spawnSync(ffmpeg.command, ['-y', '-i', webmFile, '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-preset', 'veryfast', '-crf', '22', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', mp4File], { encoding: 'utf8', windowsHide: true, timeout: 300000 });
         const ok = conv.status === 0 && fs.existsSync(mp4File) && fs.statSync(mp4File).size > 1024;
         if (ok) {
@@ -351,7 +353,9 @@ report.summary = {
 if (report.summary.partial) report.limitations.push('Stub modes record an empty world canvas: recordings exist and prove the pipeline, but mode-specific beat/visual checks are SKIPPED.');
 if (!report.ffmpeg) report.limitations.push('ffmpeg unavailable on this machine: only WebM files are produced (MP4 conversion explicitly skipped).');
 fs.mkdirSync(outDir, { recursive: true });
-const file = path.join(outDir, 'recordings.json');
+const reportDir = argv.out ? outDir : path.join(root, 'review', 'v2', 'recordings');
+fs.mkdirSync(reportDir, { recursive: true });
+const file = path.join(reportDir, 'recordings.json');
 fs.writeFileSync(file, JSON.stringify(report, null, 2));
 console.log('\n=== record-v2 summary ===');
 console.log(JSON.stringify(report.summary, null, 2));

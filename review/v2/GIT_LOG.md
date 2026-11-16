@@ -1,47 +1,51 @@
-# V2 Git 记录（草稿 — 待 Lead 补全）
+# Git 变更记录 — Loom-only 交付
 
-> **本文件不是 git 输出。** QA 会话按任务规则**未运行 git**，因此这里不包含任何推测或编造的 commit hash。
-> 历史基线记录见 `review/GIT_LOG.md`（阶段 1 的 3 个提交：`24c53f3` → `e29a6f7` → `1e0806b`），这些是**重构前**的 Loom 基线，不代表 V2 多模式改动。
+> 本文件由 Lead 收尾时补全，只列真实存在的提交与标签；可用 `git log --oneline --decorate` 逐条核对。
+> 仓库路径：`D:\workspace\gamified-flow\kunlun-loom`；主交付分支：`feat/multi-mode-engine`。
 
-## 1. V2 变更清单（事实描述，非提交）
+## 标签
 
-以下来自本轮实际落盘文件与任务记录，供 Lead 提交时核对：
+| 标签 | 提交 | 含义 |
+|---|---|---|
+| `review-v2-baseline` | `3a778b9` | Astra Loom 评审修正版交接基线（重构前像素基准） |
+| `archive/modes-wip-2026-11-16` | `c503d3a` | 归档：完整三模式原型（Chips / Westworld）+ 全模式 QA 证据 |
+| `deliverable/loom-v1` | 见 `git log -1`（收尾证据提交；代码主体 `8f69aec`） | 本次 Loom-only 交付 |
 
-**引擎核心 / 架构**
-- `src/engine/core/`：`engine.ts`（VisualEngine、模式注册/切换、确定性 tick、telemetry）、`bus.ts`、`audio.ts`（master/recording bus + beats 账本）、`replay.ts`（ReplayPlayer + 12 事件回放）、`simulator.ts`、`spring.ts`、`drawing.ts`、`mode.ts`（VisualMode 接口 + 注册表）、`types.ts`、`design.ts`
-- `src/engine/index.ts`、`src/engine/theme.ts`、`src/App.tsx`、`src/styles.css`、`index.html`
-- `src/engine/modes/loom/**`：Loom 移植（scene/audio/atelier，含 parity 一致的几何与机械连杆）
-- `src/engine/modes/chips/**`：卡牌世界（cards.ts 纯逻辑、table/cardsView/art 渲染、audio、layout）
-- `src/engine/modes/westworld/**`：当前仍为 stub（待 Lead 实现）
-- `public/replay/loom-session.json`：12 事件确定性回放
+## 提交（旧 → 新）
 
-**QA 工具（本次新增/修改）**
-- 新增：`scripts/verify-v2.mjs`、`scripts/replay-proof.mjs`、`scripts/record-v2.mjs`、`scripts/test-modes.mjs`、`scripts/compare-stills.py`、`scripts/lib/fixtures.mjs`
-- 扩展：`scripts/lib/browser.mjs`（错误收集/等待/渲染器探测）、`scripts/shot-mode.mjs`（保持可用）
-- 测试修复：`scripts/test-mechanism.mjs` 路径由 Lead 修正为 `src/engine/modes/loom/atelier/*`
-- 未修改：`src/**`、`App.tsx`、`styles.css`、`public/**`、`package.json`（QA 写域外）
+| 提交 | 类型 | 内容 |
+|---|---|---|
+| `e90cd88` | chore | 集成 Astra `review-v2` 精简验收包，建立可回退基线 |
+| `c2bc455` | feat | 可复用视觉引擎核心（`VisualEngine` / `EventBus` / `ReplayPlayer` / `AudioEngine` / `Spring` / 程序化绘图库 / 模式注册表），Loom 作为第一个模式原样迁移；修复回放像素不确定性（确定性手动 tick） |
+| `32efe0a` | feat | 零依赖本地 Agent 事件桥（WebSocket/HTTP、`--tail` JSONL、`--demo`）+ README/键盘单入口修复 |
+| `ffbcccb` | fix | 重构后测试脚本路径修正（`modes/loom/atelier/*`），`npm test` 恢复通过 |
+| `835fd6f` | feat | Chips 工具调用卡牌世界原型（确定性牌堆/手牌/结算、程序化牌桌、票据、音频）— **已归档** |
+| `c503d3a` | archive | 归档 Chips + Westworld 完整原型与三模式 QA 证据（`archive/modes-wip-2026-11-16`） |
+| `8f69aec` | feat | Loom-only 交付面：移除 Chips/Westworld 注册与导航、原型移入 `src/engine/gallery/`（排除构建与 tsc）、单展签头部、README/ARCHITECTURE 重写、最终截图 |
+| 收尾提交 | docs/evidence | QA Loom-only 证据（`verification.json` 46 项、回放 `14/14`、录屏 `15/15`、`test-results.json` 25/25）、本 GIT_LOG 与 REVIEW 定稿；`deliverable/loom-v1` 指向此提交 |
 
-**审查产物（review/v2/，可作为一次性提交或按模式拆分）**
-- `verification.json`、`test-results.json`、`REVIEW.md`、`GIT_LOG.md`
-- `shots/`（各模式 idle/burst/settled/1920/768/switch/sequence）
-- `wip/`（Chips WIP 快照验证，过程证据）
-- `replay/`（determinism.json + a/b 截图）
-- `recordings/`（webm/mp4/代表帧 + recordings.json）
-- `comparisons/`（参考 still 并排图 + index.json）
-- `parity/`（由 Lead 采集的 Loom 重构前后像素 parity）
+## 归档物（不在交付内）
 
-## 2. 待 Lead 补全：最终提交清单
+- Git：标签 `archive/modes-wip-2026-11-16` = `c503d3a`（完整可复现的三模式源码 + QA 证据）。
+- 仓库内：`src/engine/gallery/`（Chips / Westworld 原型，含恢复说明 README；不参与构建与类型检查）。
+- 仓库外备份：
+  - `D:\workspace\gamified-flow\backup\kunlun-loom-all-2026-11-16.bundle`（全量 Git bundle，含所有分支/标签）
+  - `D:\workspace\gamified-flow\backup\kunlun-loom-archive-modes-2026-11-16.zip`（归档模式源码 + 截图/录像/QA 证据，约 138 MB）
+  - `D:\workspace\gamified-flow\backup\kunlun-loom-pre-v2.bundle`（重构前备份）
+- 归档证据目录：`review/v2/archive/`（三模式 QA 快照、归档 CPU 模式回放/录屏）。
 
-请在最终提交后把 `git log --oneline` 结果补到这里（含 V2 多模式与最终视觉定稿提交），并注明：
+## 交付构建身份
 
+- 源码：`8f69aec` + 收尾证据提交（仅 scripts/review 文档与证据变更，`src/`、`public/` 未再改动）。
+- 构建：`dist/`，tree SHA-256 `93ed18b7e3d3e635a4f31b548e9448da49c393e28d26b51b2ca55c0fc9e4e22e`；
+  `dist/index.html` SHA-256 `EAA10B01C144C56F87F2859CB6AADA1C2E5117CC71D4CD9829183AF653379F56`；
+  `dist/assets/index-l-JrmqNu.js` SHA-256 `88033BF81E7C32BEC9FFD20C791243FCCA157790DB54E67E99DA068A9DE1664D`。
+- 重建命令：`npm ci && npm run build`（等价源码状态下应得到同样的 `dist/` 语义；跨机器构建哈希未验证）。
+
+## 回退
+
+```bash
+git checkout review-v2-baseline     # 回到 Astra 交接基线（重构前 Loom）
+git checkout archive/modes-wip-2026-11-16  # 查看/恢复归档的三模式原型
+git checkout deliverable/loom-v1    # 回到本次 Loom 交付
 ```
-【Lead 待填】git log --oneline <base>..HEAD
-【Lead 待填】最终构建哈希 / dist 构建时间
-【Lead 待填】Chips 稳定版快照（用于替换 wip/ 证据）
-【Lead 待填】Westworld 实现提交（实现落地后 QA 重跑并更新 verification.json）
-```
-
-## 3. 回滚点提示
-
-- 重构前基线（历史）：`24c53f3`（初始基线）、`e29a6f7`（.gitignore 清理）、`1e0806b`（Loom 视觉+回放+评审包）。
-- V2 回滚点：**【Lead 待填】**（需在最终提交后提供）。

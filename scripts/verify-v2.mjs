@@ -365,6 +365,10 @@ async function verifyUiSwitching(modes, port) {
       tabs: document.querySelectorAll('.mode-tab').length,
       tabTexts: Array.from(document.querySelectorAll('.mode-tab')).map(b=>b.textContent.trim()),
       captionTitle: document.querySelector('.mode-caption-title')?.textContent?.trim() ?? null,
+      plaque: document.querySelector('.mode-plaque')?.textContent?.trim() ?? null,
+      plaqueName: document.querySelector('.mode-plaque .mode-name')?.textContent?.trim() ?? null,
+      plaqueNote: document.querySelector('.mode-plaque .mode-plaque-note')?.textContent?.trim() ?? null,
+      telemetryLabels: Array.from(document.querySelectorAll('.telemetry dl dt')).map(t=>t.textContent.trim()),
       telemetryPill: document.querySelector('.telemetry .pill')?.textContent?.trim() ?? null,
       telemetryFields: document.querySelectorAll('.telemetry dl > div').length,
       transportButtons: Array.from(document.querySelectorAll('.transport button')).map(b=>b.textContent.trim()),
@@ -383,6 +387,8 @@ async function verifyUiSwitching(modes, port) {
     add('hint line present', typeof header.hint === 'string' && header.hint.length > 0, header.hint ?? '');
     if (tabCount === 0) {
       add('single-mode header: no mode tabs', true, '0 .mode-tab elements (Loom-only delivery)');
+      add('single-mode plaque: 01 LOOM / EXHIBITION 01 · 112 ENDS', /LOOM/i.test(header.plaqueName ?? '') && /112 ENDS/i.test(header.plaqueNote ?? ''), `plaque=${JSON.stringify(header.plaque)}`);
+      add('telemetry labels: PICKS/QUEUE/SHED/MODE', ['PICKS', 'QUEUE', 'SHED', 'MODE'].every((l) => (header.telemetryLabels ?? []).includes(l)), JSON.stringify(header.telemetryLabels));
       add('single-mode view: engine mode is loom', header.modeId === 'loom', `modeId=${header.modeId}`);
     } else {
       add('mode tabs rendered', tabCount >= 1, `tabs=${JSON.stringify(header.tabTexts)}`);

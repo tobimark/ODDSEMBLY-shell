@@ -1,7 +1,7 @@
 {
   "schema": "kunlunmeta-v2-replay-determinism/1",
-  "generatedAt": "2026-11-16T04:15:38.994Z",
-  "command": "node scripts/replay-proof.mjs --modes=loom --port=4602",
+  "generatedAt": "2026-11-16T04:35:48.725Z",
+  "command": "node scripts/replay-proof.mjs --modes=loom --port=4620",
   "method": "headless Edge, ?deterministic=1&replay=1&ui=0, fixed 1/60 s manual tick batches, two fresh browser sessions, PNG SHA-256 equality",
   "dtSeconds": 0.016666666666666666,
   "marksSeconds": {
@@ -97,15 +97,15 @@
         "b": {
           "marks": {
             "2s": {
-              "file": "review/v2/replay/loom-a-2s.png",
+              "file": "review/v2/replay/loom-b-2s.png",
               "sha256": "77023aa1a6863bb7cd4fe1354010f3b18492e8061973a66312c0867868ca9bf3"
             },
             "8s": {
-              "file": "review/v2/replay/loom-a-8s.png",
+              "file": "review/v2/replay/loom-b-8s.png",
               "sha256": "45a541e33c7cd350fa71c4b1cb6b6c300bb1c2e35b71f47376f23a6910dffb25"
             },
             "21s": {
-              "file": "review/v2/replay/loom-a-21s.png",
+              "file": "review/v2/replay/loom-b-21s.png",
               "sha256": "b7f23adff09477f65e0e77727df0201d4ed14a236bef27f5cf5b773dc21068ac"
             }
           },
@@ -271,10 +271,17 @@
     "failureIds": [],
     "pass": true,
     "partial": false,
-    "finishedAt": "2026-11-16T04:15:51.027Z",
-    "durationSeconds": 12.033
+    "finishedAt": "2026-11-16T04:36:01.664Z",
+    "durationSeconds": 12.939
   },
   "limitations": [
     "PNG equality is measured within this machine/driver/browser build; it proves replay determinism, not cross-machine rendering parity."
-  ]
+  ],
+  "scope": "loom-final",
+  "build": {
+    "treeSha256": "93ed18b7e3d3e635a4f31b548e9448da49c393e28d26b51b2ca55c0fc9e4e22e",
+    "commit": "8f69aec",
+    "tag": "deliverable/loom-v1"
+  },
+  "harnessNote": "Side-label bug fixed before this proof: previously both fresh sessions wrote -a screenshots, so equality compared one file twice. Re-run uses distinct -a/-b files and compares their bytes."
 }

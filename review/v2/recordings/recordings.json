@@ -1,7 +1,7 @@
 {
   "schema": "kunlunmeta-v2-recordings/1",
-  "generatedAt": "2026-11-16T04:24:21.724Z",
-  "command": "node scripts/record-v2.mjs --modes=loom --port=4612",
+  "generatedAt": "2026-11-16T04:38:26.966Z",
+  "command": "node scripts/record-v2.mjs --port=4626",
   "method": "canvas.captureStream(30) + AudioEngine.recordingStream audio track, MediaRecorder VP9/Opus, wall-clock engine.startReplay(), ffmpeg MP4 when available",
   "ffmpeg": {
     "command": "C:\\Users\\51159\\AppData\\Roaming\\Python\\Python312\\site-packages\\imageio_ffmpeg\\binaries\\ffmpeg-win-x86_64-v7.1.exe",
@@ -45,7 +45,7 @@
           "total": 12,
           "done": true
         },
-        "engineTime": 26.116399999999697,
+        "engineTime": 26.13279999999979,
         "modeTelemetry": {
           "mode": "loom",
           "phase": 0,
@@ -56,7 +56,7 @@
           "shed": 0,
           "beat": 0,
           "travel": 0,
-          "angle": 75.39822368615548
+          "angle": 75.39822368615552
         },
         "audioState": "running",
         "beatCount": 12,
@@ -77,11 +77,11 @@
         "stub": false
       },
       "raf": {
-        "frames": 1559,
-        "seconds": 26.147300000071525,
-        "meanFps": 59.31554882111298,
-        "p95FrameMs": 16.800000000000182,
-        "maxFrameMs": 133.4000000000001
+        "frames": 1562,
+        "seconds": 26.159299999952317,
+        "meanFps": 59.46779938665498,
+        "p95FrameMs": 16.799999999999955,
+        "maxFrameMs": 133.29999999999973
       },
       "beats": {
         "count": 12,
@@ -115,11 +115,11 @@
         ]
       },
       "recording": {
-        "webm": "review/v2/recordings/loom-live.webm",
-        "webmBytes": 23519477,
-        "webmSha256": "04eed6c46ad4c3de5eeb54ff8ea4abb41662b7133a54a27550900a4bab550321",
+        "webm": "review/v2/loom/live.webm",
+        "webmBytes": 23753211,
+        "webmSha256": "a8a3fd33d9b10062be34f49a2b30e8c15c57d6017850ec719aa665f1ef3da5a2",
         "mime": "video/webm;codecs=vp9,opus",
-        "mp4": "review/v2/recordings/loom-live.mp4",
+        "mp4": "review/v2/loom/live.mp4",
         "ffmpeg": {
           "found": true,
           "command": "C:\\Users\\51159\\AppData\\Roaming\\Python\\Python312\\site-packages\\imageio_ffmpeg\\binaries\\ffmpeg-win-x86_64-v7.1.exe",
@@ -134,12 +134,12 @@
           "stderrTail": null
         },
         "frame": {
-          "file": "review/v2/recordings/loom-frame.png",
+          "file": "review/v2/loom/live-frame.png",
           "atSeconds": 20.2,
-          "sha256": "c13b870f529f7be87ea70444b2488defeaab928c1123f8811d807b3184866167"
+          "sha256": "daf3077f8ea63b2549b686cf60ac2c793146d2c078c6477948f906951a6e0c44"
         },
-        "mp4Bytes": 4262446,
-        "mp4Sha256": "ff51b468c1bac765e3ba27829bcad11b68e5f95fea43574c9acae5d5446167e7"
+        "mp4Bytes": 4276764,
+        "mp4Sha256": "47a0b1d4643315d0145bcd2fbfeab4b9a592cf59332665cd89204168f96ef332"
       },
       "checks": [
         {
@@ -185,7 +185,7 @@
         {
           "id": "rAF mean fps >= 20 (headless)",
           "ok": true,
-          "detail": "meanFps=59.3 p95=16.8ms frames=1559"
+          "detail": "meanFps=59.5 p95=16.8ms frames=1562"
         },
         {
           "id": "canvas stream audio track present",
@@ -195,22 +195,22 @@
         {
           "id": "WebM recording produced",
           "ok": true,
-          "detail": "22968 KB"
+          "detail": "23196 KB"
         },
         {
           "id": "recording has real motion (> 100 KB readback)",
           "ok": true,
-          "detail": "22968 KB"
+          "detail": "23196 KB"
         },
         {
           "id": "representative frame extracted from recording",
           "ok": true,
-          "detail": "review/v2/recordings/loom-frame.png @ 20.2s"
+          "detail": "review/v2/loom/live-frame.png @ 20.2s"
         },
         {
           "id": "MP4 conversion",
           "ok": true,
-          "detail": "4163 KB via ffmpeg-win-x86_64-v7.1.exe"
+          "detail": "4177 KB via ffmpeg-win-x86_64-v7.1.exe"
         },
         {
           "id": "zero uncaught exceptions during recording",
@@ -232,79 +232,79 @@
       },
       "samples": [
         {
-          "elapsed": 2.0362000000476836,
+          "elapsed": 2.033,
           "cursor": 5,
           "events": 5,
           "state": "running"
         },
         {
-          "elapsed": 4.055300000071526,
+          "elapsed": 4.047299999952316,
           "cursor": 9,
           "events": 9,
           "state": "running"
         },
         {
-          "elapsed": 6.0598999999761585,
+          "elapsed": 6.0565,
           "cursor": 12,
           "events": 12,
           "state": "running"
         },
         {
-          "elapsed": 8.068300000071526,
+          "elapsed": 8.0715,
           "cursor": 12,
           "events": 12,
           "state": "running"
         },
         {
-          "elapsed": 10.081700000047684,
+          "elapsed": 10.074299999952316,
           "cursor": 12,
           "events": 12,
           "state": "running"
         },
         {
-          "elapsed": 12.090600000023842,
+          "elapsed": 12.077100000023842,
           "cursor": 12,
           "events": 12,
           "state": "running"
         },
         {
-          "elapsed": 14.107899999976159,
+          "elapsed": 14.084600000023842,
           "cursor": 12,
           "events": 12,
           "state": "running"
         },
         {
-          "elapsed": 16.115700000047685,
+          "elapsed": 16.100299999952316,
           "cursor": 12,
           "events": 12,
           "state": "running"
         },
         {
-          "elapsed": 18.1215,
+          "elapsed": 18.11010000002384,
           "cursor": 12,
           "events": 12,
           "state": "running"
         },
         {
-          "elapsed": 20.132300000071524,
+          "elapsed": 20.124899999976158,
           "cursor": 12,
           "events": 12,
           "state": "running"
         },
         {
-          "elapsed": 22.134100000023842,
+          "elapsed": 22.139799999952317,
           "cursor": 12,
           "events": 12,
           "state": "running"
         },
         {
-          "elapsed": 24.140200000047685,
+          "elapsed": 24.154299999952315,
           "cursor": 12,
           "events": 12,
           "state": "running"
         },
         {
-          "elapsed": 26.14589999997616,
+          "elapsed": 26.1565,
           "cursor": 12,
           "events": 12,
           "state": "running"
@@ -323,12 +323,23 @@
     "partial": false,
     "recordings": {
       "loom": {
-        "webm": "review/v2/recordings/loom-live.webm",
-        "mp4": "review/v2/recordings/loom-live.mp4"
+        "webm": "review/v2/loom/live.webm",
+        "mp4": "review/v2/loom/live.mp4"
       }
     },
-    "finishedAt": "2026-11-16T04:24:55.586Z",
-    "durationSeconds": 33.862
+    "finishedAt": "2026-11-16T04:39:01.827Z",
+    "durationSeconds": 34.861
   },
-  "limitations": []
+  "limitations": [],
+  "scope": "loom-final",
+  "build": {
+    "treeSha256": "93ed18b7e3d3e635a4f31b548e9448da49c393e28d26b51b2ca55c0fc9e4e22e",
+    "commit": "8f69aec",
+    "tag": "deliverable/loom-v1"
+  },
+  "deliverable": {
+    "webm": "review/v2/loom/live.webm",
+    "mp4": "review/v2/loom/live.mp4",
+    "frame": "review/v2/loom/live-frame.png"
+  }
 }

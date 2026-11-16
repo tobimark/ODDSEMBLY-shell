@@ -73,9 +73,9 @@ async function batchTicks(browser, seconds) {
 }
 
 /** One fresh-browser deterministic replay run; returns hashes + facts. */
-async function runOnce(mode, marks, rootDir, session, port) {
+async function runOnce(mode, marks, rootDir, session, port, side) {
   const browser = await launch({ root: rootDir, httpPort: port, debugPort: port + 100, width: 1472, height: 1008, swiftshader: software });
-  const run = { mode, session: session.query, marks: {}, facts: null, errors: null, environment: null };
+  const run = { mode, side, session: session.query, marks: {}, facts: null, errors: null, environment: null };
   try {
     await browser.setViewport(1472, 1008);
     await browser.goto(`?mode=${mode}&deterministic=1${session.query}&ui=0`, { settle: 600 });
@@ -91,7 +91,7 @@ async function runOnce(mode, marks, rootDir, session, port) {
       await batchTicks(browser, t - elapsed);
       elapsed = t;
       const label = `${t}s`;
-      const file = path.join(outDir, `${mode}-${run._side ?? 'a'}-${label}.png`);
+      const file = path.join(outDir, `${mode}-${side}-${label}.png`);
       await browser.screenshot(file);
       run.marks[label] = { file: relative(file), sha256: await fileHash(file) };
     }
@@ -161,10 +161,8 @@ for (const mode of modes) {
   }
   console.log(`[replay-proof] ${mode}: session=${session.source} (${session.modeSpecific ? 'per-mode' : 'shared loom fallback'})`);
   try {
-    const a = await runOnce(mode, modeMarks, rootDir, session, port); port += 2;
-    a._side = 'a';
-    const b = await runOnce(mode, modeMarks, rootDir, session, port); port += 2;
-    b._side = 'b';
+    const a = await runOnce(mode, modeMarks, rootDir, session, port, 'a'); port += 2;
+    const b = await runOnce(mode, modeMarks, rootDir, session, port, 'b'); port += 2;
     modeReport.runs = { a: { marks: a.marks, facts: a.facts, errors: a.errors, environment: a.environment }, b: { marks: b.marks, facts: b.facts, errors: b.errors, environment: b.environment } };
 
     const checks = [];

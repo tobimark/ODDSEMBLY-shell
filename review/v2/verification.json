@@ -1,8 +1,8 @@
 {
   "schema": "kunlunmeta-v2-verification/1",
-  "generatedAt": "2026-11-16T04:17:43.922Z",
+  "generatedAt": "2026-11-16T04:37:03.332Z",
   "node": "v22.22.2",
-  "command": "node scripts/verify-v2.mjs --modes=loom --port=4610",
+  "command": "node scripts/verify-v2.mjs --modes=loom --port=4622",
   "report": {
     "scope": "loom-final",
     "archivedModesNote": "Chips and Westworld are archived experiments and not part of the final Loom-only delivery; passing snapshots for them live under review/v2/archive/."
@@ -91,7 +91,7 @@
         {
           "id": "engine clock advanced",
           "ok": true,
-          "detail": "virtualTime=26.00s (status time is publish-throttled: 17.10s)"
+          "detail": "virtualTime=26.00s (status time is publish-throttled: 23.70s)"
         },
         {
           "id": "event counts sum to 12",
@@ -368,6 +368,16 @@
         "detail": "0 .mode-tab elements (Loom-only delivery)"
       },
       {
+        "id": "single-mode plaque: 01 LOOM / EXHIBITION 01 · 112 ENDS",
+        "ok": true,
+        "detail": "plaque=\"01LOOMEXHIBITION 01 · 112 ENDS\""
+      },
+      {
+        "id": "telemetry labels: PICKS/QUEUE/SHED/MODE",
+        "ok": true,
+        "detail": "[\"PICKS\",\"QUEUE\",\"SHED\",\"MODE\"]"
+      },
+      {
         "id": "single-mode view: engine mode is loom",
         "ok": true,
         "detail": "modeId=loom"
@@ -451,6 +461,15 @@
       "tabs": 0,
       "tabTexts": [],
       "captionTitle": "Loom",
+      "plaque": "01LOOMEXHIBITION 01 · 112 ENDS",
+      "plaqueName": "LOOM",
+      "plaqueNote": "EXHIBITION 01 · 112 ENDS",
+      "telemetryLabels": [
+        "PICKS",
+        "QUEUE",
+        "SHED",
+        "MODE"
+      ],
       "telemetryPill": "IDLE",
       "telemetryFields": 4,
       "transportButtons": [
@@ -473,14 +492,14 @@
       "loom": "pass"
     },
     "ui": "pass",
-    "checks": 44,
+    "checks": 46,
     "skipped": 1,
     "failures": 0,
     "failureIds": [],
     "pass": true,
     "partial": false,
-    "finishedAt": "2026-11-16T04:17:51.713Z",
-    "durationSeconds": 7.791
+    "finishedAt": "2026-11-16T04:37:11.469Z",
+    "durationSeconds": 8.137
   },
   "limitations": [],
   "buildHashes": {
@@ -503,5 +522,13 @@
     "duplicates": [],
     "note": "fewer than two implemented worlds — distinctness not applicable yet"
   },
-  "audioNote": "Audio beats are captured from AudioEngine.markBeat only when an AudioContext exists; beat audioTime/wallTime are wall-clock and therefore excluded from determinism claims."
+  "audioNote": "Audio beats are captured from AudioEngine.markBeat only when an AudioContext exists; beat audioTime/wallTime are wall-clock and therefore excluded from determinism claims.",
+  "scope": "loom-final",
+  "build": {
+    "treeSha256": "93ed18b7e3d3e635a4f31b548e9448da49c393e28d26b51b2ca55c0fc9e4e22e",
+    "commit": "8f69aec",
+    "tag": "deliverable/loom-v1",
+    "indexHtmlSha256": "EAA10B01C144C56F87F2859CB6AADA1C2E5117CC71D4CD9829183AF653379F56",
+    "bundleSha256": "88033BF81E7C32BEC9FFD20C791243FCCA157790DB54E67E99DA068A9DE1664D"
+  }
 }
