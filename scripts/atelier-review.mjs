@@ -4,7 +4,7 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import { startServer } from './serve.mjs';
 const root = path.resolve(import.meta.dirname, '..');
-const out = path.join(root,'review','atelier'); fs.mkdirSync(out,{recursive:true}); fs.mkdirSync(path.join(root,'.tmp'),{recursive:true});
+const out = path.join(root,'review','mechanics-v2'); fs.mkdirSync(out,{recursive:true}); fs.mkdirSync(path.join(root,'.tmp'),{recursive:true});
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 const software = process.env.LOOM_SOFTWARE === '1';
 class CDP {
@@ -15,7 +15,7 @@ class CDP {
 const server = await startServer(4179);
 const profile=fs.mkdtempSync(path.join(root,'.tmp','atelier-'));
 const edge=spawn(process.env.EDGE_PATH || 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',[
-'--headless=new','--remote-debugging-port=9340','--window-size=1472,1008','--hide-scrollbars','--no-first-run','--no-default-browser-check','--disable-extensions',...(software ? ['--enable-unsafe-swiftshader','--use-angle=swiftshader'] : []),'--disable-background-timer-throttling','--disable-renderer-backgrounding',`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
+'--autoplay-policy=no-user-gesture-required','--headless=new','--remote-debugging-port=9340','--window-size=1472,1008','--hide-scrollbars','--no-first-run','--no-default-browser-check','--disable-extensions',...(software ? ['--enable-unsafe-swiftshader','--use-angle=swiftshader'] : []),'--disable-background-timer-throttling','--disable-renderer-backgrounding',`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
 let c;
 try {
   let endpoint;
@@ -66,7 +66,9 @@ try {
     const measure=t=>{window.__frameTimes.push(t);if(window.__measureFrames)requestAnimationFrame(measure)};requestAnimationFrame(measure);
     window.__recordChunks=[];
     const stream=document.querySelector('canvas').captureStream(30);
-    window.__recorder=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp9',videoBitsPerSecond:9000000});
+    const audio=window.__loom.engine.audio;audio.ensure();
+    audio.recordingStream.getAudioTracks().forEach(t=>stream.addTrack(t));
+    window.__recorder=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp9,opus',videoBitsPerSecond:9000000});
     window.__recorder.ondataavailable=e=>{if(e.data.size)window.__recordChunks.push(e.data)};
     window.__recordDone=new Promise(resolve=>window.__recorder.onstop=async()=>{
       const blob=new Blob(window.__recordChunks,{type:'video/webm'});const reader=new FileReader();reader.onload=()=>resolve(reader.result.split(',')[1]);reader.readAsDataURL(blob);stream.getTracks().forEach(t=>t.stop());
@@ -87,7 +89,10 @@ try {
   // Small protocol messages avoid the browser/WebSocket large-message limit.
   const chunks=[];for(let i=0;i<length;i+=524288) chunks.push(Buffer.from(await ev(`window.__encodedRecording.slice(${i},${i+524288})`),'base64'));
   fs.writeFileSync(path.join(out,'loom-live.webm'),Buffer.concat(chunks));
+  const audioProof=await ev('({state:window.__loom.engine.audio.state,beats:window.__loom.engine.audio.beats})');
+  assert.equal(audioProof.state,'running');assert.equal(audioProof.beats.length,12);
+  assert.deepEqual(audioProof.beats.map(b=>b.eventId),Array.from({length:12},(_,i)=>i+1));
   const exceptions=c.events.filter(e=>e.method==='Runtime.exceptionThrown');assert.equal(exceptions.length,0,JSON.stringify(exceptions));
-  const report={verifiedAt:new Date().toISOString(),browser:endpoint.Browser,renderer,performanceStats,checks:['single canvas / initialization','UI Play emits simulated events','Pause freezes status and phase','2x speed control','mute control','shuttle only crosses open shed','one cloth commit per event','12-event burst drains in order','1920 desktop and 768 tablet renders','replay pause freezes input','replay contains exactly 12 events without simulator contamination','stop cancels queue','real-time recording: 12 events become 12 woven picks','no uncaught browser exceptions'],recording:{file:'loom-live.webm',method:'canvas.captureStream(30) + MediaRecorder VP9',manualTick:false,seconds:performanceStats.seconds},final};
+  const report={verifiedAt:new Date().toISOString(),browser:endpoint.Browser,renderer,performanceStats,audioProof,checks:['single canvas / initialization','UI Play emits simulated events','Pause freezes status and phase','2x speed control','mute control','shuttle only crosses open shed','one cloth commit per event','12-event burst drains in order','1920 desktop and 768 tablet renders','replay pause freezes input','replay contains exactly 12 events without simulator contamination','stop cancels queue','real-time recording: 12 events become 12 woven picks','12 beat sounds emitted at cloth commits; live Opus track recorded','no uncaught browser exceptions'],recording:{file:'loom-live.webm',method:'canvas.captureStream(30) + MediaRecorder VP9',manualTick:false,seconds:performanceStats.seconds},final};
   fs.writeFileSync(path.join(out,'verification.json'),JSON.stringify(report,null,2));console.log('PASS',JSON.stringify({events:final.s.events,picks:final.m.picks,exceptions:exceptions.length,recordingBytes:fs.statSync(path.join(out,'loom-live.webm')).size}));
 } finally {if(c)await c.send('Browser.close').catch(()=>{});edge.kill();server.close();}

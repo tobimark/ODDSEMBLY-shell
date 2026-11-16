@@ -5,6 +5,8 @@ export class LoomAudio {
   private whirOsc: OscillatorNode | null = null;
   private whirGain: GainNode | null = null;
   muted = false;
+  private recording: MediaStreamAudioDestinationNode | null = null;
+  readonly beats: { eventId: number; audioTime: number; wallTime: number }[] = [];
 
   ensure(): void {
     if (this.ctx) {
@@ -17,6 +19,8 @@ export class LoomAudio {
     this.master = this.ctx.createGain();
     this.master.gain.value = this.muted ? 0 : 0.5;
     this.master.connect(this.ctx.destination);
+    this.recording = this.ctx.createMediaStreamDestination();
+    this.master.connect(this.recording);
 
     this.whirOsc = this.ctx.createOscillator();
     this.whirOsc.type = 'sawtooth';
@@ -62,6 +66,17 @@ export class LoomAudio {
       this.noise(now, 0.07, 0.05, 2200, 500);
       this.tone(now, 340, 0.05, 0.03, 'sine');
     }
+  }
+
+  get recordingStream(): MediaStream { this.ensure(); return this.recording!.stream; }
+  get state() { return this.ctx?.state; }
+  beat(eventId: number): void {
+    if (!this.ctx || !this.master) return;
+    const now = this.ctx.currentTime;
+    this.noise(now, .055, .24, 1200, 100);
+    this.tone(now, 110, .075, .12, "triangle");
+    this.beats.push({eventId, audioTime: now, wallTime: performance.now()});
+    if (this.beats.length > 256) this.beats.shift();
   }
 
   destroy(): void {

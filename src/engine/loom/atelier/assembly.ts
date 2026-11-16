@@ -44,14 +44,14 @@ export function backdrop() {
     metal(g, 313, 136, 910, 11);
     for (let i = 0; i < 16; i++) bobbin(g, 380 + i * 52, 158, YARNS[i], i);
     for (let i = 0; i < WEAVE.ends; i++) {
-      const group = Math.floor(i / 12);
-      const x = 359 + i * 822 / 191;
-      line(g, [380 + group * 52 + (i % 12 - 6) * .5, 213, x, 243], YARNS[group] + '99', .6);
+      const group = Math.floor(i / 7);
+      const x = 359 + i * 822 / (WEAVE.ends - 1);
+      line(g, [380 + group * 52 + (i % 7 - 3) * .5, 213, x, 243], YARNS[group] + '99', .6);
     }
     plate(g, 302, 239, 936, 36, false);
     metal(g, 342, 252, 853, 14);
     for (let i = 0; i < WEAVE.ends; i++) {
-      const x = 359 + i * 822 / 191;
+      const x = 359 + i * 822 / (WEAVE.ends - 1);
       line(g, [x - 5, 253, x + 5, 266], '#798D9370', .5);
       line(g, [x + 5, 253, x - 5, 266], '#798D9340', .4);
     }
@@ -77,7 +77,7 @@ export function backdrop() {
       line(g, [246 + Math.cos(a) * (i % 4 ? 26 : 23), 392 + Math.sin(a) * (i % 4 ? 26 : 23), 246 + Math.cos(a) * 28, 392 + Math.sin(a) * 28], '#5A6979', .7);
     }
     label(g, 'TENSION', 246, 408, 5.5, '#657985', 'center'); label(g, 'N', 246, 382, 7, '#657985', 'center');
-    label(g, 'WARP / 192', 245, 437, 7, '#687987', 'center');
+    label(g, 'WARP / 112', 245, 437, 7, '#687987', 'center');
     // Tension linkage and physically mounted sensor cable.
     line(g, [246, 346, 246, 313, 301, 313], '#5B6C7A', 5); line(g, [246, 346, 246, 313, 301, 313], '#C2CCC6', 2.5);
     // Worm shaft, drive motor and cooling fins.
@@ -91,19 +91,20 @@ export function backdrop() {
     for (const x of [315, 1227]) bearing(g, x, 840, 21);
     rect(g, 680, 856, 167, 16, C.navy, 2);
     label(g, 'K U N L U N M E T A', 764, 867, 8, '#EEEFE9', 'center');
+    for (const [y, name] of [[489, 'SERVO A'], [601, 'SERVO B'], [719, 'SERVO R']] as const) label(g, name, 1300, y + 4, 6.5, '#8B969A');
     // Quiet service notation outside the machine envelope.
     label(g, '01 / CREEL', 1300, 205, 9, '#8B969A'); line(g, [1256, 201, 1290, 201], '#B5BEBC', .6);
-    label(g, '02 / SHED', 1300, 468, 9, '#8B969A'); line(g, [1256, 464, 1290, 464], '#B5BEBC', .6);
+    label(g, '02 / SHED', 1350, 468, 9, '#8B969A'); line(g, [1305, 464, 1340, 464], '#B5BEBC', .6);
     label(g, '03 / CLOTH', 1300, 780, 9, '#8B969A'); line(g, [1256, 776, 1290, 776], '#B5BEBC', .6);
     label(g, 'PICKS', 1271, 842, 7, '#8A959A');
-    label(g, '192 ENDS', 354, 905, 9, '#73828B'); label(g, '2 / 2 BROKEN TWILL', 770, 905, 9, '#73828B', 'center'); label(g, 'EVENT-DRIVEN / SERIES 01', 1234, 905, 9, '#73828B', 'right');
+    label(g, '112 ENDS', 354, 905, 9, '#73828B'); label(g, '2 / 2 BROKEN TWILL', 770, 905, 9, '#73828B', 'center'); label(g, 'EVENT-DRIVEN / SERIES 01', 1234, 905, 9, '#73828B', 'right');
   });
 }
 
 export function heddle(width = 906, rear = false) {
   return surface(width + 20, 57, g => {
-    for (let i = 0; i < 96; i++) {
-      const x = 45 + i * 8.6;
+    for (let i = 0; i < WEAVE.ends / 2; i++) {
+      const x = 45 + i * 2 * 822 / (WEAVE.ends - 1);
       line(g, [x, 18, x, 52], rear ? '#7D8B9370' : '#A3AEA6', .65);
       line(g, [x + .7, 18, x + .7, 52], '#FFFFFF80', .4);
     }
@@ -119,10 +120,10 @@ export function heddle(width = 906, rear = false) {
 export function reed() {
   return surface(930, 75, g => {
     rect(g, 10, 46, 910, 15, '#171C6025', 2);
-    for (let x = 47; x < 879; x += 4.3) { line(g, [x, 7, x, 42], '#5A6D7A', .8); line(g, [x + .9, 7, x + .9, 42], '#FFFFFFA0', .5); }
+    for (let x = 47; x < 879; x += 832 / WEAVE.ends) { line(g, [x, 7, x, 42], '#5A6D7A', .8); line(g, [x + .9, 7, x + .9, 42], '#FFFFFFA0', .5); }
     metal(g, 7, 3, 912, 9); metal(g, 7, 38, 912, 13);
     for (const x of [19, 905]) { plate(g, x - 12, 0, 26, 55, false, false); bolt(g, x, 12, 4); bolt(g, x, 43, 4); }
-    rect(g, 420, 39, 88, 10, C.navy, 1); label(g, 'R E E D  /  192', 464, 46, 5.5, '#F8F7ED', 'center');
+    rect(g, 420, 39, 88, 10, C.navy, 1); label(g, 'R E E D  /  112', 464, 46, 5.5, '#F8F7ED', 'center');
   });
 }
 

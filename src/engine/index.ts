@@ -51,7 +51,7 @@ export class LoomEngine {
     container.appendChild(this.app.canvas);
 
     this.world = new Container();
-    this.scene = new LoomScene();
+    this.scene = new LoomScene((e) => this.audio.beat(e.id));
     this.world.addChild(this.scene);
     this.app.stage.addChild(this.world);
 
@@ -110,7 +110,7 @@ export class LoomEngine {
     this.scene?.trigger(e);
     this.eventTimes.push(performance.now());
     this.bus.emitEvent(e);
-    this.audio.play(e.type);
+
     if (this.mode === 'idle' || this.mode === 'stopped') this.mode = 'running';
     this.bus.patch({ state: this.mode });
   }
