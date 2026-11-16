@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import ts from 'typescript';
-const source = fs.readFileSync(new URL('../src/engine/loom/atelier/mechanism.ts', import.meta.url), 'utf8');
+const source = fs.readFileSync(new URL('../src/engine/modes/loom/atelier/mechanism.ts', import.meta.url), 'utf8');
 const { outputText } = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022 } });
 const { Mechanism } = await import('data:text/javascript;base64,' + Buffer.from(outputText).toString('base64'));
 const event = i => ({ id: i, type: ['Read','Edit','Write','Bash','Search'][i%5], detail: 'test', at: i });
@@ -18,7 +18,7 @@ assert.equal(b.picks,a.picks); assert(Math.abs(a.angle-b.angle)<1e-8);
 a.push(event(99)); a.update(.4); a.stop(); a.update(10); assert.equal(a.picks,12); assert.equal(a.active,null); assert.equal(a.queue.length,0);
 console.log('PASS: shed precedes shuttle; no early cloth; one commit per event; FIFO; frame-step independence; stop cancels queue.');
 
-const linkageSource = fs.readFileSync(new URL('../src/engine/loom/atelier/linkage.ts', import.meta.url),'utf8');
+const linkageSource = fs.readFileSync(new URL('../src/engine/modes/loom/atelier/linkage.ts', import.meta.url),'utf8');
 const compiled = ts.transpileModule(linkageSource,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ES2022}}).outputText;
 const { solveLinkage } = await import('data:text/javascript;base64,'+Buffer.from(compiled).toString('base64'));
 let maxError=0;
