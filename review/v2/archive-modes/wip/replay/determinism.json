@@ -1,0 +1,326 @@
+{
+  "schema": "kunlunmeta-v2-replay-determinism/1",
+  "generatedAt": "2026-11-16T03:43:23.053Z",
+  "command": "node scripts/replay-proof.mjs --modes=chips --root-chips=.tmp/dist-chips --out=review/v2/wip/replay --port=4562",
+  "method": "headless Edge, ?deterministic=1&replay=1&ui=0, fixed 1/60 s manual tick batches, two fresh browser sessions, PNG SHA-256 equality",
+  "dtSeconds": 0.016666666666666666,
+  "marksSeconds": {
+    "chips": [
+      2,
+      8,
+      16
+    ]
+  },
+  "softwareRendering": false,
+  "modes": {
+    "chips": {
+      "mode": "chips",
+      "root": ".tmp/dist-chips",
+      "session": {
+        "query": "&replay=1",
+        "file": ".tmp/dist-chips/replay/chips-session.json",
+        "modeSpecific": true
+      },
+      "marksSeconds": [
+        2,
+        8,
+        16
+      ],
+      "status": "pass",
+      "runs": {
+        "a": {
+          "marks": {
+            "2s": {
+              "file": "review/v2/wip/replay/chips-a-2s.png",
+              "sha256": "626a765a5d05a02c2eace5969b54147be3a5540917d12afc0ce2faa37e89490b"
+            },
+            "8s": {
+              "file": "review/v2/wip/replay/chips-a-8s.png",
+              "sha256": "9fca158b3b499c094c0d17deb05bbf965e97da818ed7f30a94eecc95b07e02ab"
+            },
+            "16s": {
+              "file": "review/v2/wip/replay/chips-a-16s.png",
+              "sha256": "51a95c37183e3c75f7b68719156381d843fa97c7e751e454e5051f89e3f34975"
+            }
+          },
+          "facts": {
+            "replay": {
+              "loaded": true,
+              "cursor": 12,
+              "total": 12,
+              "done": true
+            },
+            "events": 12,
+            "engineTime": 16.000000000000373,
+            "state": "running",
+            "modeTelemetry": {
+              "mode": "chips",
+              "stage": "idle",
+              "stageLabel": "IN HAND",
+              "handNo": 3,
+              "handInAnte": 3,
+              "ante": 1,
+              "score": 993,
+              "chips": 99,
+              "globalMult": 1,
+              "quota": 1160,
+              "deckLeft": 33,
+              "queued": 0,
+              "hand": [
+                {
+                  "id": 11,
+                  "family": "Search",
+                  "rank": 9,
+                  "edition": "plain"
+                },
+                {
+                  "id": 12,
+                  "family": "Write",
+                  "rank": 8,
+                  "edition": "plain"
+                }
+              ],
+              "lastCombo": "HIGH_CARD",
+              "lastLabel": "HIGH CARD",
+              "lastHandChips": 322,
+              "lastTotalMult": 1.5,
+              "lastScore": 483,
+              "lastGained": 483,
+              "heat": 0,
+              "resolvedHands": 2,
+              "successHands": 0,
+              "missHands": 2,
+              "sponsorLevel": 0,
+              "totalDealt": 12
+            },
+            "audioState": "running",
+            "beatEventIds": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "beatCount": 12,
+            "stub": false
+          },
+          "errors": {
+            "exceptions": [],
+            "consoleErrors": [],
+            "logErrors": [],
+            "total": 0
+          },
+          "environment": {
+            "renderer": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "software": false
+          }
+        },
+        "b": {
+          "marks": {
+            "2s": {
+              "file": "review/v2/wip/replay/chips-a-2s.png",
+              "sha256": "626a765a5d05a02c2eace5969b54147be3a5540917d12afc0ce2faa37e89490b"
+            },
+            "8s": {
+              "file": "review/v2/wip/replay/chips-a-8s.png",
+              "sha256": "9fca158b3b499c094c0d17deb05bbf965e97da818ed7f30a94eecc95b07e02ab"
+            },
+            "16s": {
+              "file": "review/v2/wip/replay/chips-a-16s.png",
+              "sha256": "51a95c37183e3c75f7b68719156381d843fa97c7e751e454e5051f89e3f34975"
+            }
+          },
+          "facts": {
+            "replay": {
+              "loaded": true,
+              "cursor": 12,
+              "total": 12,
+              "done": true
+            },
+            "events": 12,
+            "engineTime": 16.000000000000373,
+            "state": "running",
+            "modeTelemetry": {
+              "mode": "chips",
+              "stage": "idle",
+              "stageLabel": "IN HAND",
+              "handNo": 3,
+              "handInAnte": 3,
+              "ante": 1,
+              "score": 993,
+              "chips": 99,
+              "globalMult": 1,
+              "quota": 1160,
+              "deckLeft": 33,
+              "queued": 0,
+              "hand": [
+                {
+                  "id": 11,
+                  "family": "Search",
+                  "rank": 9,
+                  "edition": "plain"
+                },
+                {
+                  "id": 12,
+                  "family": "Write",
+                  "rank": 8,
+                  "edition": "plain"
+                }
+              ],
+              "lastCombo": "HIGH_CARD",
+              "lastLabel": "HIGH CARD",
+              "lastHandChips": 322,
+              "lastTotalMult": 1.5,
+              "lastScore": 483,
+              "lastGained": 483,
+              "heat": 0,
+              "resolvedHands": 2,
+              "successHands": 0,
+              "missHands": 2,
+              "sponsorLevel": 0,
+              "totalDealt": 12
+            },
+            "audioState": "running",
+            "beatEventIds": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "beatCount": 12,
+            "stub": false
+          },
+          "errors": {
+            "exceptions": [],
+            "consoleErrors": [],
+            "logErrors": [],
+            "total": 0
+          },
+          "environment": {
+            "renderer": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "software": false
+          }
+        }
+      },
+      "comparison": [
+        {
+          "mark": "2s",
+          "equal": true,
+          "hashA": "626a765a5d05a02c2eace5969b54147be3a5540917d12afc0ce2faa37e89490b",
+          "hashB": "626a765a5d05a02c2eace5969b54147be3a5540917d12afc0ce2faa37e89490b",
+          "sizeA": 923724,
+          "sizeB": 923724
+        },
+        {
+          "mark": "8s",
+          "equal": true,
+          "hashA": "9fca158b3b499c094c0d17deb05bbf965e97da818ed7f30a94eecc95b07e02ab",
+          "hashB": "9fca158b3b499c094c0d17deb05bbf965e97da818ed7f30a94eecc95b07e02ab",
+          "sizeA": 911553,
+          "sizeB": 911553
+        },
+        {
+          "mark": "16s",
+          "equal": true,
+          "hashA": "51a95c37183e3c75f7b68719156381d843fa97c7e751e454e5051f89e3f34975",
+          "hashB": "51a95c37183e3c75f7b68719156381d843fa97c7e751e454e5051f89e3f34975",
+          "sizeA": 902088,
+          "sizeB": 902088
+        }
+      ],
+      "checks": [
+        {
+          "id": "mark 2s: pixel-identical across fresh sessions",
+          "ok": true,
+          "detail": "sha256 626a765a5d05a02c…/626a765a5d05a02c… sizes 923724/923724"
+        },
+        {
+          "id": "mark 8s: pixel-identical across fresh sessions",
+          "ok": true,
+          "detail": "sha256 9fca158b3b499c09…/9fca158b3b499c09… sizes 911553/911553"
+        },
+        {
+          "id": "mark 16s: pixel-identical across fresh sessions",
+          "ok": true,
+          "detail": "sha256 51a95c37183e3c75…/51a95c37183e3c75… sizes 902088/902088"
+        },
+        {
+          "id": "replay cursor 12/12 in both runs",
+          "ok": true,
+          "detail": "A={\"loaded\":true,\"cursor\":12,\"total\":12,\"done\":true} B={\"loaded\":true,\"cursor\":12,\"total\":12,\"done\":true}"
+        },
+        {
+          "id": "engine received exactly 12 replay events",
+          "ok": true,
+          "detail": "A=12 B=12"
+        },
+        {
+          "id": "virtual clock identical",
+          "ok": true,
+          "detail": "A=16.000000000000373 B=16.000000000000373"
+        },
+        {
+          "id": "mode telemetry identical",
+          "ok": true,
+          "detail": "{\"mode\":\"chips\",\"stage\":\"idle\",\"stageLabel\":\"IN HAND\",\"handNo\":3,\"handInAnte\":3,\"ante\":1,\"score\":993,\"chips\":99,\"globalMult\":1,\"quota\":1160,\"deckLeft\":33,\"queued\":0,\"hand\":[{\"id\":11,\"family\":\"Search\",\"rank\":9,\"edition\":\"plain\"},{\"id\":12,\"fa"
+        },
+        {
+          "id": "audio beat eventId sequence identical",
+          "ok": true,
+          "detail": "A=[1,2,3,4,5,6,7,8,9,10,11,12] B=[1,2,3,4,5,6,7,8,9,10,11,12]"
+        },
+        {
+          "id": "no uncaught exceptions in either run",
+          "ok": true,
+          "detail": "{\"a\":[],\"b\":[]}"
+        },
+        {
+          "id": "no console errors in either run",
+          "ok": true,
+          "detail": "{\"a\":[],\"b\":[]}"
+        },
+        {
+          "id": "12 audio beat marks recorded",
+          "ok": true,
+          "detail": "A=12 B=12"
+        },
+        {
+          "id": "beat marks cover eventIds 1..12",
+          "ok": true,
+          "detail": "[1,2,3,4,5,6,7,8,9,10,11,12] (bookkeeping marks: [])"
+        }
+      ],
+      "notes": []
+    }
+  },
+  "summary": {
+    "statuses": {
+      "chips": "pass"
+    },
+    "checks": 12,
+    "failures": 0,
+    "failureIds": [],
+    "pass": true,
+    "partial": false,
+    "finishedAt": "2026-11-16T03:43:34.654Z",
+    "durationSeconds": 11.601
+  },
+  "limitations": [
+    "PNG equality is measured within this machine/driver/browser build; it proves replay determinism, not cross-machine rendering parity."
+  ]
+}

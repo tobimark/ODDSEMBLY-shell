@@ -78,6 +78,7 @@ export async function launch(opts = {}) {
   const send = (m, p = {}) => cdp.send(m, p, sessionId);
   await send('Page.enable');
   await send('Runtime.enable');
+  try { await send('Log.enable'); } catch { /* Log domain is optional */ }
   const setViewport = async (w = width, h = height, dsf = 1) =>
     send('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor: dsf, mobile: false });
 
@@ -108,6 +109,35 @@ export async function launch(opts = {}) {
       fs.mkdirSync(path.dirname(file), { recursive: true });
       fs.writeFileSync(file, Buffer.from(r.data, 'base64'));
       return file;
+    },
+    /** Current length of the retained CDP event buffer (usage: errors since a mark). */
+    mark() { return cdp.events.length; },
+    /** Poll an in-page expression until truthy; resolves null after timeout. */
+    async waitFor(expression, timeoutMs = 8000, intervalMs = 80) {
+      const value = await evaluate(`new Promise((resolve)=>{const started=Date.now();const t=setInterval(()=>{let v=null;try{v=(${expression})}catch(e){clearInterval(t);resolve({__error:String(e&&e.message||e)});return}if(v){clearInterval(t);resolve(v)}else if(Date.now()-started>${timeoutMs}){clearInterval(t);resolve(null)}},${intervalMs})})`);
+      if (value && typeof value === 'object' && '__error' in value) throw new Error('waitFor failed: ' + value.__error);
+      return value;
+    },
+    /** Summarised uncaught exceptions, console errors and log errors since a mark. */
+    errorsSince(mark = 0) {
+      const slice = cdp.events.slice(mark);
+      const exceptions = slice
+        .filter((e) => e.method === 'Runtime.exceptionThrown')
+        .map((e) => {
+          const d = e.params?.exceptionDetails ?? {};
+          return { text: d.text, description: d.exception?.description?.slice(0, 400), url: d.url, line: d.lineNumber };
+        });
+      const consoleErrors = slice
+        .filter((e) => e.method === 'Runtime.consoleAPICalled' && e.params?.type === 'error')
+        .map((e) => (e.params.args ?? []).map((a) => a.value ?? a.description ?? a.type).join(' ').slice(0, 400));
+      const logErrors = slice
+        .filter((e) => e.method === 'Log.entryAdded' && e.params?.entry?.level === 'error')
+        .map((e) => ({ source: e.params.entry.source, text: (e.params.entry.text ?? '').slice(0, 400), url: e.params.entry.url }));
+      return { exceptions, consoleErrors, logErrors, total: exceptions.length + consoleErrors.length + logErrors.length };
+    },
+    /** Renderer string reported by WebGL (recording evidence / environment pinning). */
+    async renderer() {
+      return evaluate(`(()=>{const c=document.querySelector('canvas');if(!c)return null;const gl=c.getContext('webgl2')||c.getContext('webgl');if(!gl)return null;const ext=gl.getExtension('WEBGL_debug_renderer_info');return ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER)})()`);
     },
     async close() {
       try { await send('Browser.close'); } catch { /* noop */ }

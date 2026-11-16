@@ -1,0 +1,1803 @@
+{
+  "schema": "kunlunmeta-v2-verification/1",
+  "generatedAt": "2026-11-16T04:06:32.785Z",
+  "node": "v22.22.2",
+  "command": "node scripts/verify-v2.mjs --root=.tmp/dist-westworld --out=review/v2/wip-all --port=4594",
+  "roots": {
+    "loom": ".tmp/dist-westworld",
+    "chips": ".tmp/dist-westworld",
+    "westworld": ".tmp/dist-westworld"
+  },
+  "fixture": {
+    "events": 12,
+    "types": [
+      "Read",
+      "Edit",
+      "Write",
+      "Bash",
+      "Search",
+      "Read",
+      "Edit",
+      "Write",
+      "Bash",
+      "Search",
+      "Read",
+      "Edit"
+    ],
+    "tickDt": 0.1,
+    "viewport": "1472x1008"
+  },
+  "modes": {
+    "loom": {
+      "mode": "loom",
+      "label": "Loom",
+      "root": ".tmp/dist-westworld",
+      "query": "?mode=loom&deterministic=1&noauto=1&ui=0",
+      "status": "pass",
+      "stub": null,
+      "checks": [
+        {
+          "id": "engine bridge exposed",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "id": "exactly one canvas",
+          "ok": true,
+          "detail": "canvases=1"
+        },
+        {
+          "id": "no fatal overlay",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "id": "modeId matches query",
+          "ok": true,
+          "detail": "mode=loom"
+        },
+        {
+          "id": "initial state idle (noauto)",
+          "ok": true,
+          "detail": "state=idle"
+        },
+        {
+          "id": "engine clock at 0",
+          "ok": true,
+          "detail": "time=0"
+        },
+        {
+          "id": "canvas fills viewport",
+          "ok": true,
+          "detail": "{\"w\":1472,\"h\":1008,\"bw\":1472,\"bh\":1008}"
+        },
+        {
+          "id": "no document overflow",
+          "ok": true,
+          "detail": "{\"scrollW\":1472,\"scrollH\":1008}"
+        },
+        {
+          "id": "AudioContext created",
+          "ok": true,
+          "detail": "state=running"
+        },
+        {
+          "id": "engine received 12 events",
+          "ok": true,
+          "detail": "events=12"
+        },
+        {
+          "id": "engine clock advanced",
+          "ok": true,
+          "detail": "virtualTime=26.00s (status time is publish-throttled: 18.90s)"
+        },
+        {
+          "id": "event counts sum to 12",
+          "ok": true,
+          "detail": "{\"Read\":3,\"Edit\":3,\"Write\":2,\"Bash\":2,\"Search\":2}"
+        },
+        {
+          "id": "no replay loaded in burst pass",
+          "ok": true,
+          "detail": "null"
+        },
+        {
+          "id": "mode queue drained",
+          "ok": true,
+          "detail": "queued=0"
+        },
+        {
+          "id": "picks === 12",
+          "ok": true,
+          "detail": "picks=12"
+        },
+        {
+          "id": "queue drained",
+          "ok": true,
+          "detail": "queued=0"
+        },
+        {
+          "id": "stage READY",
+          "ok": true,
+          "detail": "stage=READY"
+        },
+        {
+          "id": "exactly 12 audio beats",
+          "ok": true,
+          "detail": "beats=12"
+        },
+        {
+          "id": "audio beat eventIds 1..12 in order",
+          "ok": true,
+          "detail": "[1,2,3,4,5,6,7,8,9,10,11,12]"
+        },
+        {
+          "id": "AudioContext running",
+          "ok": true,
+          "detail": "state=running"
+        },
+        {
+          "id": "responsive 1920x1080: single canvas",
+          "ok": true,
+          "detail": "canvases=1"
+        },
+        {
+          "id": "responsive 1920x1080: canvas fills viewport",
+          "ok": true,
+          "detail": "{\"w\":1920,\"h\":1080}"
+        },
+        {
+          "id": "responsive 1920x1080: no overflow",
+          "ok": true,
+          "detail": "{\"scrollW\":1920,\"scrollH\":1080}"
+        },
+        {
+          "id": "responsive 768x1024: single canvas",
+          "ok": true,
+          "detail": "canvases=1"
+        },
+        {
+          "id": "responsive 768x1024: canvas fills viewport",
+          "ok": true,
+          "detail": "{\"w\":768,\"h\":1024}"
+        },
+        {
+          "id": "responsive 768x1024: no overflow",
+          "ok": true,
+          "detail": "{\"scrollW\":768,\"scrollH\":1024}"
+        },
+        {
+          "id": "zero uncaught exceptions",
+          "ok": true,
+          "detail": "[]"
+        },
+        {
+          "id": "zero console errors",
+          "ok": true,
+          "detail": "[]"
+        },
+        {
+          "id": "zero browser log errors",
+          "ok": true,
+          "detail": "[]"
+        }
+      ],
+      "screenshots": {
+        "idle": {
+          "file": "review/v2/wip-all/shots/loom-idle.png",
+          "sha256": "8cb6a90b65d825aae93a5dbe35f528a275bf9ffab646e6a66f59a0db466c3baa"
+        },
+        "burst": {
+          "file": "review/v2/wip-all/shots/loom-burst.png",
+          "sha256": "edc41548dbbbfb33f6198c278540e772804cd9519b26891c0f3752d903b39002"
+        },
+        "settled": {
+          "file": "review/v2/wip-all/shots/loom-settled.png",
+          "sha256": "56b3195a3280e9815e2648d9681beadec93ed1feedca17af909f15a8c838df23"
+        },
+        "responsive-1920": {
+          "file": "review/v2/wip-all/shots/loom-1920.png",
+          "sha256": "4f476c8585e23ca067598bd5ab3f52138bdd54fe4a69c15653d04f347ca51fb3"
+        },
+        "responsive-768": {
+          "file": "review/v2/wip-all/shots/loom-768.png",
+          "sha256": "a7abbb5855f79d5c00adc5b80472bc2a2409e276295c46972a5fbc05d6371803"
+        }
+      },
+      "hashes": {
+        "idle": "8cb6a90b65d825aae93a5dbe35f528a275bf9ffab646e6a66f59a0db466c3baa",
+        "burst": "edc41548dbbbfb33f6198c278540e772804cd9519b26891c0f3752d903b39002",
+        "settled": "56b3195a3280e9815e2648d9681beadec93ed1feedca17af909f15a8c838df23",
+        "responsive-1920": "4f476c8585e23ca067598bd5ab3f52138bdd54fe4a69c15653d04f347ca51fb3",
+        "responsive-768": "a7abbb5855f79d5c00adc5b80472bc2a2409e276295c46972a5fbc05d6371803"
+      },
+      "telemetry": {
+        "time": 26.0000000000001,
+        "state": "running",
+        "mode": "loom",
+        "events": 12,
+        "replay": null,
+        "modes": {
+          "loom": {
+            "mode": "loom",
+            "phase": 0,
+            "picks": 12,
+            "queued": 0,
+            "active": null,
+            "stage": "READY",
+            "shed": 0,
+            "beat": 0,
+            "travel": 0,
+            "angle": 75.39822368615529
+          }
+        }
+      },
+      "modeTelemetry": {
+        "mode": "loom",
+        "phase": 0,
+        "picks": 12,
+        "queued": 0,
+        "active": null,
+        "stage": "READY",
+        "shed": 0,
+        "beat": 0,
+        "travel": 0,
+        "angle": 75.39822368615529
+      },
+      "audio": {
+        "state": "running",
+        "beatCount": 12,
+        "beats": [
+          {
+            "eventId": 1,
+            "kind": "loom-beat"
+          },
+          {
+            "eventId": 2,
+            "kind": "loom-beat"
+          },
+          {
+            "eventId": 3,
+            "kind": "loom-beat"
+          },
+          {
+            "eventId": 4,
+            "kind": "loom-beat"
+          },
+          {
+            "eventId": 5,
+            "kind": "loom-beat"
+          },
+          {
+            "eventId": 6,
+            "kind": "loom-beat"
+          },
+          {
+            "eventId": 7,
+            "kind": "loom-beat"
+          },
+          {
+            "eventId": 8,
+            "kind": "loom-beat"
+          },
+          {
+            "eventId": 9,
+            "kind": "loom-beat"
+          },
+          {
+            "eventId": 10,
+            "kind": "loom-beat"
+          },
+          {
+            "eventId": 11,
+            "kind": "loom-beat"
+          },
+          {
+            "eventId": 12,
+            "kind": "loom-beat"
+          }
+        ]
+      },
+      "errors": {
+        "exceptions": [],
+        "consoleErrors": [],
+        "logErrors": [],
+        "total": 0
+      },
+      "environment": {
+        "renderer": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "viewport": "1472x1008"
+      },
+      "notes": [],
+      "midTelemetry": {
+        "status": "running",
+        "tel": {
+          "mode": "loom",
+          "phase": 0.8484848484848473,
+          "picks": 5,
+          "queued": 7,
+          "active": "Search",
+          "stage": "BEATING",
+          "shed": 0,
+          "beat": 1,
+          "travel": 1,
+          "angle": 30.463928762083157
+        }
+      }
+    },
+    "chips": {
+      "mode": "chips",
+      "label": "Chips",
+      "root": ".tmp/dist-westworld",
+      "query": "?mode=chips&deterministic=1&noauto=1&ui=0",
+      "status": "pass",
+      "stub": null,
+      "checks": [
+        {
+          "id": "engine bridge exposed",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "id": "exactly one canvas",
+          "ok": true,
+          "detail": "canvases=1"
+        },
+        {
+          "id": "no fatal overlay",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "id": "modeId matches query",
+          "ok": true,
+          "detail": "mode=chips"
+        },
+        {
+          "id": "initial state idle (noauto)",
+          "ok": true,
+          "detail": "state=idle"
+        },
+        {
+          "id": "engine clock at 0",
+          "ok": true,
+          "detail": "time=0"
+        },
+        {
+          "id": "canvas fills viewport",
+          "ok": true,
+          "detail": "{\"w\":1472,\"h\":1008,\"bw\":1472,\"bh\":1008}"
+        },
+        {
+          "id": "no document overflow",
+          "ok": true,
+          "detail": "{\"scrollW\":1472,\"scrollH\":1008}"
+        },
+        {
+          "id": "AudioContext created",
+          "ok": true,
+          "detail": "state=running"
+        },
+        {
+          "id": "engine received 12 events",
+          "ok": true,
+          "detail": "events=12"
+        },
+        {
+          "id": "engine clock advanced",
+          "ok": true,
+          "detail": "virtualTime=20.00s (status time is publish-throttled: 11.10s)"
+        },
+        {
+          "id": "event counts sum to 12",
+          "ok": true,
+          "detail": "{\"Read\":3,\"Edit\":3,\"Write\":2,\"Bash\":2,\"Search\":2}"
+        },
+        {
+          "id": "no replay loaded in burst pass",
+          "ok": true,
+          "detail": "null"
+        },
+        {
+          "id": "mode queue drained",
+          "ok": true,
+          "detail": "queued=0"
+        },
+        {
+          "id": "totalDealt === 12",
+          "ok": true,
+          "detail": "totalDealt=12"
+        },
+        {
+          "id": "resolvedHands === 2",
+          "ok": true,
+          "detail": "resolvedHands=2"
+        },
+        {
+          "id": "score > 0",
+          "ok": true,
+          "detail": "score=926"
+        },
+        {
+          "id": "queue empty",
+          "ok": true,
+          "detail": "queued=0"
+        },
+        {
+          "id": "stage settled (idle/holding)",
+          "ok": true,
+          "detail": "stage=idle stageLabel=IN HAND"
+        },
+        {
+          "id": "12 chips-deal beat marks in order",
+          "ok": true,
+          "detail": "deal=[1,2,3,4,5,6,7,8,9,10,11,12] cashMarks=0"
+        },
+        {
+          "id": "audio beats cover events 1..12",
+          "ok": true,
+          "detail": "eventIds=[1,2,3,4,5,6,7,8,9,10,11,12] bookkeeping=[]"
+        },
+        {
+          "id": "AudioContext running",
+          "ok": true,
+          "detail": "state=running"
+        },
+        {
+          "id": "responsive 1920x1080: single canvas",
+          "ok": true,
+          "detail": "canvases=1"
+        },
+        {
+          "id": "responsive 1920x1080: canvas fills viewport",
+          "ok": true,
+          "detail": "{\"w\":1920,\"h\":1080}"
+        },
+        {
+          "id": "responsive 1920x1080: no overflow",
+          "ok": true,
+          "detail": "{\"scrollW\":1920,\"scrollH\":1080}"
+        },
+        {
+          "id": "responsive 768x1024: single canvas",
+          "ok": true,
+          "detail": "canvases=1"
+        },
+        {
+          "id": "responsive 768x1024: canvas fills viewport",
+          "ok": true,
+          "detail": "{\"w\":768,\"h\":1024}"
+        },
+        {
+          "id": "responsive 768x1024: no overflow",
+          "ok": true,
+          "detail": "{\"scrollW\":768,\"scrollH\":1024}"
+        },
+        {
+          "id": "zero uncaught exceptions",
+          "ok": true,
+          "detail": "[]"
+        },
+        {
+          "id": "zero console errors",
+          "ok": true,
+          "detail": "[]"
+        },
+        {
+          "id": "zero browser log errors",
+          "ok": true,
+          "detail": "[]"
+        }
+      ],
+      "screenshots": {
+        "idle": {
+          "file": "review/v2/wip-all/shots/chips-idle.png",
+          "sha256": "a550c0f961cd9c713fbba2b2841f1faeb5f760487decc0abb7d71c46f01c08a8"
+        },
+        "burst": {
+          "file": "review/v2/wip-all/shots/chips-burst.png",
+          "sha256": "ba4a5d3fe0011da2e806ce1066701e2183cb7cf1dbfd1fe3f194b7f61361446e"
+        },
+        "settled": {
+          "file": "review/v2/wip-all/shots/chips-settled.png",
+          "sha256": "ebc73e7d6c21b7c94c85a718845c974cd1cb3517c7f17a8675c757bd09cd7493"
+        },
+        "responsive-1920": {
+          "file": "review/v2/wip-all/shots/chips-1920.png",
+          "sha256": "bac43d8f5a65fd4e656e0efbd475549fdbbcc62a74dbdc9bde05eae62568751a"
+        },
+        "responsive-768": {
+          "file": "review/v2/wip-all/shots/chips-768.png",
+          "sha256": "a07823abe3710fe3d146c17b374f58cd8fb54f2d75079ed97dc06c704acef60f"
+        }
+      },
+      "hashes": {
+        "idle": "a550c0f961cd9c713fbba2b2841f1faeb5f760487decc0abb7d71c46f01c08a8",
+        "burst": "ba4a5d3fe0011da2e806ce1066701e2183cb7cf1dbfd1fe3f194b7f61361446e",
+        "settled": "ebc73e7d6c21b7c94c85a718845c974cd1cb3517c7f17a8675c757bd09cd7493",
+        "responsive-1920": "bac43d8f5a65fd4e656e0efbd475549fdbbcc62a74dbdc9bde05eae62568751a",
+        "responsive-768": "a07823abe3710fe3d146c17b374f58cd8fb54f2d75079ed97dc06c704acef60f"
+      },
+      "telemetry": {
+        "time": 20.000000000000014,
+        "state": "running",
+        "mode": "chips",
+        "events": 12,
+        "replay": null,
+        "modes": {
+          "chips": {
+            "mode": "chips",
+            "stage": "idle",
+            "stageLabel": "IN HAND",
+            "handNo": 3,
+            "handInAnte": 3,
+            "ante": 1,
+            "score": 926,
+            "chips": 92,
+            "globalMult": 1,
+            "quota": 1160,
+            "deckLeft": 33,
+            "queued": 0,
+            "hand": [
+              {
+                "id": 11,
+                "family": "Read",
+                "rank": 9,
+                "edition": "plain"
+              },
+              {
+                "id": 12,
+                "family": "Edit",
+                "rank": 8,
+                "edition": "plain"
+              }
+            ],
+            "lastCombo": "HIGH_CARD",
+            "lastLabel": "HIGH CARD",
+            "lastHandChips": 326,
+            "lastTotalMult": 1.25,
+            "lastScore": 408,
+            "lastGained": 408,
+            "heat": 0,
+            "resolvedHands": 2,
+            "successHands": 0,
+            "missHands": 2,
+            "sponsorLevel": 0,
+            "totalDealt": 12
+          }
+        }
+      },
+      "modeTelemetry": {
+        "mode": "chips",
+        "stage": "idle",
+        "stageLabel": "IN HAND",
+        "handNo": 3,
+        "handInAnte": 3,
+        "ante": 1,
+        "score": 926,
+        "chips": 92,
+        "globalMult": 1,
+        "quota": 1160,
+        "deckLeft": 33,
+        "queued": 0,
+        "hand": [
+          {
+            "id": 11,
+            "family": "Read",
+            "rank": 9,
+            "edition": "plain"
+          },
+          {
+            "id": 12,
+            "family": "Edit",
+            "rank": 8,
+            "edition": "plain"
+          }
+        ],
+        "lastCombo": "HIGH_CARD",
+        "lastLabel": "HIGH CARD",
+        "lastHandChips": 326,
+        "lastTotalMult": 1.25,
+        "lastScore": 408,
+        "lastGained": 408,
+        "heat": 0,
+        "resolvedHands": 2,
+        "successHands": 0,
+        "missHands": 2,
+        "sponsorLevel": 0,
+        "totalDealt": 12
+      },
+      "audio": {
+        "state": "running",
+        "beatCount": 12,
+        "beats": [
+          {
+            "eventId": 1,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 2,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 3,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 4,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 5,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 6,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 7,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 8,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 9,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 10,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 11,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 12,
+            "kind": "chips-deal"
+          }
+        ]
+      },
+      "errors": {
+        "exceptions": [],
+        "consoleErrors": [],
+        "logErrors": [],
+        "total": 0
+      },
+      "environment": {
+        "renderer": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "viewport": "1472x1008"
+      },
+      "notes": [],
+      "midTelemetry": {
+        "status": "running",
+        "tel": {
+          "mode": "chips",
+          "stage": "sweep",
+          "stageLabel": "SWEEPING",
+          "handNo": 1,
+          "handInAnte": 1,
+          "ante": 1,
+          "score": 518,
+          "chips": 51,
+          "globalMult": 1,
+          "quota": 640,
+          "deckLeft": 40,
+          "queued": 7,
+          "hand": [
+            {
+              "id": 1,
+              "family": "Read",
+              "rank": 3,
+              "edition": "plain"
+            },
+            {
+              "id": 2,
+              "family": "Edit",
+              "rank": 8,
+              "edition": "plain"
+            },
+            {
+              "id": 3,
+              "family": "Write",
+              "rank": 6,
+              "edition": "plain"
+            },
+            {
+              "id": 4,
+              "family": "Bash",
+              "rank": 9,
+              "edition": "plain"
+            },
+            {
+              "id": 5,
+              "family": "Search",
+              "rank": 7,
+              "edition": "plain"
+            }
+          ],
+          "lastCombo": "HIGH_CARD",
+          "lastLabel": "HIGH CARD",
+          "lastHandChips": 414,
+          "lastTotalMult": 1.25,
+          "lastScore": 518,
+          "lastGained": 518,
+          "heat": 1,
+          "resolvedHands": 1,
+          "successHands": 0,
+          "missHands": 1,
+          "sponsorLevel": 0,
+          "totalDealt": 10
+        }
+      }
+    },
+    "westworld": {
+      "mode": "westworld",
+      "label": "Westworld",
+      "root": ".tmp/dist-westworld",
+      "query": "?mode=westworld&deterministic=1&noauto=1&ui=0",
+      "status": "pass",
+      "stub": null,
+      "checks": [
+        {
+          "id": "engine bridge exposed",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "id": "exactly one canvas",
+          "ok": true,
+          "detail": "canvases=1"
+        },
+        {
+          "id": "no fatal overlay",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "id": "modeId matches query",
+          "ok": true,
+          "detail": "mode=westworld"
+        },
+        {
+          "id": "initial state idle (noauto)",
+          "ok": true,
+          "detail": "state=idle"
+        },
+        {
+          "id": "engine clock at 0",
+          "ok": true,
+          "detail": "time=0"
+        },
+        {
+          "id": "canvas fills viewport",
+          "ok": true,
+          "detail": "{\"w\":1472,\"h\":1008,\"bw\":1472,\"bh\":1008}"
+        },
+        {
+          "id": "no document overflow",
+          "ok": true,
+          "detail": "{\"scrollW\":1472,\"scrollH\":1008}"
+        },
+        {
+          "id": "AudioContext created",
+          "ok": true,
+          "detail": "state=running"
+        },
+        {
+          "id": "engine received 12 events",
+          "ok": true,
+          "detail": "events=12"
+        },
+        {
+          "id": "engine clock advanced",
+          "ok": true,
+          "detail": "virtualTime=20.00s (status time is publish-throttled: 15.10s)"
+        },
+        {
+          "id": "event counts sum to 12",
+          "ok": true,
+          "detail": "{\"Read\":3,\"Edit\":3,\"Write\":2,\"Bash\":2,\"Search\":2}"
+        },
+        {
+          "id": "no replay loaded in burst pass",
+          "ok": true,
+          "detail": "null"
+        },
+        {
+          "id": "mode queue drained",
+          "ok": true,
+          "detail": "queued=0"
+        },
+        {
+          "id": "charge/total === 12",
+          "ok": true,
+          "detail": "charge=12 total=12"
+        },
+        {
+          "id": "releases === 2",
+          "ok": true,
+          "detail": "releases=2"
+        },
+        {
+          "id": "purges === 0",
+          "ok": true,
+          "detail": "purges=0"
+        },
+        {
+          "id": "queue empty",
+          "ok": true,
+          "detail": "queued=0"
+        },
+        {
+          "id": "plant stable",
+          "ok": true,
+          "detail": "stage=STABLE"
+        },
+        {
+          "id": "pressure/heat in 0..1",
+          "ok": true,
+          "detail": "pressure=0.249 heat=0.04"
+        },
+        {
+          "id": "release #2 ticket lists 5 calls",
+          "ok": true,
+          "detail": "lastRelease={\"index\":2,\"families\":[\"Read\",\"Edit\",\"Write\",\"Bash\",\"Search\"],\"ticket\":\"INTA · REGU · RESE · COMB · SCAN\"}"
+        },
+        {
+          "id": "lastPurge === 0 (no purge before 20 calls)",
+          "ok": true,
+          "detail": "lastPurge=0"
+        },
+        {
+          "id": "12 ordered ww actuation beats",
+          "ok": true,
+          "detail": "wwBeats=[1,2,3,4,5,6,7,8,9,10,11,12]"
+        },
+        {
+          "id": "audio beats cover events 1..12",
+          "ok": true,
+          "detail": "eventIds=[1,2,3,4,5,6,7,8,9,10,11,12] bookkeeping=[]"
+        },
+        {
+          "id": "AudioContext running",
+          "ok": true,
+          "detail": "state=running"
+        },
+        {
+          "id": "responsive 1920x1080: single canvas",
+          "ok": true,
+          "detail": "canvases=1"
+        },
+        {
+          "id": "responsive 1920x1080: canvas fills viewport",
+          "ok": true,
+          "detail": "{\"w\":1920,\"h\":1080}"
+        },
+        {
+          "id": "responsive 1920x1080: no overflow",
+          "ok": true,
+          "detail": "{\"scrollW\":1920,\"scrollH\":1080}"
+        },
+        {
+          "id": "responsive 768x1024: single canvas",
+          "ok": true,
+          "detail": "canvases=1"
+        },
+        {
+          "id": "responsive 768x1024: canvas fills viewport",
+          "ok": true,
+          "detail": "{\"w\":768,\"h\":1024}"
+        },
+        {
+          "id": "responsive 768x1024: no overflow",
+          "ok": true,
+          "detail": "{\"scrollW\":768,\"scrollH\":1024}"
+        },
+        {
+          "id": "zero uncaught exceptions",
+          "ok": true,
+          "detail": "[]"
+        },
+        {
+          "id": "zero console errors",
+          "ok": true,
+          "detail": "[]"
+        },
+        {
+          "id": "zero browser log errors",
+          "ok": true,
+          "detail": "[]"
+        }
+      ],
+      "screenshots": {
+        "idle": {
+          "file": "review/v2/wip-all/shots/westworld-idle.png",
+          "sha256": "c54455d37c9dfc9771bfc892d27f8ba18ac3c19d30c9edb0024c0139c337336a"
+        },
+        "burst": {
+          "file": "review/v2/wip-all/shots/westworld-burst.png",
+          "sha256": "7bc59ac128fc843953887c1a6e88c981933e7976ff14ec0b1463e5f4e87cbb2e"
+        },
+        "settled": {
+          "file": "review/v2/wip-all/shots/westworld-settled.png",
+          "sha256": "8b353b45988c678a409a6075ea64b0848b1902696830aaae80633f1123d2490d"
+        },
+        "responsive-1920": {
+          "file": "review/v2/wip-all/shots/westworld-1920.png",
+          "sha256": "c021eb0b3d7136c8dddccc00352105b655e00ea99ac16d173bfb13e173f0f6c5"
+        },
+        "responsive-768": {
+          "file": "review/v2/wip-all/shots/westworld-768.png",
+          "sha256": "19ff88c47323216ff838a408841a6ae997763d4eaa3628c75d54c9013090ffd8"
+        }
+      },
+      "hashes": {
+        "idle": "c54455d37c9dfc9771bfc892d27f8ba18ac3c19d30c9edb0024c0139c337336a",
+        "burst": "7bc59ac128fc843953887c1a6e88c981933e7976ff14ec0b1463e5f4e87cbb2e",
+        "settled": "8b353b45988c678a409a6075ea64b0848b1902696830aaae80633f1123d2490d",
+        "responsive-1920": "c021eb0b3d7136c8dddccc00352105b655e00ea99ac16d173bfb13e173f0f6c5",
+        "responsive-768": "19ff88c47323216ff838a408841a6ae997763d4eaa3628c75d54c9013090ffd8"
+      },
+      "telemetry": {
+        "time": 20.000000000000014,
+        "state": "running",
+        "mode": "westworld",
+        "events": 12,
+        "replay": null,
+        "modes": {
+          "westworld": {
+            "mode": "westworld",
+            "pressure": 0.249,
+            "heat": 0.04,
+            "charge": 12,
+            "total": 12,
+            "releases": 2,
+            "purges": 0,
+            "levels": {
+              "intake": 0.244,
+              "regulator": 0.735,
+              "reservoir": 0.37
+            },
+            "valves": {
+              "Read": 0,
+              "Edit": 0,
+              "Write": 0,
+              "Bash": 0,
+              "Search": 0
+            },
+            "needle": 0.2489748892572899,
+            "scan": 0,
+            "drive": 23.68,
+            "activeFamily": null,
+            "progress": 0,
+            "queued": 0,
+            "stage": "STABLE",
+            "lastRelease": {
+              "index": 2,
+              "families": [
+                "Read",
+                "Edit",
+                "Write",
+                "Bash",
+                "Search"
+              ],
+              "ticket": "INTA · REGU · RESE · COMB · SCAN"
+            },
+            "lastPurge": 0,
+            "settled": 12,
+            "channels": {
+              "Read": {
+                "channel": "INTAKE",
+                "label": "INTAKE",
+                "cn": "进料",
+                "pressure": 0.07,
+                "heat": 0,
+                "level": 0,
+                "valve": 0.5,
+                "scan": 0.15,
+                "duration": 0.52,
+                "tint": "#425679"
+              },
+              "Edit": {
+                "channel": "REGULATOR",
+                "label": "REGULATOR",
+                "cn": "调压",
+                "pressure": 0.1,
+                "heat": 0.02,
+                "level": 0.13,
+                "valve": 0.75,
+                "scan": 0,
+                "duration": 0.6,
+                "tint": "#171C60"
+              },
+              "Write": {
+                "channel": "RESERVOIR",
+                "label": "RESERVOIR",
+                "cn": "蓄能",
+                "pressure": 0.13,
+                "heat": 0,
+                "level": 0.18,
+                "valve": 0.65,
+                "scan": 0,
+                "duration": 0.66,
+                "tint": "#1F8F92"
+              },
+              "Bash": {
+                "channel": "COMBUSTION",
+                "label": "COMBUSTION",
+                "cn": "燃烧",
+                "pressure": 0.22,
+                "heat": 0.26,
+                "level": 0,
+                "valve": 0.95,
+                "scan": 0,
+                "duration": 0.56,
+                "tint": "#A6513F"
+              },
+              "Search": {
+                "channel": "SCANNER",
+                "label": "SCANNER",
+                "cn": "扫描",
+                "pressure": 0.06,
+                "heat": 0.01,
+                "level": 0,
+                "valve": 0.4,
+                "scan": 1,
+                "duration": 0.46,
+                "tint": "#5F7A6B"
+              }
+            }
+          }
+        }
+      },
+      "modeTelemetry": {
+        "mode": "westworld",
+        "pressure": 0.249,
+        "heat": 0.04,
+        "charge": 12,
+        "total": 12,
+        "releases": 2,
+        "purges": 0,
+        "levels": {
+          "intake": 0.244,
+          "regulator": 0.735,
+          "reservoir": 0.37
+        },
+        "valves": {
+          "Read": 0,
+          "Edit": 0,
+          "Write": 0,
+          "Bash": 0,
+          "Search": 0
+        },
+        "needle": 0.2489748892572899,
+        "scan": 0,
+        "drive": 23.68,
+        "activeFamily": null,
+        "progress": 0,
+        "queued": 0,
+        "stage": "STABLE",
+        "lastRelease": {
+          "index": 2,
+          "families": [
+            "Read",
+            "Edit",
+            "Write",
+            "Bash",
+            "Search"
+          ],
+          "ticket": "INTA · REGU · RESE · COMB · SCAN"
+        },
+        "lastPurge": 0,
+        "settled": 12,
+        "channels": {
+          "Read": {
+            "channel": "INTAKE",
+            "label": "INTAKE",
+            "cn": "进料",
+            "pressure": 0.07,
+            "heat": 0,
+            "level": 0,
+            "valve": 0.5,
+            "scan": 0.15,
+            "duration": 0.52,
+            "tint": "#425679"
+          },
+          "Edit": {
+            "channel": "REGULATOR",
+            "label": "REGULATOR",
+            "cn": "调压",
+            "pressure": 0.1,
+            "heat": 0.02,
+            "level": 0.13,
+            "valve": 0.75,
+            "scan": 0,
+            "duration": 0.6,
+            "tint": "#171C60"
+          },
+          "Write": {
+            "channel": "RESERVOIR",
+            "label": "RESERVOIR",
+            "cn": "蓄能",
+            "pressure": 0.13,
+            "heat": 0,
+            "level": 0.18,
+            "valve": 0.65,
+            "scan": 0,
+            "duration": 0.66,
+            "tint": "#1F8F92"
+          },
+          "Bash": {
+            "channel": "COMBUSTION",
+            "label": "COMBUSTION",
+            "cn": "燃烧",
+            "pressure": 0.22,
+            "heat": 0.26,
+            "level": 0,
+            "valve": 0.95,
+            "scan": 0,
+            "duration": 0.56,
+            "tint": "#A6513F"
+          },
+          "Search": {
+            "channel": "SCANNER",
+            "label": "SCANNER",
+            "cn": "扫描",
+            "pressure": 0.06,
+            "heat": 0.01,
+            "level": 0,
+            "valve": 0.4,
+            "scan": 1,
+            "duration": 0.46,
+            "tint": "#5F7A6B"
+          }
+        }
+      },
+      "audio": {
+        "state": "running",
+        "beatCount": 12,
+        "beats": [
+          {
+            "eventId": 1,
+            "kind": "ww-actuate"
+          },
+          {
+            "eventId": 2,
+            "kind": "ww-actuate"
+          },
+          {
+            "eventId": 3,
+            "kind": "ww-actuate"
+          },
+          {
+            "eventId": 4,
+            "kind": "ww-actuate"
+          },
+          {
+            "eventId": 5,
+            "kind": "ww-actuate"
+          },
+          {
+            "eventId": 6,
+            "kind": "ww-actuate"
+          },
+          {
+            "eventId": 7,
+            "kind": "ww-actuate"
+          },
+          {
+            "eventId": 8,
+            "kind": "ww-actuate"
+          },
+          {
+            "eventId": 9,
+            "kind": "ww-actuate"
+          },
+          {
+            "eventId": 10,
+            "kind": "ww-actuate"
+          },
+          {
+            "eventId": 11,
+            "kind": "ww-actuate"
+          },
+          {
+            "eventId": 12,
+            "kind": "ww-actuate"
+          }
+        ]
+      },
+      "errors": {
+        "exceptions": [],
+        "consoleErrors": [],
+        "logErrors": [],
+        "total": 0
+      },
+      "environment": {
+        "renderer": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "viewport": "1472x1008"
+      },
+      "notes": [],
+      "midTelemetry": {
+        "status": "running",
+        "tel": {
+          "mode": "westworld",
+          "pressure": 0.459,
+          "heat": 0.124,
+          "charge": 8,
+          "total": 8,
+          "releases": 1,
+          "purges": 0,
+          "levels": {
+            "intake": 0.294,
+            "regulator": 0.605,
+            "reservoir": 0.545
+          },
+          "valves": {
+            "Read": 0,
+            "Edit": 0,
+            "Write": 0,
+            "Bash": 0.86,
+            "Search": 0
+          },
+          "needle": 0.4585433156231743,
+          "scan": 0,
+          "drive": 6.25,
+          "activeFamily": "Bash",
+          "progress": 0.18,
+          "queued": 4,
+          "stage": "ACTUATING",
+          "lastRelease": {
+            "index": 1,
+            "families": [
+              "Read",
+              "Edit",
+              "Write",
+              "Bash",
+              "Search"
+            ],
+            "ticket": "INTA · REGU · RESE · COMB · SCAN"
+          },
+          "lastPurge": 0,
+          "settled": 8,
+          "channels": {
+            "Read": {
+              "channel": "INTAKE",
+              "label": "INTAKE",
+              "cn": "进料",
+              "pressure": 0.07,
+              "heat": 0,
+              "level": 0,
+              "valve": 0.5,
+              "scan": 0.15,
+              "duration": 0.52,
+              "tint": "#425679"
+            },
+            "Edit": {
+              "channel": "REGULATOR",
+              "label": "REGULATOR",
+              "cn": "调压",
+              "pressure": 0.1,
+              "heat": 0.02,
+              "level": 0.13,
+              "valve": 0.75,
+              "scan": 0,
+              "duration": 0.6,
+              "tint": "#171C60"
+            },
+            "Write": {
+              "channel": "RESERVOIR",
+              "label": "RESERVOIR",
+              "cn": "蓄能",
+              "pressure": 0.13,
+              "heat": 0,
+              "level": 0.18,
+              "valve": 0.65,
+              "scan": 0,
+              "duration": 0.66,
+              "tint": "#1F8F92"
+            },
+            "Bash": {
+              "channel": "COMBUSTION",
+              "label": "COMBUSTION",
+              "cn": "燃烧",
+              "pressure": 0.22,
+              "heat": 0.26,
+              "level": 0,
+              "valve": 0.95,
+              "scan": 0,
+              "duration": 0.56,
+              "tint": "#A6513F"
+            },
+            "Search": {
+              "channel": "SCANNER",
+              "label": "SCANNER",
+              "cn": "扫描",
+              "pressure": 0.06,
+              "heat": 0.01,
+              "level": 0,
+              "valve": 0.4,
+              "scan": 1,
+              "duration": 0.46,
+              "tint": "#5F7A6B"
+            }
+          }
+        }
+      }
+    }
+  },
+  "uiSwitching": {
+    "query": "?deterministic=1&noauto=1 (UI visible)",
+    "status": "pass",
+    "checks": [
+      {
+        "id": "three mode tabs rendered",
+        "ok": true,
+        "detail": "[\"01Loom\",\"02Chips\",\"03Westworld\"]"
+      },
+      {
+        "id": "initial tab active is Loom (default mode)",
+        "ok": true,
+        "detail": "[{\"text\":\"01Loom\",\"active\":true},{\"text\":\"02Chips\",\"active\":false},{\"text\":\"03Westworld\",\"active\":false}]"
+      },
+      {
+        "id": "tab click switches to loom",
+        "ok": true,
+        "detail": "modeId=loom"
+      },
+      {
+        "id": "loom tab marked active",
+        "ok": true,
+        "detail": "active=01Loom"
+      },
+      {
+        "id": "loom still one canvas",
+        "ok": true,
+        "detail": "canvases=1"
+      },
+      {
+        "id": "loom UI responsive 1920x1080: canvas+no overflow",
+        "ok": true,
+        "detail": "{\"canvas\":{\"w\":1920,\"h\":1080},\"inner\":{\"w\":1920,\"h\":1080},\"overflow\":{\"scrollW\":1920,\"scrollH\":1080},\"canvases\":1}"
+      },
+      {
+        "id": "loom UI responsive 768x1024: canvas+no overflow",
+        "ok": true,
+        "detail": "{\"canvas\":{\"w\":768,\"h\":1024},\"inner\":{\"w\":768,\"h\":1024},\"overflow\":{\"scrollW\":768,\"scrollH\":1024},\"canvases\":1}"
+      },
+      {
+        "id": "tab click switches to chips",
+        "ok": true,
+        "detail": "modeId=chips"
+      },
+      {
+        "id": "chips tab marked active",
+        "ok": true,
+        "detail": "active=02Chips"
+      },
+      {
+        "id": "chips still one canvas",
+        "ok": true,
+        "detail": "canvases=1"
+      },
+      {
+        "id": "chips UI responsive 1920x1080: canvas+no overflow",
+        "ok": true,
+        "detail": "{\"canvas\":{\"w\":1920,\"h\":1080},\"inner\":{\"w\":1920,\"h\":1080},\"overflow\":{\"scrollW\":1920,\"scrollH\":1080},\"canvases\":1}"
+      },
+      {
+        "id": "chips UI responsive 768x1024: canvas+no overflow",
+        "ok": true,
+        "detail": "{\"canvas\":{\"w\":768,\"h\":1024},\"inner\":{\"w\":768,\"h\":1024},\"overflow\":{\"scrollW\":768,\"scrollH\":1024},\"canvases\":1}"
+      },
+      {
+        "id": "tab click switches to westworld",
+        "ok": true,
+        "detail": "modeId=westworld"
+      },
+      {
+        "id": "westworld tab marked active",
+        "ok": true,
+        "detail": "active=03Westworld"
+      },
+      {
+        "id": "westworld still one canvas",
+        "ok": true,
+        "detail": "canvases=1"
+      },
+      {
+        "id": "westworld UI responsive 1920x1080: canvas+no overflow",
+        "ok": true,
+        "detail": "{\"canvas\":{\"w\":1920,\"h\":1080},\"inner\":{\"w\":1920,\"h\":1080},\"overflow\":{\"scrollW\":1920,\"scrollH\":1080},\"canvases\":1}"
+      },
+      {
+        "id": "westworld UI responsive 768x1024: canvas+no overflow",
+        "ok": true,
+        "detail": "{\"canvas\":{\"w\":768,\"h\":1024},\"inner\":{\"w\":768,\"h\":1024},\"overflow\":{\"scrollW\":768,\"scrollH\":1024},\"canvases\":1}"
+      },
+      {
+        "id": "sequence: could re-enter Loom tab",
+        "ok": true,
+        "detail": "{\"clicked\":true,\"label\":\"01Loom\"}"
+      },
+      {
+        "id": "sequence: Loom accumulated 12 picks before switching",
+        "ok": true,
+        "detail": "picks=12"
+      },
+      {
+        "id": "sequence: one canvas while weaving",
+        "ok": true,
+        "detail": "canvases=1"
+      },
+      {
+        "id": "sequence: switch 2 to chips",
+        "ok": true,
+        "detail": "modeId=chips"
+      },
+      {
+        "id": "sequence: chips keeps single canvas",
+        "ok": true,
+        "detail": "canvases=1"
+      },
+      {
+        "id": "sequence: switch 3 to westworld",
+        "ok": true,
+        "detail": "modeId=westworld"
+      },
+      {
+        "id": "sequence: westworld keeps single canvas",
+        "ok": true,
+        "detail": "canvases=1"
+      },
+      {
+        "id": "sequence: switch 4 to loom",
+        "ok": true,
+        "detail": "modeId=loom"
+      },
+      {
+        "id": "sequence: loom keeps single canvas",
+        "ok": true,
+        "detail": "canvases=1"
+      },
+      {
+        "id": "sequence: back on Loom after full round-trip",
+        "ok": true,
+        "detail": "modeId=loom"
+      },
+      {
+        "id": "sequence: Loom picks survived switching away and back",
+        "ok": true,
+        "detail": "before=12 after=12"
+      },
+      {
+        "id": "sequence: Loom HUD PICKS still 12 after return",
+        "ok": true,
+        "detail": "HUD PICKS=12"
+      },
+      {
+        "id": "sequence: engine event log unchanged by switching",
+        "ok": true,
+        "detail": "events=12"
+      },
+      {
+        "id": "chips: switched away to Loom and back",
+        "ok": true,
+        "detail": "modeId=chips"
+      },
+      {
+        "id": "chips: accumulated table telemetry unchanged across switching",
+        "ok": true,
+        "detail": "before={\"mode\":\"chips\",\"stage\":\"idle\",\"stageLabel\":\"IN HAND\",\"handNo\":3,\"handInAnte\":3,\"ante\":1,\"score\":926,\"chips\":92,\"globalMult\":1,\"quota\":1160,\"deckLeft\":33,\"queued\":0,\"hand\":[{\"id\":11,\"family\":\"Read\",\"rank\":9,\"edition\":\"pl after={\"mode\":\"chips\",\"stage\":\"idle\",\"stageLabel\":\"IN HAND\",\"handNo\":3,\"handInAnte\":3,\"ante\":1,\"score\":926,\"chips\":92,\"globalMult\":1,\"quota\":1160,\"deckLeft\":33,\"queued\":0,\"hand\":[{\"id\":11,\"family\":\"Read\",\"rank\":9,\"edition\":\"pl"
+      },
+      {
+        "id": "chips: hand cards preserved across switching",
+        "ok": true,
+        "detail": "hand=[{\"id\":11,\"family\":\"Read\",\"rank\":9,\"edition\":\"plain\"},{\"id\":12,\"family\":\"Edit\",\"rank\":8,\"edition\":\"plain\"}] totalDealt=12"
+      },
+      {
+        "id": "tab switching: zero uncaught exceptions",
+        "ok": true,
+        "detail": "[]"
+      },
+      {
+        "id": "tab switching: zero console errors",
+        "ok": true,
+        "detail": "[]"
+      }
+    ],
+    "screenshots": {
+      "switch-loom": {
+        "file": "review/v2/wip-all/shots/switch-loom.png",
+        "sha256": "2ada329350405344140edd4c4fb0e7b4d71b5fadcc19595bfc695a956deb4dc1"
+      },
+      "switch-loom-1920": {
+        "file": "review/v2/wip-all/shots/switch-loom-1920.png",
+        "sha256": "335efcb9ee6af40ca5288b45cf5dc5355ab56121a6251002e97a3a77fd992d0d"
+      },
+      "switch-loom-768": {
+        "file": "review/v2/wip-all/shots/switch-loom-768.png",
+        "sha256": "3864e006e1924eac5e8ca86e4448ade05249e022a73fbe6a091f81b1544ea7b5"
+      },
+      "switch-chips": {
+        "file": "review/v2/wip-all/shots/switch-chips.png",
+        "sha256": "f012844aee9315719116a9df53973e41b5ba36192ca45497e6a8294ef5bc0d43"
+      },
+      "switch-chips-1920": {
+        "file": "review/v2/wip-all/shots/switch-chips-1920.png",
+        "sha256": "c2e253575b904f3c01dea302d08cc7693d91602af6c42ac28f4ae5098fc865c7"
+      },
+      "switch-chips-768": {
+        "file": "review/v2/wip-all/shots/switch-chips-768.png",
+        "sha256": "dfb06b7dd919171304a432b6c4255aad72a200283667e26691e77f90f20f98c5"
+      },
+      "switch-westworld": {
+        "file": "review/v2/wip-all/shots/switch-westworld.png",
+        "sha256": "2ac09401e126da0fce9a34d2d157d393ad5f99a8036dcea7f8f423017a5bde58"
+      },
+      "switch-westworld-1920": {
+        "file": "review/v2/wip-all/shots/switch-westworld-1920.png",
+        "sha256": "0ed342d88213e95ff5a2b75f96a17d1a56915679548de6baf58c1a3dd5627d8c"
+      },
+      "switch-westworld-768": {
+        "file": "review/v2/wip-all/shots/switch-westworld-768.png",
+        "sha256": "9016f9ee5ddb63562d463358d323dc660181d39b62c6051d500657008ff32158"
+      },
+      "sequence-1-loom-woven": {
+        "file": "review/v2/wip-all/shots/sequence-1-loom-woven.png",
+        "sha256": "70a76176a27f3ded985e0b4a3d904522457f435655f191326eda19a653cde654"
+      },
+      "sequence-2-chips": {
+        "file": "review/v2/wip-all/shots/sequence-2-chips.png",
+        "sha256": "5a62892d61be847c6709301edc011546b6f08ceecbabebedf006219ff3d71291"
+      },
+      "sequence-3-westworld": {
+        "file": "review/v2/wip-all/shots/sequence-3-westworld.png",
+        "sha256": "d11576824beb2b534d92d917475b609737fcd7fb356a21adfb739e72bf3d62e2"
+      },
+      "sequence-4-loom": {
+        "file": "review/v2/wip-all/shots/sequence-4-loom.png",
+        "sha256": "3703033643380a78ab60a03ce6a523e4f98cf430ca75e98ab4d5b61597238b37"
+      },
+      "sequence-5-chips-settled": {
+        "file": "review/v2/wip-all/shots/sequence-5-chips-settled.png",
+        "sha256": "e4f8b4fef651101872b6945468d301512b250858c8cce0f536708b63c54e1b5e"
+      },
+      "sequence-6-chips-return": {
+        "file": "review/v2/wip-all/shots/sequence-6-chips-return.png",
+        "sha256": "17cc080a0e4ff23cfb38df4ae054e85fa4b96d0599560b47d578c4052475ef54"
+      }
+    },
+    "tabClicks": [
+      {
+        "mode": "loom",
+        "click": {
+          "clicked": true,
+          "label": "01Loom"
+        },
+        "statusModeId": "loom",
+        "activeTab": "01Loom",
+        "caption": "Loom",
+        "stub": null
+      },
+      {
+        "mode": "chips",
+        "click": {
+          "clicked": true,
+          "label": "02Chips"
+        },
+        "statusModeId": "chips",
+        "activeTab": "02Chips",
+        "caption": "Chips",
+        "stub": null
+      },
+      {
+        "mode": "westworld",
+        "click": {
+          "clicked": true,
+          "label": "03Westworld"
+        },
+        "statusModeId": "westworld",
+        "activeTab": "03Westworld",
+        "caption": "Westworld",
+        "stub": null
+      }
+    ],
+    "sequence": [
+      {
+        "step": 1,
+        "mode": "loom",
+        "modeId": "loom",
+        "picks": 12,
+        "events": 12,
+        "screenshot": {
+          "file": "review/v2/wip-all/shots/sequence-1-loom-woven.png",
+          "sha256": "70a76176a27f3ded985e0b4a3d904522457f435655f191326eda19a653cde654"
+        }
+      },
+      {
+        "step": 2,
+        "mode": "chips",
+        "modeId": "chips",
+        "events": 12,
+        "screenshot": {
+          "file": "review/v2/wip-all/shots/sequence-2-chips.png",
+          "sha256": "5a62892d61be847c6709301edc011546b6f08ceecbabebedf006219ff3d71291"
+        }
+      },
+      {
+        "step": 3,
+        "mode": "westworld",
+        "modeId": "westworld",
+        "events": 12,
+        "screenshot": {
+          "file": "review/v2/wip-all/shots/sequence-3-westworld.png",
+          "sha256": "d11576824beb2b534d92d917475b609737fcd7fb356a21adfb739e72bf3d62e2"
+        }
+      },
+      {
+        "step": 4,
+        "mode": "loom",
+        "modeId": "loom",
+        "events": 12,
+        "screenshot": {
+          "file": "review/v2/wip-all/shots/sequence-4-loom.png",
+          "sha256": "3703033643380a78ab60a03ce6a523e4f98cf430ca75e98ab4d5b61597238b37"
+        }
+      }
+    ],
+    "errors": {
+      "exceptions": [],
+      "consoleErrors": [],
+      "logErrors": [],
+      "total": 0
+    },
+    "environment": {
+      "renderer": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "viewport": "1472x1008"
+    },
+    "root": ".tmp/dist-westworld",
+    "persistence": {
+      "picksBefore": 12,
+      "picksAfter": 12,
+      "events": 12,
+      "modeId": "loom",
+      "hudPicks": "12"
+    },
+    "chipsPersistence": {
+      "before": {
+        "mode": "chips",
+        "stage": "idle",
+        "stageLabel": "IN HAND",
+        "handNo": 3,
+        "handInAnte": 3,
+        "ante": 1,
+        "score": 926,
+        "chips": 92,
+        "globalMult": 1,
+        "quota": 1160,
+        "deckLeft": 33,
+        "queued": 0,
+        "hand": [
+          {
+            "id": 11,
+            "family": "Read",
+            "rank": 9,
+            "edition": "plain"
+          },
+          {
+            "id": 12,
+            "family": "Edit",
+            "rank": 8,
+            "edition": "plain"
+          }
+        ],
+        "lastCombo": "HIGH_CARD",
+        "lastLabel": "HIGH CARD",
+        "lastHandChips": 326,
+        "lastTotalMult": 1.25,
+        "lastScore": 408,
+        "lastGained": 408,
+        "heat": 0,
+        "resolvedHands": 2,
+        "successHands": 0,
+        "missHands": 2,
+        "sponsorLevel": 0,
+        "totalDealt": 12
+      },
+      "after": {
+        "mode": "chips",
+        "stage": "idle",
+        "stageLabel": "IN HAND",
+        "handNo": 3,
+        "handInAnte": 3,
+        "ante": 1,
+        "score": 926,
+        "chips": 92,
+        "globalMult": 1,
+        "quota": 1160,
+        "deckLeft": 33,
+        "queued": 0,
+        "hand": [
+          {
+            "id": 11,
+            "family": "Read",
+            "rank": 9,
+            "edition": "plain"
+          },
+          {
+            "id": 12,
+            "family": "Edit",
+            "rank": 8,
+            "edition": "plain"
+          }
+        ],
+        "lastCombo": "HIGH_CARD",
+        "lastLabel": "HIGH CARD",
+        "lastHandChips": 326,
+        "lastTotalMult": 1.25,
+        "lastScore": 408,
+        "lastGained": 408,
+        "heat": 0,
+        "resolvedHands": 2,
+        "successHands": 0,
+        "missHands": 2,
+        "sponsorLevel": 0,
+        "totalDealt": 12
+      },
+      "modeIdBefore": "chips",
+      "modeIdAfter": "chips",
+      "screenshotBefore": {
+        "file": "review/v2/wip-all/shots/sequence-5-chips-settled.png",
+        "sha256": "e4f8b4fef651101872b6945468d301512b250858c8cce0f536708b63c54e1b5e"
+      },
+      "screenshotAfter": {
+        "file": "review/v2/wip-all/shots/sequence-6-chips-return.png",
+        "sha256": "17cc080a0e4ff23cfb38df4ae054e85fa4b96d0599560b47d578c4052475ef54"
+      }
+    }
+  },
+  "summary": {
+    "statuses": {
+      "loom": "pass",
+      "chips": "pass",
+      "westworld": "pass"
+    },
+    "ui": "pass",
+    "checks": 129,
+    "skipped": 0,
+    "failures": 0,
+    "failureIds": [],
+    "pass": true,
+    "partial": false,
+    "finishedAt": "2026-11-16T04:06:59.736Z",
+    "durationSeconds": 26.951
+  },
+  "limitations": [],
+  "crossMode": {
+    "idleHashes": [
+      {
+        "mode": "loom",
+        "hash": "8cb6a90b65d825aae93a5dbe35f528a275bf9ffab646e6a66f59a0db466c3baa",
+        "stub": false
+      },
+      {
+        "mode": "chips",
+        "hash": "a550c0f961cd9c713fbba2b2841f1faeb5f760487decc0abb7d71c46f01c08a8",
+        "stub": false
+      },
+      {
+        "mode": "westworld",
+        "hash": "c54455d37c9dfc9771bfc892d27f8ba18ac3c19d30c9edb0024c0139c337336a",
+        "stub": false
+      }
+    ],
+    "distinctRealWorlds": true,
+    "duplicates": []
+  },
+  "audioNote": "Audio beats are captured from AudioEngine.markBeat only when an AudioContext exists; beat audioTime/wallTime are wall-clock and therefore excluded from determinism claims."
+}

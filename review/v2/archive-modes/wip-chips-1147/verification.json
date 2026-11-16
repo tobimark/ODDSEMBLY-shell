@@ -1,0 +1,672 @@
+{
+  "schema": "kunlunmeta-v2-verification/1",
+  "generatedAt": "2026-11-16T04:04:09.798Z",
+  "node": "v22.22.2",
+  "command": "node scripts/verify-v2.mjs --modes=chips --root-chips=.tmp/dist-chips --out=review/v2/wip-chips-1147 --port=4590",
+  "roots": {
+    "chips": ".tmp/dist-chips"
+  },
+  "fixture": {
+    "events": 12,
+    "types": [
+      "Read",
+      "Edit",
+      "Write",
+      "Bash",
+      "Search",
+      "Read",
+      "Edit",
+      "Write",
+      "Bash",
+      "Search",
+      "Read",
+      "Edit"
+    ],
+    "tickDt": 0.1,
+    "viewport": "1472x1008"
+  },
+  "modes": {
+    "chips": {
+      "mode": "chips",
+      "label": "Chips",
+      "root": ".tmp/dist-chips",
+      "query": "?mode=chips&deterministic=1&noauto=1&ui=0",
+      "status": "pass",
+      "stub": null,
+      "checks": [
+        {
+          "id": "engine bridge exposed",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "id": "exactly one canvas",
+          "ok": true,
+          "detail": "canvases=1"
+        },
+        {
+          "id": "no fatal overlay",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "id": "modeId matches query",
+          "ok": true,
+          "detail": "mode=chips"
+        },
+        {
+          "id": "initial state idle (noauto)",
+          "ok": true,
+          "detail": "state=idle"
+        },
+        {
+          "id": "engine clock at 0",
+          "ok": true,
+          "detail": "time=0"
+        },
+        {
+          "id": "canvas fills viewport",
+          "ok": true,
+          "detail": "{\"w\":1472,\"h\":1008,\"bw\":1472,\"bh\":1008}"
+        },
+        {
+          "id": "no document overflow",
+          "ok": true,
+          "detail": "{\"scrollW\":1472,\"scrollH\":1008}"
+        },
+        {
+          "id": "AudioContext created",
+          "ok": true,
+          "detail": "state=running"
+        },
+        {
+          "id": "engine received 12 events",
+          "ok": true,
+          "detail": "events=12"
+        },
+        {
+          "id": "engine clock advanced",
+          "ok": true,
+          "detail": "virtualTime=20.00s (status time is publish-throttled: 11.10s)"
+        },
+        {
+          "id": "event counts sum to 12",
+          "ok": true,
+          "detail": "{\"Read\":3,\"Edit\":3,\"Write\":2,\"Bash\":2,\"Search\":2}"
+        },
+        {
+          "id": "no replay loaded in burst pass",
+          "ok": true,
+          "detail": "null"
+        },
+        {
+          "id": "mode queue drained",
+          "ok": true,
+          "detail": "queued=0"
+        },
+        {
+          "id": "totalDealt === 12",
+          "ok": true,
+          "detail": "totalDealt=12"
+        },
+        {
+          "id": "resolvedHands === 2",
+          "ok": true,
+          "detail": "resolvedHands=2"
+        },
+        {
+          "id": "score > 0",
+          "ok": true,
+          "detail": "score=926"
+        },
+        {
+          "id": "queue empty",
+          "ok": true,
+          "detail": "queued=0"
+        },
+        {
+          "id": "stage settled (idle/holding)",
+          "ok": true,
+          "detail": "stage=idle stageLabel=IN HAND"
+        },
+        {
+          "id": "12 chips-deal beat marks in order",
+          "ok": true,
+          "detail": "deal=[1,2,3,4,5,6,7,8,9,10,11,12] cashMarks=0"
+        },
+        {
+          "id": "audio beats cover events 1..12",
+          "ok": true,
+          "detail": "eventIds=[1,2,3,4,5,6,7,8,9,10,11,12] bookkeeping=[]"
+        },
+        {
+          "id": "AudioContext running",
+          "ok": true,
+          "detail": "state=running"
+        },
+        {
+          "id": "responsive 1920x1080: single canvas",
+          "ok": true,
+          "detail": "canvases=1"
+        },
+        {
+          "id": "responsive 1920x1080: canvas fills viewport",
+          "ok": true,
+          "detail": "{\"w\":1920,\"h\":1080}"
+        },
+        {
+          "id": "responsive 1920x1080: no overflow",
+          "ok": true,
+          "detail": "{\"scrollW\":1920,\"scrollH\":1080}"
+        },
+        {
+          "id": "responsive 768x1024: single canvas",
+          "ok": true,
+          "detail": "canvases=1"
+        },
+        {
+          "id": "responsive 768x1024: canvas fills viewport",
+          "ok": true,
+          "detail": "{\"w\":768,\"h\":1024}"
+        },
+        {
+          "id": "responsive 768x1024: no overflow",
+          "ok": true,
+          "detail": "{\"scrollW\":768,\"scrollH\":1024}"
+        },
+        {
+          "id": "zero uncaught exceptions",
+          "ok": true,
+          "detail": "[]"
+        },
+        {
+          "id": "zero console errors",
+          "ok": true,
+          "detail": "[]"
+        },
+        {
+          "id": "zero browser log errors",
+          "ok": true,
+          "detail": "[]"
+        }
+      ],
+      "screenshots": {
+        "idle": {
+          "file": "review/v2/wip-chips-1147/shots/chips-idle.png",
+          "sha256": "a550c0f961cd9c713fbba2b2841f1faeb5f760487decc0abb7d71c46f01c08a8"
+        },
+        "burst": {
+          "file": "review/v2/wip-chips-1147/shots/chips-burst.png",
+          "sha256": "ba4a5d3fe0011da2e806ce1066701e2183cb7cf1dbfd1fe3f194b7f61361446e"
+        },
+        "settled": {
+          "file": "review/v2/wip-chips-1147/shots/chips-settled.png",
+          "sha256": "ebc73e7d6c21b7c94c85a718845c974cd1cb3517c7f17a8675c757bd09cd7493"
+        },
+        "responsive-1920": {
+          "file": "review/v2/wip-chips-1147/shots/chips-1920.png",
+          "sha256": "bac43d8f5a65fd4e656e0efbd475549fdbbcc62a74dbdc9bde05eae62568751a"
+        },
+        "responsive-768": {
+          "file": "review/v2/wip-chips-1147/shots/chips-768.png",
+          "sha256": "a07823abe3710fe3d146c17b374f58cd8fb54f2d75079ed97dc06c704acef60f"
+        }
+      },
+      "hashes": {
+        "idle": "a550c0f961cd9c713fbba2b2841f1faeb5f760487decc0abb7d71c46f01c08a8",
+        "burst": "ba4a5d3fe0011da2e806ce1066701e2183cb7cf1dbfd1fe3f194b7f61361446e",
+        "settled": "ebc73e7d6c21b7c94c85a718845c974cd1cb3517c7f17a8675c757bd09cd7493",
+        "responsive-1920": "bac43d8f5a65fd4e656e0efbd475549fdbbcc62a74dbdc9bde05eae62568751a",
+        "responsive-768": "a07823abe3710fe3d146c17b374f58cd8fb54f2d75079ed97dc06c704acef60f"
+      },
+      "telemetry": {
+        "time": 20.000000000000014,
+        "state": "running",
+        "mode": "chips",
+        "events": 12,
+        "replay": null,
+        "modes": {
+          "chips": {
+            "mode": "chips",
+            "stage": "idle",
+            "stageLabel": "IN HAND",
+            "handNo": 3,
+            "handInAnte": 3,
+            "ante": 1,
+            "score": 926,
+            "chips": 92,
+            "globalMult": 1,
+            "quota": 1160,
+            "deckLeft": 33,
+            "queued": 0,
+            "hand": [
+              {
+                "id": 11,
+                "family": "Read",
+                "rank": 9,
+                "edition": "plain"
+              },
+              {
+                "id": 12,
+                "family": "Edit",
+                "rank": 8,
+                "edition": "plain"
+              }
+            ],
+            "lastCombo": "HIGH_CARD",
+            "lastLabel": "HIGH CARD",
+            "lastHandChips": 326,
+            "lastTotalMult": 1.25,
+            "lastScore": 408,
+            "lastGained": 408,
+            "heat": 0,
+            "resolvedHands": 2,
+            "successHands": 0,
+            "missHands": 2,
+            "sponsorLevel": 0,
+            "totalDealt": 12
+          }
+        }
+      },
+      "modeTelemetry": {
+        "mode": "chips",
+        "stage": "idle",
+        "stageLabel": "IN HAND",
+        "handNo": 3,
+        "handInAnte": 3,
+        "ante": 1,
+        "score": 926,
+        "chips": 92,
+        "globalMult": 1,
+        "quota": 1160,
+        "deckLeft": 33,
+        "queued": 0,
+        "hand": [
+          {
+            "id": 11,
+            "family": "Read",
+            "rank": 9,
+            "edition": "plain"
+          },
+          {
+            "id": 12,
+            "family": "Edit",
+            "rank": 8,
+            "edition": "plain"
+          }
+        ],
+        "lastCombo": "HIGH_CARD",
+        "lastLabel": "HIGH CARD",
+        "lastHandChips": 326,
+        "lastTotalMult": 1.25,
+        "lastScore": 408,
+        "lastGained": 408,
+        "heat": 0,
+        "resolvedHands": 2,
+        "successHands": 0,
+        "missHands": 2,
+        "sponsorLevel": 0,
+        "totalDealt": 12
+      },
+      "audio": {
+        "state": "running",
+        "beatCount": 12,
+        "beats": [
+          {
+            "eventId": 1,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 2,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 3,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 4,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 5,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 6,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 7,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 8,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 9,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 10,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 11,
+            "kind": "chips-deal"
+          },
+          {
+            "eventId": 12,
+            "kind": "chips-deal"
+          }
+        ]
+      },
+      "errors": {
+        "exceptions": [],
+        "consoleErrors": [],
+        "logErrors": [],
+        "total": 0
+      },
+      "environment": {
+        "renderer": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "viewport": "1472x1008"
+      },
+      "notes": [],
+      "midTelemetry": {
+        "status": "running",
+        "tel": {
+          "mode": "chips",
+          "stage": "sweep",
+          "stageLabel": "SWEEPING",
+          "handNo": 1,
+          "handInAnte": 1,
+          "ante": 1,
+          "score": 518,
+          "chips": 51,
+          "globalMult": 1,
+          "quota": 640,
+          "deckLeft": 40,
+          "queued": 7,
+          "hand": [
+            {
+              "id": 1,
+              "family": "Read",
+              "rank": 3,
+              "edition": "plain"
+            },
+            {
+              "id": 2,
+              "family": "Edit",
+              "rank": 8,
+              "edition": "plain"
+            },
+            {
+              "id": 3,
+              "family": "Write",
+              "rank": 6,
+              "edition": "plain"
+            },
+            {
+              "id": 4,
+              "family": "Bash",
+              "rank": 9,
+              "edition": "plain"
+            },
+            {
+              "id": 5,
+              "family": "Search",
+              "rank": 7,
+              "edition": "plain"
+            }
+          ],
+          "lastCombo": "HIGH_CARD",
+          "lastLabel": "HIGH CARD",
+          "lastHandChips": 414,
+          "lastTotalMult": 1.25,
+          "lastScore": 518,
+          "lastGained": 518,
+          "heat": 1,
+          "resolvedHands": 1,
+          "successHands": 0,
+          "missHands": 1,
+          "sponsorLevel": 0,
+          "totalDealt": 10
+        }
+      }
+    }
+  },
+  "uiSwitching": {
+    "query": "?deterministic=1&noauto=1 (UI visible)",
+    "status": "pass",
+    "checks": [
+      {
+        "id": "three mode tabs rendered",
+        "ok": true,
+        "detail": "[\"01Loom\",\"02Chips\",\"03Westworld\"]"
+      },
+      {
+        "id": "initial tab active is Loom (default mode)",
+        "ok": true,
+        "detail": "[{\"text\":\"01Loom\",\"active\":true},{\"text\":\"02Chips\",\"active\":false},{\"text\":\"03Westworld\",\"active\":false}]"
+      },
+      {
+        "id": "tab click switches to chips",
+        "ok": true,
+        "detail": "modeId=chips"
+      },
+      {
+        "id": "chips tab marked active",
+        "ok": true,
+        "detail": "active=02Chips"
+      },
+      {
+        "id": "chips still one canvas",
+        "ok": true,
+        "detail": "canvases=1"
+      },
+      {
+        "id": "chips UI responsive 1920x1080: canvas+no overflow",
+        "ok": true,
+        "detail": "{\"canvas\":{\"w\":1920,\"h\":1080},\"inner\":{\"w\":1920,\"h\":1080},\"overflow\":{\"scrollW\":1920,\"scrollH\":1080},\"canvases\":1}"
+      },
+      {
+        "id": "chips UI responsive 768x1024: canvas+no overflow",
+        "ok": true,
+        "detail": "{\"canvas\":{\"w\":768,\"h\":1024},\"inner\":{\"w\":768,\"h\":1024},\"overflow\":{\"scrollW\":768,\"scrollH\":1024},\"canvases\":1}"
+      },
+      {
+        "id": "chips: switched away to Loom and back",
+        "ok": true,
+        "detail": "modeId=chips"
+      },
+      {
+        "id": "chips: accumulated table telemetry unchanged across switching",
+        "ok": true,
+        "detail": "before={\"mode\":\"chips\",\"stage\":\"idle\",\"stageLabel\":\"IN HAND\",\"handNo\":3,\"handInAnte\":3,\"ante\":1,\"score\":926,\"chips\":92,\"globalMult\":1,\"quota\":1160,\"deckLeft\":33,\"queued\":0,\"hand\":[{\"id\":11,\"family\":\"Read\",\"rank\":9,\"edition\":\"pl after={\"mode\":\"chips\",\"stage\":\"idle\",\"stageLabel\":\"IN HAND\",\"handNo\":3,\"handInAnte\":3,\"ante\":1,\"score\":926,\"chips\":92,\"globalMult\":1,\"quota\":1160,\"deckLeft\":33,\"queued\":0,\"hand\":[{\"id\":11,\"family\":\"Read\",\"rank\":9,\"edition\":\"pl"
+      },
+      {
+        "id": "chips: hand cards preserved across switching",
+        "ok": true,
+        "detail": "hand=[{\"id\":11,\"family\":\"Read\",\"rank\":9,\"edition\":\"plain\"},{\"id\":12,\"family\":\"Edit\",\"rank\":8,\"edition\":\"plain\"}] totalDealt=12"
+      },
+      {
+        "id": "tab switching: zero uncaught exceptions",
+        "ok": true,
+        "detail": "[]"
+      },
+      {
+        "id": "tab switching: zero console errors",
+        "ok": true,
+        "detail": "[]"
+      }
+    ],
+    "screenshots": {
+      "switch-chips": {
+        "file": "review/v2/wip-chips-1147/shots/switch-chips.png",
+        "sha256": "f012844aee9315719116a9df53973e41b5ba36192ca45497e6a8294ef5bc0d43"
+      },
+      "switch-chips-1920": {
+        "file": "review/v2/wip-chips-1147/shots/switch-chips-1920.png",
+        "sha256": "c2e253575b904f3c01dea302d08cc7693d91602af6c42ac28f4ae5098fc865c7"
+      },
+      "switch-chips-768": {
+        "file": "review/v2/wip-chips-1147/shots/switch-chips-768.png",
+        "sha256": "dfb06b7dd919171304a432b6c4255aad72a200283667e26691e77f90f20f98c5"
+      },
+      "sequence-5-chips-settled": {
+        "file": "review/v2/wip-chips-1147/shots/sequence-5-chips-settled.png",
+        "sha256": "20258303d7af6d78ec90cda6cf9505c64934ed2252a125ad48aa586870b85e4a"
+      },
+      "sequence-6-chips-return": {
+        "file": "review/v2/wip-chips-1147/shots/sequence-6-chips-return.png",
+        "sha256": "6db6792783316d064ff25010c5ba4e7e4f2f8ae6a06aca665a1a86171197ba3d"
+      }
+    },
+    "tabClicks": [
+      {
+        "mode": "chips",
+        "click": {
+          "clicked": true,
+          "label": "02Chips"
+        },
+        "statusModeId": "chips",
+        "activeTab": "02Chips",
+        "caption": "Chips",
+        "stub": null
+      }
+    ],
+    "sequence": [],
+    "errors": {
+      "exceptions": [],
+      "consoleErrors": [],
+      "logErrors": [],
+      "total": 0
+    },
+    "environment": {
+      "renderer": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "viewport": "1472x1008"
+    },
+    "root": ".tmp/dist-chips",
+    "chipsPersistence": {
+      "before": {
+        "mode": "chips",
+        "stage": "idle",
+        "stageLabel": "IN HAND",
+        "handNo": 3,
+        "handInAnte": 3,
+        "ante": 1,
+        "score": 926,
+        "chips": 92,
+        "globalMult": 1,
+        "quota": 1160,
+        "deckLeft": 33,
+        "queued": 0,
+        "hand": [
+          {
+            "id": 11,
+            "family": "Read",
+            "rank": 9,
+            "edition": "plain"
+          },
+          {
+            "id": 12,
+            "family": "Edit",
+            "rank": 8,
+            "edition": "plain"
+          }
+        ],
+        "lastCombo": "HIGH_CARD",
+        "lastLabel": "HIGH CARD",
+        "lastHandChips": 326,
+        "lastTotalMult": 1.25,
+        "lastScore": 408,
+        "lastGained": 408,
+        "heat": 0,
+        "resolvedHands": 2,
+        "successHands": 0,
+        "missHands": 2,
+        "sponsorLevel": 0,
+        "totalDealt": 12
+      },
+      "after": {
+        "mode": "chips",
+        "stage": "idle",
+        "stageLabel": "IN HAND",
+        "handNo": 3,
+        "handInAnte": 3,
+        "ante": 1,
+        "score": 926,
+        "chips": 92,
+        "globalMult": 1,
+        "quota": 1160,
+        "deckLeft": 33,
+        "queued": 0,
+        "hand": [
+          {
+            "id": 11,
+            "family": "Read",
+            "rank": 9,
+            "edition": "plain"
+          },
+          {
+            "id": 12,
+            "family": "Edit",
+            "rank": 8,
+            "edition": "plain"
+          }
+        ],
+        "lastCombo": "HIGH_CARD",
+        "lastLabel": "HIGH CARD",
+        "lastHandChips": 326,
+        "lastTotalMult": 1.25,
+        "lastScore": 408,
+        "lastGained": 408,
+        "heat": 0,
+        "resolvedHands": 2,
+        "successHands": 0,
+        "missHands": 2,
+        "sponsorLevel": 0,
+        "totalDealt": 12
+      },
+      "modeIdBefore": "chips",
+      "modeIdAfter": "chips",
+      "screenshotBefore": {
+        "file": "review/v2/wip-chips-1147/shots/sequence-5-chips-settled.png",
+        "sha256": "20258303d7af6d78ec90cda6cf9505c64934ed2252a125ad48aa586870b85e4a"
+      },
+      "screenshotAfter": {
+        "file": "review/v2/wip-chips-1147/shots/sequence-6-chips-return.png",
+        "sha256": "6db6792783316d064ff25010c5ba4e7e4f2f8ae6a06aca665a1a86171197ba3d"
+      }
+    }
+  },
+  "summary": {
+    "statuses": {
+      "chips": "pass"
+    },
+    "ui": "pass",
+    "checks": 43,
+    "skipped": 0,
+    "failures": 0,
+    "failureIds": [],
+    "pass": true,
+    "partial": false,
+    "finishedAt": "2026-11-16T04:04:20.706Z",
+    "durationSeconds": 10.908
+  },
+  "limitations": [],
+  "crossMode": {
+    "idleHashes": [
+      {
+        "mode": "chips",
+        "hash": "a550c0f961cd9c713fbba2b2841f1faeb5f760487decc0abb7d71c46f01c08a8",
+        "stub": false
+      }
+    ],
+    "distinctRealWorlds": true,
+    "duplicates": [],
+    "note": "fewer than two implemented worlds — distinctness not applicable yet"
+  },
+  "audioNote": "Audio beats are captured from AudioEngine.markBeat only when an AudioContext exists; beat audioTime/wallTime are wall-clock and therefore excluded from determinism claims."
+}

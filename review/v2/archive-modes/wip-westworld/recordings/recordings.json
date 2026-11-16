@@ -1,0 +1,415 @@
+{
+  "schema": "kunlunmeta-v2-recordings/1",
+  "generatedAt": "2026-11-16T04:02:41.056Z",
+  "command": "node scripts/record-v2.mjs --modes=westworld --root-westworld=.tmp/dist-westworld --out=review/v2/wip-westworld/recordings --port=4584",
+  "method": "canvas.captureStream(30) + AudioEngine.recordingStream audio track, MediaRecorder VP9/Opus, wall-clock engine.startReplay(), ffmpeg MP4 when available",
+  "ffmpeg": {
+    "command": "C:\\Users\\51159\\AppData\\Roaming\\Python\\Python312\\site-packages\\imageio_ffmpeg\\binaries\\ffmpeg-win-x86_64-v7.1.exe",
+    "version": "ffmpeg version 7.1-essentials_build-www.gyan.dev Copyright (c) 2000-2024 the FFmpeg developers",
+    "capabilities": {
+      "libx264": true,
+      "aac": true,
+      "vp9Decoder": true,
+      "opusDecoder": true
+    }
+  },
+  "modes": {
+    "westworld": {
+      "mode": "westworld",
+      "root": ".tmp/dist-westworld",
+      "status": "pass",
+      "session": {
+        "file": ".tmp/dist-westworld/replay/westworld-session.json",
+        "name": "westworld-session-12",
+        "lastAt": 5200,
+        "modeSpecific": true
+      },
+      "capture": {
+        "mime": "video/webm;codecs=vp9,opus",
+        "audioTracks": 1,
+        "videoTracks": 1,
+        "audioState": "running",
+        "replay": {
+          "loaded": true,
+          "cursor": 0,
+          "total": 12,
+          "done": false
+        }
+      },
+      "facts": {
+        "state": "running",
+        "events": 12,
+        "replay": {
+          "loaded": true,
+          "cursor": 12,
+          "total": 12,
+          "done": true
+        },
+        "engineTime": 26.23289999999981,
+        "modeTelemetry": {
+          "mode": "westworld",
+          "pressure": 0.283,
+          "heat": 0.04,
+          "charge": 12,
+          "total": 12,
+          "releases": 2,
+          "purges": 0,
+          "levels": {
+            "intake": 0.12,
+            "regulator": 0.712,
+            "reservoir": 0.621
+          },
+          "valves": {
+            "Read": 0,
+            "Edit": 0,
+            "Write": 0,
+            "Bash": 0,
+            "Search": 0
+          },
+          "needle": 0.2831056154982343,
+          "scan": 0,
+          "drive": 31.84,
+          "activeFamily": null,
+          "progress": 0,
+          "queued": 0,
+          "stage": "STABLE",
+          "lastRelease": {
+            "index": 2,
+            "families": [
+              "Search",
+              "Edit",
+              "Write",
+              "Bash",
+              "Edit"
+            ],
+            "ticket": "SCAN · REGU · RESE · COMB · REGU"
+          },
+          "lastPurge": 0,
+          "settled": 12,
+          "channels": {
+            "Read": {
+              "channel": "INTAKE",
+              "label": "INTAKE",
+              "cn": "进料",
+              "pressure": 0.07,
+              "heat": 0,
+              "level": 0,
+              "valve": 0.5,
+              "scan": 0.15,
+              "duration": 0.52,
+              "tint": "#425679"
+            },
+            "Edit": {
+              "channel": "REGULATOR",
+              "label": "REGULATOR",
+              "cn": "调压",
+              "pressure": 0.1,
+              "heat": 0.02,
+              "level": 0.13,
+              "valve": 0.75,
+              "scan": 0,
+              "duration": 0.6,
+              "tint": "#171C60"
+            },
+            "Write": {
+              "channel": "RESERVOIR",
+              "label": "RESERVOIR",
+              "cn": "蓄能",
+              "pressure": 0.13,
+              "heat": 0,
+              "level": 0.18,
+              "valve": 0.65,
+              "scan": 0,
+              "duration": 0.66,
+              "tint": "#1F8F92"
+            },
+            "Bash": {
+              "channel": "COMBUSTION",
+              "label": "COMBUSTION",
+              "cn": "燃烧",
+              "pressure": 0.22,
+              "heat": 0.26,
+              "level": 0,
+              "valve": 0.95,
+              "scan": 0,
+              "duration": 0.56,
+              "tint": "#A6513F"
+            },
+            "Search": {
+              "channel": "SCANNER",
+              "label": "SCANNER",
+              "cn": "扫描",
+              "pressure": 0.06,
+              "heat": 0.01,
+              "level": 0,
+              "valve": 0.4,
+              "scan": 1,
+              "duration": 0.46,
+              "tint": "#5F7A6B"
+            }
+          }
+        },
+        "audioState": "running",
+        "beatCount": 12,
+        "beatEventIds": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "stub": false
+      },
+      "raf": {
+        "frames": 1566,
+        "seconds": 26.345600000023843,
+        "meanFps": 59.02030072068879,
+        "p95FrameMs": 16.800000000000182,
+        "maxFrameMs": 183.39999999999986
+      },
+      "beats": {
+        "count": 12,
+        "eventIds": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "kinds": [
+          "ww-actuate",
+          "ww-actuate",
+          "ww-actuate",
+          "ww-actuate",
+          "ww-actuate",
+          "ww-actuate",
+          "ww-actuate",
+          "ww-actuate",
+          "ww-actuate",
+          "ww-actuate",
+          "ww-actuate",
+          "ww-actuate"
+        ]
+      },
+      "recording": {
+        "webm": "review/v2/wip-westworld/recordings/westworld-live.webm",
+        "webmBytes": 13122417,
+        "webmSha256": "865229692930eb4c27549cba0691ca1a4e2aaacd838e92aaa8aa14fca8109e37",
+        "mime": "video/webm;codecs=vp9,opus",
+        "mp4": "review/v2/wip-westworld/recordings/westworld-live.mp4",
+        "ffmpeg": {
+          "found": true,
+          "command": "C:\\Users\\51159\\AppData\\Roaming\\Python\\Python312\\site-packages\\imageio_ffmpeg\\binaries\\ffmpeg-win-x86_64-v7.1.exe",
+          "version": "ffmpeg version 7.1-essentials_build-www.gyan.dev Copyright (c) 2000-2024 the FFmpeg developers",
+          "capabilities": {
+            "libx264": true,
+            "aac": true,
+            "vp9Decoder": true,
+            "opusDecoder": true
+          },
+          "exitCode": 0,
+          "stderrTail": null
+        },
+        "frame": {
+          "file": "review/v2/wip-westworld/recordings/westworld-frame.png",
+          "atSeconds": 20.2,
+          "sha256": "8e261f50f0268c0afdbb11eddd67709f01112ed41050b1d982ad0695ef89aed5"
+        },
+        "mp4Bytes": 932698,
+        "mp4Sha256": "f0f12feba345d68a816167f4b25b44faf1f822fc4465665edec1bbaf8c99cd4c"
+      },
+      "checks": [
+        {
+          "id": "recorder started (video+audio track)",
+          "ok": true,
+          "detail": "{\"mime\":\"video/webm;codecs=vp9,opus\",\"audioTracks\":1,\"videoTracks\":1,\"audioState\":\"running\",\"replay\":{\"loaded\":true,\"cursor\":0,\"total\":12,\"done\":false}}"
+        },
+        {
+          "id": "replay transport running",
+          "ok": true,
+          "detail": "{\"loaded\":true,\"cursor\":0,\"total\":12,\"done\":false}"
+        },
+        {
+          "id": "12 replay events delivered",
+          "ok": true,
+          "detail": "events=12"
+        },
+        {
+          "id": "replay cursor reached 12/12",
+          "ok": true,
+          "detail": "{\"loaded\":true,\"cursor\":12,\"total\":12,\"done\":true}"
+        },
+        {
+          "id": "AudioContext running during capture",
+          "ok": true,
+          "detail": "state=running"
+        },
+        {
+          "id": "audio beats cover eventIds 1..12",
+          "ok": true,
+          "detail": "[1,2,3,4,5,6,7,8,9,10,11,12] (bookkeeping marks: [])"
+        },
+        {
+          "id": "rAF mean fps >= 20 (headless)",
+          "ok": true,
+          "detail": "meanFps=59.0 p95=16.8ms frames=1566"
+        },
+        {
+          "id": "canvas stream audio track present",
+          "ok": true,
+          "detail": "audioTracks=1"
+        },
+        {
+          "id": "WebM recording produced",
+          "ok": true,
+          "detail": "12815 KB"
+        },
+        {
+          "id": "recording has real motion (> 100 KB readback)",
+          "ok": true,
+          "detail": "12815 KB"
+        },
+        {
+          "id": "representative frame extracted from recording",
+          "ok": true,
+          "detail": "review/v2/wip-westworld/recordings/westworld-frame.png @ 20.2s"
+        },
+        {
+          "id": "MP4 conversion",
+          "ok": true,
+          "detail": "911 KB via ffmpeg-win-x86_64-v7.1.exe"
+        },
+        {
+          "id": "zero uncaught exceptions during recording",
+          "ok": true,
+          "detail": "[]"
+        }
+      ],
+      "errors": {
+        "exceptions": [],
+        "consoleErrors": [],
+        "logErrors": [],
+        "total": 0
+      },
+      "notes": [
+        "recording duration = last event 5200 ms + tail 20000 ms = 25200 ms"
+      ],
+      "environment": {
+        "renderer": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "samples": [
+        {
+          "elapsed": 2.2267999999523163,
+          "cursor": 5,
+          "events": 5,
+          "state": "running"
+        },
+        {
+          "elapsed": 4.243199999928475,
+          "cursor": 9,
+          "events": 9,
+          "state": "running"
+        },
+        {
+          "elapsed": 6.2465,
+          "cursor": 12,
+          "events": 12,
+          "state": "running"
+        },
+        {
+          "elapsed": 8.261100000023841,
+          "cursor": 12,
+          "events": 12,
+          "state": "running"
+        },
+        {
+          "elapsed": 10.276399999976158,
+          "cursor": 12,
+          "events": 12,
+          "state": "running"
+        },
+        {
+          "elapsed": 12.279299999952316,
+          "cursor": 12,
+          "events": 12,
+          "state": "running"
+        },
+        {
+          "elapsed": 14.294100000023843,
+          "cursor": 12,
+          "events": 12,
+          "state": "running"
+        },
+        {
+          "elapsed": 16.306399999976158,
+          "cursor": 12,
+          "events": 12,
+          "state": "running"
+        },
+        {
+          "elapsed": 18.311100000023842,
+          "cursor": 12,
+          "events": 12,
+          "state": "running"
+        },
+        {
+          "elapsed": 20.3225,
+          "cursor": 12,
+          "events": 12,
+          "state": "running"
+        },
+        {
+          "elapsed": 22.331,
+          "cursor": 12,
+          "events": 12,
+          "state": "running"
+        },
+        {
+          "elapsed": 24.33560000002384,
+          "cursor": 12,
+          "events": 12,
+          "state": "running"
+        },
+        {
+          "elapsed": 26.342699999928474,
+          "cursor": 12,
+          "events": 12,
+          "state": "running"
+        }
+      ]
+    }
+  },
+  "summary": {
+    "statuses": {
+      "westworld": "pass"
+    },
+    "checks": 13,
+    "failures": 0,
+    "failureIds": [],
+    "pass": true,
+    "partial": false,
+    "recordings": {
+      "westworld": {
+        "webm": "review/v2/wip-westworld/recordings/westworld-live.webm",
+        "mp4": "review/v2/wip-westworld/recordings/westworld-live.mp4"
+      }
+    },
+    "finishedAt": "2026-11-16T04:03:14.857Z",
+    "durationSeconds": 33.802
+  },
+  "limitations": []
+}
