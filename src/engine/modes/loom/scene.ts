@@ -64,12 +64,18 @@ export class LoomScene extends Container {
   }
 
   setStatus(_s: EngineStatus) { /* Counters stay in the quiet React transport. */ }
-  private received = 0;
-  trigger(e: ToolEvent) { this.mechanism.push(e); this.dial.setRead(e.type, ++this.received); this.dial.setQueue(this.mechanism.queue.length); }
+  trigger(e: ToolEvent) {
+    this.mechanism.push(e);
+    this.dial.pushEvent(e);
+    this.dial.setQueue(this.mechanism.queue.length);
+  }
   setRunning(_on: boolean) { /* The event queue powers the shaft. */ }
+  setReducedMotion(on: boolean) { this.dial.setReducedMotion(on); }
   setStopped() { this.mechanism.stop(); this.pose(); }
   get telemetry() { return this.mechanism.snapshot(); }
-  update(dt: number, _running: boolean) { this.mechanism.update(dt); this.pose(); }
+  /** Fixed-readout instrument state (also exposed through LoomMode.telemetry). */
+  get dialState() { return this.dial.telemetry(); }
+  update(dt: number, _running: boolean) { this.mechanism.update(dt); this.dial.update(dt); this.pose(); }
 
   private pose() {
     const m = this.mechanism;

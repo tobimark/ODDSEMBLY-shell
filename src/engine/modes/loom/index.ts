@@ -57,6 +57,7 @@ export class LoomMode implements VisualMode {
   update(dt: number, rt: ModeRuntime): void {
     const scene = this.scene;
     if (!scene) return;
+    scene.setReducedMotion(rt.reducedMotion);
     if (rt.state === 'paused') return;
     scene.update(dt, rt.state === 'running');
     const t = scene.telemetry;
@@ -90,7 +91,7 @@ export class LoomMode implements VisualMode {
   private caption = '等待事件 · 每一次调用，织入一道纬线';
 
   telemetry(): Record<string, unknown> {
-    return { mode: 'loom', ...(this.scene?.telemetry ?? {}) };
+    return { mode: 'loom', ...(this.scene?.telemetry ?? {}), dial: this.scene?.dialState ?? null };
   }
 
   reset(): void {

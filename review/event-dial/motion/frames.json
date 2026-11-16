@@ -1,0 +1,24 @@
+{
+  "clip": {
+    "x": 30,
+    "y": 40,
+    "width": 460,
+    "height": 400,
+    "scale": 1
+  },
+  "frames": [
+    "f00-hold-read.png",
+    "f01-050ms.png",
+    "f02-083ms.png",
+    "f03-117ms.png",
+    "f04-150ms.png",
+    "f05-183ms.png",
+    "f06-217ms.png",
+    "f07-250ms.png",
+    "f08-283ms.png",
+    "f09-317ms.png",
+    "f10-350ms.png",
+    "f11-383ms.png",
+    "f12-417ms.png"
+  ]
+}

@@ -26,8 +26,8 @@ async function run(kind,dir,port){
     await b.screenshot(path.join(out,'loom-detail-2x.png'),{clip:{x:495,y:240,width:410,height:440,scale:1}});
     await b.setViewport(1472,1008,1);await b.goto('?mode=loom&static=1&ui=0');
     await b.evaluate(`(()=>{${JSON.stringify(events)}.forEach(e=>window.__engine.inject(e));for(let i=0;i<42;i++)window.__engine.tick(1/60)})()`);
-    const dial=await b.evaluate(`(()=>{const d=window.__engine.getModeInstance('loom').scene.dial;return {read:d.readText.text,count:d.multText.text,queue:d.queueCount.text}})()`);
-    assert.equal(dial.count,'×12');assert.equal(Number(dial.queue),result.states[mark].mechanism.queued); result.dial=dial;
+    const dial=await b.evaluate(`(()=>{const d=window.__engine.getModeTelemetry().dial;return {phase:d.phase,read:d.type,count:'×'+d.count,step:d.slot,angle:d.angleDeg,queue:d.queue}})()`);
+    assert.equal(dial.count,'×1');assert.equal(dial.read,'Edit');assert.equal(dial.step,12);assert.equal(dial.angle,360);assert.equal(Number(dial.queue),result.states[mark].mechanism.queued); result.dial=dial;
    }
   }
   assert.equal(result.states[21].mechanism.picks,12);

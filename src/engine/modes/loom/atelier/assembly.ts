@@ -27,11 +27,10 @@ export function sheetBase() {
     label(g, 'FIG. 01', 42, 142, 10, '#8B9398');
     label(g, 'THE EVENT', 42, 163, 9, '#8B9398'); label(g, 'BECOMES THREAD.', 42, 177, 9, '#8B9398');
     // Bottom catalogue captions stay fixed to the sheet as the machine pans.
+    // (The former "00 / EVENT SCALE" caption moved into the fixed readout panel.)
     label(g, '112 ENDS', 354, 905, 9, '#73828B');
     label(g, '2 / 2 BROKEN TWILL', 770, 905, 9, '#73828B', 'center');
     label(g, 'EVENT-DRIVEN / SERIES 01', 1234, 905, 9, '#73828B', 'right');
-    label(g, '00 / EVENT SCALE', 42, 882, 8, '#8B9398');
-    line(g, [40, 888, 168, 888], '#B5BEBC66', .6);
   });
 }
 

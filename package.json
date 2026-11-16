@@ -10,9 +10,12 @@
     "shot": "node scripts/capture.mjs",
     "shot:mode": "node scripts/shot-mode.mjs",
     "parity:loom": "node scripts/parity-loom.mjs",
-    "test": "node scripts/test-mechanism.mjs",
+    "test": "node scripts/test-mechanism.mjs && node scripts/test-dial.mjs",
     "review:atelier": "node scripts/atelier-review.mjs",
     "review:precision": "node scripts/review-precision.mjs",
+    "review:dial": "node scripts/review-event-dial.mjs",
+    "shot:dial-motion": "node scripts/shot-dial-motion.mjs",
+    "rollback:dial": "node scripts/rollback-event-dial.mjs",
     "bridge": "node scripts/agent-bridge.mjs",
     "agent:demo": "node scripts/agent-bridge.mjs --demo"
   },

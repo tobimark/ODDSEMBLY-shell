@@ -1,12 +1,15 @@
 import { bolt, label, line, plate, rect, surface } from './drawing';
 import { FINISH as F, machinePoint } from './finish';
+import { DIAL } from './dialGeometry';
 
 /** Shared stationary chassis. These are enclosure mounts, not drive links. */
 export function sharedChassis() {
   return surface(1472,1008,g=>{
     const post = machinePoint(311,490);
     // Tangential saddle clamps the OUTER stationary scale housing to the loom frame.
-    const a=42*Math.PI/180, x=-610+Math.cos(a)*1312, y=-390+Math.sin(a)*1312;
+    // The saddle uses the same read-head angle as the fixed readout panel, so the
+    // instrument, housing and mount stay one assembly (no hand-copied magic numbers).
+    const a=(DIAL.headDeg)*Math.PI/180, x=DIAL.cx+Math.cos(a)*DIAL.lipOut, y=DIAL.cy+Math.sin(a)*DIAL.lipOut;
     plate(g,x-3,post.y-7,post.x-x+20,18,false,false);
     for(let px=x+27;px<post.x-15;px+=30) rect(g,px,post.y-2,16,4,F.recess,2,F.fine);
     g.save();g.translate(x,y);g.rotate(a+Math.PI/2);
