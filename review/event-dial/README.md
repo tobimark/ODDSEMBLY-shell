@@ -39,6 +39,21 @@
 | `visual-subtraction/comparison-dial-before-after.png` | 盘面/读数器细节前后对比 |
 | `visual-subtraction/after-dial-2x.png` / `after-readout-2x.png` | 新版盘面与读数器 2× |
 
+
+## 三分区构图（layout v3，2026-11-17）
+
+按 CrommaCode 壳的真实 GameView `730×495` 重新分配内部比例：Loom `1.0×` 右移，
+转盘 `0.83×` 留在左上，齿轮组在左下，三者不重叠。完整比例与字号预算见
+[layout-v3/README.md](layout-v3/README.md) 和 [docs/LAYOUT.md](../../docs/LAYOUT.md)。
+
+| 文件 | 内容 |
+|---|---|
+| `layout-v3/full-1x.png` | 最终全场景 |
+| `layout-v3/proportions.png` | 三分区 bbox / 间距 / 显示尺寸标注 |
+| `layout-v3/shell-context.png` | 场景合入 1453×865 壳的示意 |
+| `layout-v3/readout-2x.png` | 读数器 2×（210×94，TYPE 44 / 第二行 22） |
+| `layout-v3/comparison-before-after.png` | 上一版 → 本版 |
+
 ## 动态录屏（读数器固定）
 
 | 文件 | 内容 |

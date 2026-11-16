@@ -7,7 +7,7 @@ import { solveLinkage } from './atelier/linkage';
 import { Textile, WEAVE } from './atelier/textile';
 import { sharedChassis } from './atelier/integration';
 import { FINISH as F, MOUNT } from './atelier/finish';
-import { EventDial } from './atelier/eventDial';
+import { DIAL, EventDial } from './atelier/eventDial';
 
 /** Original procedural assembly. Canvas creates material textures; Pixi owns
  * compositing, part transforms and animation. No reference pixels are sampled. */
@@ -30,6 +30,10 @@ export class LoomScene extends Container {
   private textures: Sprite[] = [];
   private readonly world = new Container();
   private readonly dial = new EventDial();
+  /** The dial is a separate top-left instrument: 83% size, shifted so its
+   *  outer edge stops before the loom frame (three-part composition). */
+  private readonly dialBody = new Container();
+  private readonly dialFront = new Container();
 
   constructor(private readonly onBeat: (e: ToolEvent) => void = () => {}) {
     super();
@@ -38,6 +42,15 @@ export class LoomScene extends Container {
     const chassis = sharedChassis();
     this.world.scale.set(MOUNT.scale);
     this.world.position.set(MOUNT.x, MOUNT.y);
+    const dialView = { scale: 0.83, cx: -553, cy: -390 };
+    const dtx = dialView.cx - dialView.scale * DIAL.cx;
+    const dty = dialView.cy - dialView.scale * DIAL.cy;
+    for (const wrap of [this.dialBody, this.dialFront]) {
+      wrap.scale.set(dialView.scale);
+      wrap.position.set(dtx, dty);
+    }
+    this.dialBody.addChild(this.dial.body);
+    this.dialFront.addChild(this.dial.front);
     this.wheel.position.set(221, 660); this.gearA.position.set(221, 509); this.gearB.position.set(281, 509);
     this.shaftA.position.set(307, 401); this.shaftB.position.set(307, 513);
     this.reed.position.set(308, 606); this.shuttle.position.set(366, 675);
@@ -57,7 +70,7 @@ export class LoomScene extends Container {
     race.position.set(302, 651);
     this.stageLabel.position.set(1020, 930); this.pickLabel.position.set(1270, 852);
     this.world.addChild(base, this.textile.cloth, this.textile.warp, this.shaftB, this.shaftA, belt, this.wheel, this.gearA, this.gearB, this.linkage, this.reed, this.weft, this.shuttle, this.textile.front, race, this.needle, this.stageLabel, this.pickLabel);
-    this.addChild(sheet, this.dial.body, chassis, this.world, this.dial.front);
+    this.addChild(sheet, this.dialBody, chassis, this.world, this.dialFront);
     this.textures = [sheet, chassis, base, belt, race, this.wheel, this.gearA, this.gearB, this.shaftA, this.shaftB, this.reed, this.shuttle];
     this.mechanism.onPick = e => { this.textile.commit(e.type); this.onBeat(e); this.pickLabel.text = String(this.mechanism.picks).padStart(4, '0'); };
     this.pose();

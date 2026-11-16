@@ -3,7 +3,7 @@
 本轮把 Loom 左侧的大型事件刻度机构从「静态读数窗」做成可回滚的动态转盘：
 
 - **会动的是 12 槽索引鼓**（`ringPhase`，每个新工具组前进 30°；180 ms `easeInOutCubic`）。
-- **读数器结构上不可旋转**：轴对齐 180×92 面板，悬架在 40° 读头旁的盘面上；类型里没有 rotation 字段，只显示工具 / ×N / 槽位。
+- **读数器结构上不可旋转**：轴对齐 210×94 面板，悬架在 40° 读头旁的盘面上；类型里没有 rotation 字段，只显示工具 / ×N / 槽位。
 - **颜色=当前工具**：统一 `ToolPalette`（取原版运行时实测色）。
 - **动效参数来自原版实测**：105 ms 显示延迟 → 70–200 ms 换卡过渡放大为 180 ms → 单卡 ≈2 s 停留；同工具事件合并为 `×N`，不转轮。
 - 原版依据与逐条差异：`CrommaCode-Loom事件转盘-研究.md`（研究）§6、§8、§9。
@@ -26,18 +26,19 @@
 ```
 EventDial.body (在织机后面)                 EventDial.front (压在织机上)
 ├── statorSprite   环带/滚花/蓝弧/内鼓/夹块   └── readout (★ 盘面悬架读数器)
-├── rotor          12 个环扇卡窗 + 5° 刻度        ├── panelSprite（bezel + 安装轨）
-│   └── slotTint   当前卡窗的细小色边/叠色        ├── typeText 30px bold
-├── accent         37°–43° 工具色弧段             ├── multText ×N（右对齐）
-├── pointer        固定读头（座/臂/读数窗口）      └── stepText Sxx / 12
+├── rotor          12 个环扇卡窗 + 5° 刻度        ├── panelSprite（210×94，bezel + 安装轨）
+│   └── slotTint   当前卡窗的细小色边/叠色        ├── typeText 44px bold
+├── accent         37°–43° 工具色弧段             ├── multText ×N 22px
+├── pointer        固定读头（座/臂/读数窗口）      └── stepText Sxx/12 22px
 └── mount          蓝弧两点夹具 + 读头短连杆
 ```
 
 不变量：
 
 1. **任何 `Text` 都不在 rotor 子树里**（水平文字只能出现在不旋转层；反向旋转会发虚）。
-2. **`ReadoutPanel` 几何没有 rotation/parent-rotor 字段**；构造期定位在 `(85,175)`、180×92，
-   由固定蓝弧上的两个夹具与一根短连杆悬挂；它允许压在卡窗上方，但绝不随盘旋转。
+2. **`ReadoutPanel` 几何没有 rotation/parent-rotor 字段**；构造期定位在盘面局部
+   `(80,170)`、210×94，由固定蓝弧上的两个夹具与一根短连杆悬挂；转盘整体缩放 0.83
+   不改变其“不旋转”性质；它允许压在卡窗上方，但绝不随盘旋转。
 3. 所有旋转件姿态 = `f(state.angleDeg)` 的纯投影；模型是纯函数，可 node 直测。
 4. 「固定」指**设计空间**固定（1472×1008 等比缩放），不是 DOM 浮层。
 
@@ -80,12 +81,17 @@ IDLE ──event──► ARMING(105 ms) ──► MOVING(180 ms) ──► HOLD
 
 按最新评审，本轮不增加机械件，只做减法与重新构图：
 
-- **恢复 Loom 主体**：`MOUNT` 从 `{x:235, y:30, scale:.92}` 回到 `{x:0, y:0, scale:1}`；
-  织机回到原始尺寸/重心，转盘退到织机背后并被遮挡。
+- **三分区构图**：Loom 保持 `scale 1.0`，整体右移到 `MOUNT {x:151, y:0}`，左框落在
+  x=484；转盘整体缩到 **0.83**、平移到 `center(-553,-390)`，可见弧带只占 x 0–470；
+  齿轮组留在 x≈270–474、y≈480–775。三者没有像素级重叠，间距见
+  [LAYOUT.md](LAYOUT.md)。设计 1472×1008 实际显示为 730×495（×0.496）。
 - **删除左下控制箱与队列牌**：连同箱脚、接线盒、箱→队列线、读头→控制箱导管一起删除；
-  事件引擎与 queue 遥测保留，只是不再有可见外壳。共享床身缩到织机下方（x≈300–1405）。
-- **读数器重做**：`x=85, y=175, 180×92`，只保留 `TYPE / ×N / Sxx / 12` + 固定标题
-  `EVENT / 01`；文件路径、detail、age、chip、动态分隔线删除。字号 TYPE 30 / ×N 16 / step 9。
+  事件引擎与 queue 遥测保留，只是不再有可见外壳。共享床身缩到 Loom 脚下
+  （x≈460–1380，y=840）。
+- **读数器重做**：盘面局部 `x=80, y=170, 210×94`；只保留 `TYPE / ×N / Sxx / 12`，
+  删除标题 `EVENT / 01`、文件路径、detail、age、chip、动态分隔线。
+  字号 **TYPE 44 / ×N 22 / step 22**；经 0.83 缩放并在 730×495 中显示为
+  约 18.1 / 9.1 / 9.1 px，仍可读。
 - **悬架**：不再用长线缆。固定蓝弧上 30°/44° 两处夹具 + 两根短杆托住面板，右下再以
   一根短连杆接到读头臂；面板有 bezel、投影与底部安装轨。
 - **弱化卡窗**：卡窗填充 alpha 0.62、描边 1.1→0.8；当前槽只保留 `alpha .025` 的极浅叠色
@@ -98,7 +104,9 @@ IDLE ──event──► ARMING(105 ms) ──► MOVING(180 ms) ──► HOLD
 
 动态验证：`review/event-dial/recording/dial-readout-fixed.mp4`（30 fps，11 s，330 帧）
 包含 READ→BASH→BASH×N（不推轮）→EDIT/WRITE/SEARCH→12 组整圈→READ；读数器位置不变。
-前后对比：`review/event-dial/visual-subtraction/comparison-before-after.png`。
+前后对比：`review/event-dial/visual-subtraction/comparison-before-after.png`；
+壳内尺寸与三分区比例：[LAYOUT.md](LAYOUT.md)。
+壳内示意：`review/event-dial/visual-subtraction/shell-context.png`（合成图，非运行时集成）。
 
 ## 遥测 / 调试
 

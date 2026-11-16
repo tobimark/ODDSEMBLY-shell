@@ -277,12 +277,10 @@ function readoutPanel(w: number, h: number): Sprite {
     g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 6); g.fillStyle = F.enamel; g.fill(); g.restore();
     g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 6); g.strokeStyle = F.edge; g.lineWidth = 1.1; g.stroke();
     rect(g, 6, 6, w - 12, h - 12, F.paper, 3, F.fine);
-    label(g, 'EVENT / 01', 9, 14, 6, F.muted);
-    line(g, [8, 20, w - 8, 20], F.fine, 0.6);
-    line(g, [8, 57, w - 8, 57], F.fine, 0.6);
+    line(g, [9, 56, w - 9, 56], F.fine, 0.7);
     // mounting rail at the bottom edge, bolted to the suspension bracket
-    rect(g, w / 2 - 27, h - 12, 54, 6, F.steel, 2, F.edge);
-    bolt(g, w / 2 - 16, h - 9, 1.8); bolt(g, w / 2 + 16, h - 9, 1.8);
+    rect(g, w / 2 - 27, h - 9, 54, 5, F.steel, 2, F.edge);
+    bolt(g, w / 2 - 16, h - 6.5, 1.6); bolt(g, w / 2 + 16, h - 6.5, 1.6);
   });
 }
 
@@ -340,20 +338,20 @@ export class EventDial {
 
     this.typeText = new Text({
       text: 'IDLE',
-      style: { fontFamily: SANS, fontSize: 30, fontWeight: '700', fill: '#8B9398', letterSpacing: 1.2 },
+      style: { fontFamily: SANS, fontSize: 44, fontWeight: '700', fill: '#8B9398', letterSpacing: 1 },
     });
-    this.typeText.position.set(9, 22);
+    this.typeText.position.set(11, 9);
     this.multText = new Text({
       text: '',
-      style: { fontFamily: SANS, fontSize: 16, fontWeight: '700', fill: '#1E2330', letterSpacing: 0.6 },
+      style: { fontFamily: SANS, fontSize: 22, fontWeight: '700', fill: '#1E2330', letterSpacing: 0.4 },
     });
     this.multText.anchor.set(1, 0);
-    this.multText.position.set(panel.w - 9, 26);
+    this.multText.position.set(panel.w - 11, 58);
     this.stepText = new Text({
       text: '',
-      style: { fontFamily: MONO, fontSize: 9, fill: '#67624F', letterSpacing: 1.1 },
+      style: { fontFamily: MONO, fontSize: 22, fill: '#67624F', letterSpacing: 0.8 },
     });
-    this.stepText.position.set(9, 63);
+    this.stepText.position.set(11, 58);
 
     this.readout.addChild(this.typeText, this.multText, this.stepText);
     this.readout.position.set(panel.x, panel.y);
