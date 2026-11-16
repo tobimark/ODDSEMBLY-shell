@@ -1,0 +1,508 @@
+{
+  "baseline": "c6d93db",
+  "viewport": [
+    1472,
+    1008
+  ],
+  "events": [
+    {
+      "id": 1,
+      "type": "Read",
+      "detail": "precision review 1",
+      "at": 0
+    },
+    {
+      "id": 2,
+      "type": "Edit",
+      "detail": "precision review 2",
+      "at": 120
+    },
+    {
+      "id": 3,
+      "type": "Write",
+      "detail": "precision review 3",
+      "at": 240
+    },
+    {
+      "id": 4,
+      "type": "Bash",
+      "detail": "precision review 4",
+      "at": 360
+    },
+    {
+      "id": 5,
+      "type": "Search",
+      "detail": "precision review 5",
+      "at": 480
+    },
+    {
+      "id": 6,
+      "type": "Read",
+      "detail": "precision review 6",
+      "at": 600
+    },
+    {
+      "id": 7,
+      "type": "Edit",
+      "detail": "precision review 7",
+      "at": 720
+    },
+    {
+      "id": 8,
+      "type": "Write",
+      "detail": "precision review 8",
+      "at": 840
+    },
+    {
+      "id": 9,
+      "type": "Bash",
+      "detail": "precision review 9",
+      "at": 960
+    },
+    {
+      "id": 10,
+      "type": "Search",
+      "detail": "precision review 10",
+      "at": 1080
+    },
+    {
+      "id": 11,
+      "type": "Read",
+      "detail": "precision review 11",
+      "at": 1200
+    },
+    {
+      "id": 12,
+      "type": "Edit",
+      "detail": "precision review 12",
+      "at": 1320
+    }
+  ],
+  "marks": [
+    0,
+    0.4,
+    0.7,
+    1.4,
+    2.1,
+    8,
+    21
+  ],
+  "pass": true,
+  "checks": [
+    "exact mechanism telemetry parity",
+    "exact textile rows parity",
+    "same shaft/reed/shuttle coordinates",
+    "12 events / 12 picks",
+    "dial reads real inputs and queue",
+    "pause freezes clock",
+    "reset clears picks",
+    "no browser errors"
+  ],
+  "before": {
+    "states": {
+      "0": {
+        "mechanism": {
+          "phase": 0,
+          "picks": 0,
+          "queued": 0,
+          "active": null,
+          "stage": "READY",
+          "shed": 0,
+          "beat": 0,
+          "travel": 0,
+          "angle": 0
+        },
+        "rows": [],
+        "picks": 0,
+        "shafts": [
+          401,
+          513
+        ],
+        "reed": 606,
+        "shuttle": [
+          366,
+          675
+        ]
+      },
+      "8": {
+        "mechanism": {
+          "phase": 0.8484848484848472,
+          "picks": 5,
+          "queued": 7,
+          "active": "Search",
+          "stage": "BEATING",
+          "shed": 0,
+          "beat": 1,
+          "travel": 1,
+          "angle": 30.463928762083157
+        },
+        "rows": [
+          "Search",
+          "Bash",
+          "Write",
+          "Edit",
+          "Read"
+        ],
+        "picks": 5,
+        "shafts": [
+          401,
+          513
+        ],
+        "reed": 635,
+        "shuttle": [
+          1175,
+          675
+        ]
+      },
+      "21": {
+        "mechanism": {
+          "phase": 0,
+          "picks": 12,
+          "queued": 0,
+          "active": null,
+          "stage": "READY",
+          "shed": 0,
+          "beat": 0,
+          "travel": 0,
+          "angle": 75.39822368615529
+        },
+        "rows": [
+          "Edit",
+          "Read",
+          "Search",
+          "Bash",
+          "Write",
+          "Edit",
+          "Read",
+          "Search",
+          "Bash",
+          "Write",
+          "Edit",
+          "Read"
+        ],
+        "picks": 12,
+        "shafts": [
+          401,
+          513
+        ],
+        "reed": 606,
+        "shuttle": [
+          366,
+          675
+        ]
+      },
+      "0.4": {
+        "mechanism": {
+          "phase": 0.24242424242424251,
+          "picks": 0,
+          "queued": 11,
+          "active": "Read",
+          "stage": "PICKING",
+          "shed": 1,
+          "beat": 0,
+          "travel": 0.0001611065895510545,
+          "angle": 1.523196438104142
+        },
+        "rows": [],
+        "picks": 0,
+        "shafts": [
+          382,
+          532
+        ],
+        "reed": 606,
+        "shuttle": [
+          366.1303352309468,
+          674.9989877374869
+        ]
+      },
+      "0.7": {
+        "mechanism": {
+          "phase": 0.4242424242424245,
+          "picks": 0,
+          "queued": 11,
+          "active": "Read",
+          "stage": "PICKING",
+          "shed": 1,
+          "beat": 0,
+          "travel": 0.5870690425152941,
+          "angle": 2.665593766682251
+        },
+        "rows": [],
+        "picks": 0,
+        "shafts": [
+          382,
+          532
+        ],
+        "reed": 606,
+        "shuttle": [
+          840.9388553948729,
+          673.074356288944
+        ]
+      },
+      "1.4": {
+        "mechanism": {
+          "phase": 0.8484848484848472,
+          "picks": 1,
+          "queued": 11,
+          "active": "Read",
+          "stage": "BEATING",
+          "shed": 0,
+          "beat": 1,
+          "travel": 1,
+          "angle": 5.331187533364499
+        },
+        "rows": [
+          "Read"
+        ],
+        "picks": 1,
+        "shafts": [
+          401,
+          513
+        ],
+        "reed": 635,
+        "shuttle": [
+          1175,
+          675
+        ]
+      },
+      "2.1": {
+        "mechanism": {
+          "phase": 0.2727272727272728,
+          "picks": 1,
+          "queued": 10,
+          "active": "Edit",
+          "stage": "PICKING",
+          "shed": 1,
+          "beat": 0,
+          "travel": 0.9724446406304946,
+          "angle": 7.996781300046738
+        },
+        "rows": [
+          "Read"
+        ],
+        "picks": 1,
+        "shafts": [
+          420,
+          494
+        ],
+        "reed": 606,
+        "shuttle": [
+          1152.70771427007,
+          674.8270807351255
+        ]
+      }
+    },
+    "errors": {
+      "exceptions": [],
+      "consoleErrors": [],
+      "logErrors": [],
+      "total": 0
+    }
+  },
+  "after": {
+    "states": {
+      "0": {
+        "mechanism": {
+          "phase": 0,
+          "picks": 0,
+          "queued": 0,
+          "active": null,
+          "stage": "READY",
+          "shed": 0,
+          "beat": 0,
+          "travel": 0,
+          "angle": 0
+        },
+        "rows": [],
+        "picks": 0,
+        "shafts": [
+          401,
+          513
+        ],
+        "reed": 606,
+        "shuttle": [
+          366,
+          675
+        ]
+      },
+      "8": {
+        "mechanism": {
+          "phase": 0.8484848484848472,
+          "picks": 5,
+          "queued": 7,
+          "active": "Search",
+          "stage": "BEATING",
+          "shed": 0,
+          "beat": 1,
+          "travel": 1,
+          "angle": 30.463928762083157
+        },
+        "rows": [
+          "Search",
+          "Bash",
+          "Write",
+          "Edit",
+          "Read"
+        ],
+        "picks": 5,
+        "shafts": [
+          401,
+          513
+        ],
+        "reed": 635,
+        "shuttle": [
+          1175,
+          675
+        ]
+      },
+      "21": {
+        "mechanism": {
+          "phase": 0,
+          "picks": 12,
+          "queued": 0,
+          "active": null,
+          "stage": "READY",
+          "shed": 0,
+          "beat": 0,
+          "travel": 0,
+          "angle": 75.39822368615529
+        },
+        "rows": [
+          "Edit",
+          "Read",
+          "Search",
+          "Bash",
+          "Write",
+          "Edit",
+          "Read",
+          "Search",
+          "Bash",
+          "Write",
+          "Edit",
+          "Read"
+        ],
+        "picks": 12,
+        "shafts": [
+          401,
+          513
+        ],
+        "reed": 606,
+        "shuttle": [
+          366,
+          675
+        ]
+      },
+      "0.4": {
+        "mechanism": {
+          "phase": 0.24242424242424251,
+          "picks": 0,
+          "queued": 11,
+          "active": "Read",
+          "stage": "PICKING",
+          "shed": 1,
+          "beat": 0,
+          "travel": 0.0001611065895510545,
+          "angle": 1.523196438104142
+        },
+        "rows": [],
+        "picks": 0,
+        "shafts": [
+          382,
+          532
+        ],
+        "reed": 606,
+        "shuttle": [
+          366.1303352309468,
+          674.9989877374869
+        ]
+      },
+      "0.7": {
+        "mechanism": {
+          "phase": 0.4242424242424245,
+          "picks": 0,
+          "queued": 11,
+          "active": "Read",
+          "stage": "PICKING",
+          "shed": 1,
+          "beat": 0,
+          "travel": 0.5870690425152941,
+          "angle": 2.665593766682251
+        },
+        "rows": [],
+        "picks": 0,
+        "shafts": [
+          382,
+          532
+        ],
+        "reed": 606,
+        "shuttle": [
+          840.9388553948729,
+          673.074356288944
+        ]
+      },
+      "1.4": {
+        "mechanism": {
+          "phase": 0.8484848484848472,
+          "picks": 1,
+          "queued": 11,
+          "active": "Read",
+          "stage": "BEATING",
+          "shed": 0,
+          "beat": 1,
+          "travel": 1,
+          "angle": 5.331187533364499
+        },
+        "rows": [
+          "Read"
+        ],
+        "picks": 1,
+        "shafts": [
+          401,
+          513
+        ],
+        "reed": 635,
+        "shuttle": [
+          1175,
+          675
+        ]
+      },
+      "2.1": {
+        "mechanism": {
+          "phase": 0.2727272727272728,
+          "picks": 1,
+          "queued": 10,
+          "active": "Edit",
+          "stage": "PICKING",
+          "shed": 1,
+          "beat": 0,
+          "travel": 0.9724446406304946,
+          "angle": 7.996781300046738
+        },
+        "rows": [
+          "Read"
+        ],
+        "picks": 1,
+        "shafts": [
+          420,
+          494
+        ],
+        "reed": 606,
+        "shuttle": [
+          1152.70771427007,
+          674.8270807351255
+        ]
+      }
+    },
+    "errors": {
+      "exceptions": [],
+      "consoleErrors": [],
+      "logErrors": [],
+      "total": 0
+    },
+    "dial": {
+      "read": "EDIT",
+      "count": "×12",
+      "queue": "11"
+    }
+  }
+}

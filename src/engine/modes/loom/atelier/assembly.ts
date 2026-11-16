@@ -1,15 +1,15 @@
 import { C, bearing, bolt, circle, label, line, metal, plate, poly, rect, surface, type Pen } from './drawing';
+import { FINISH as F } from './finish';
 import { WEAVE, YARNS } from './textile';
 
 function bobbin(g: Pen, x: number, y: number, color: string, n: number) {
   metal(g, x - 3, y - 14, 6, 84, true);
-  rect(g, x - 16, y + 6, 34, 49, '#171C6018', 5);
-  const grad = g.createLinearGradient(x - 15, 0, x + 15, 0);
-  grad.addColorStop(0, '#586474'); grad.addColorStop(.13, color); grad.addColorStop(.42, '#F2EED477'); grad.addColorStop(.6, color); grad.addColorStop(1, '#3C5360');
-  rect(g, x - 15, y, 30, 52, grad, 5, '#5E7376');
-  for (let j = 2; j < 51; j += 2.3) {
-    line(g, [x - 13, y + j + .6, x + 13, y + j - .6], j % 3 < 1.5 ? '#FFFFFF66' : '#17294444', .6);
+  rect(g,x-15,y,30,52,F.enamel,3,F.edge);
+  for(let j=2;j<51;j+=2.3) {
+    line(g,[x-13,y+j+.4,x+13,y+j-.4],color,.7);
+    line(g,[x-11,y+j+.9,x+11,y+j+.1],F.paper,.45);
   }
+  line(g,[x-12,y+2,x-12,y+49],F.fine,.5);
   metal(g, x - 20, y - 5, 40, 7); metal(g, x - 20, y + 49, 40, 7);
   circle(g, x, y - 11, 4.5, '#DADFD8', '#83909A', .6);
   label(g, String(n + 1).padStart(2, '0'), x, y + 74, 7, '#73818A', 'center');
@@ -39,23 +39,28 @@ export function sheetBase() {
  *  the scene camera to make room for the event-scale instrument on the left. */
 export function loomPlate() {
   return surface(1472, 1008, g => {
-    // Contact shadows are bound to the footprint and return faces.
-    g.save(); g.filter = 'blur(15px)'; rect(g, 282, 877, 1010, 13, '#171C6021', 15); g.restore();
-    g.save(); g.filter = 'blur(8px)'; rect(g, 326, 264, 932, 620, '#171C6017', 8); g.restore();
-    rect(g, 333, 263, 886, 594, '#E5E5DB');
-    const field = g.createLinearGradient(340, 0, 1200, 0); field.addColorStop(0, '#D0D4CB'); field.addColorStop(.1, '#F0EEE5'); field.addColorStop(.6, '#F7F5EE'); field.addColorStop(1, '#DEDFD5');
-    rect(g, 345, 276, 850, 580, field);
+    // Open machine bed: local joints provide depth; no full-panel shadow slab.
+    rect(g,333,263,886,594,F.enamel,0,F.fine);
+    rect(g,345,276,850,580,F.paper);
     // Rear cross braces remain behind the translucent warp sheets.
     poly(g, [336, 813, 347, 813, 1207, 332, 1207, 344], '#B2B9B229');
     poly(g, [340, 333, 351, 329, 1204, 813, 1198, 823], '#B2B9B222');
     for (const x of [311, 1222]) {
       plate(g, x - 26, 254, 52, 612, true);
+      // Recessed guide bed separates the load-bearing shell from the precision rail.
+      rect(g,x-9,285,18,548,F.steel,2,F.fine);
+      line(g,[x-22,278,x-22,844],F.muted,.75);
       metal(g, x - 5, 292, 10, 535, true);
-      for (let y = 315; y < 820; y += 50) { rect(g, x - 21, y, 6, 17, '#121B45', 3, '#687392'); bolt(g, x + 17, y + 8, 2.4); }
+      for (let y = 315; y < 820; y += 50) { rect(g, x - 21, y, 6, 17, F.recess, 3, F.fine); bolt(g, x + 17, y + 8, 2.4); }
       plate(g, x - 37, 859, 78, 24, true);
       for (const yy of [383, 490, 609]) { plate(g, x - 15, yy, 30, 29, false, false); bolt(g, x, yy + 14, 4); }
     }
     // Rear top rail and creel with sixteen independently wound yarn packages.
+    for(const x of [314,1225]) {
+      plate(g,x-5,139,10,104,false,false);
+      bolt(g,x,153,2);bolt(g,x,226,2);
+      plate(g,x-13,230,26,14,false,false);
+    }
     metal(g, 313, 136, 910, 11);
     for (let i = 0; i < 16; i++) bobbin(g, 380 + i * 52, 158, YARNS[i], i);
     for (let i = 0; i < WEAVE.ends; i++) {
@@ -81,12 +86,12 @@ export function loomPlate() {
     for (const y of [329, 345]) { metal(g, 325, y, 889, 6); for (const x of [322, 1217]) { plate(g, x - 8, y - 6, 16, 19, false, false); bolt(g, x, y + 3, 3); } }
     // Main drive cassette, bolted directly to the left stanchion.
     plate(g, 166, 483, 148, 303, false);
-    rect(g, 178, 494, 124, 282, '#D8DDD7', 42, '#BAC2BC');
+    rect(g, 178, 494, 124, 282, F.enamel, 12, F.fine);
     metal(g, 215, 497, 13, 278, true);
     for (const y of [509, 566, 725]) bearing(g, 221, y, 13);
     // A single small tension instrument built into the drive housing.
     plate(g, 195, 346, 100, 103, false);
-    circle(g, 246, 393, 35, '#BAC2BF', '#7D8996'); circle(g, 246, 392, 31, '#F9F7ED', '#FFFFFF', 1.5);
+    circle(g, 246, 393, 35, F.steel, F.edge); circle(g, 246, 392, 31, '#F9F7ED', '#FFFFFF', 1.5);
     for (let i = 0; i <= 24; i++) {
       const a = Math.PI * .75 + i / 24 * Math.PI * 1.5;
       line(g, [246 + Math.cos(a) * (i % 4 ? 26 : 23), 392 + Math.sin(a) * (i % 4 ? 26 : 23), 246 + Math.cos(a) * 28, 392 + Math.sin(a) * 28], '#5A6979', .7);
@@ -118,7 +123,7 @@ export function heddle(width = 906, rear = false) {
       line(g, [x, 18, x, 52], rear ? '#7D8B9370' : '#A3AEA6', .65);
       line(g, [x + .7, 18, x + .7, 52], '#FFFFFF80', .4);
     }
-    rect(g, 8, 19, width, 12, '#171C601C', 2);
+    rect(g, 8, 19, width, 12, F.shadow, 2);
     metal(g, 7, 11, width, 12);
     line(g, [12, 15, width, 15], rear ? '#97A7AA' : '#F9FAF6', 1);
     for (const x of [15, width - 6]) { plate(g, x - 11, 3, 24, 30, false, false); bolt(g, x + 1, 18, 4); }
@@ -129,7 +134,7 @@ export function heddle(width = 906, rear = false) {
 
 export function reed() {
   return surface(930, 75, g => {
-    rect(g, 10, 46, 910, 15, '#171C6025', 2);
+    rect(g, 10, 46, 910, 15, F.shadow, 2);
     for (let x = 47; x < 879; x += 832 / WEAVE.ends) { line(g, [x, 7, x, 42], '#5A6D7A', .8); line(g, [x + .9, 7, x + .9, 42], '#FFFFFFA0', .5); }
     metal(g, 7, 3, 912, 9); metal(g, 7, 38, 912, 13);
     for (const x of [19, 905]) { plate(g, x - 12, 0, 26, 55, false, false); bolt(g, x, 12, 4); bolt(g, x, 43, 4); }
@@ -140,9 +145,9 @@ export function reed() {
 export function shuttle() {
   const s = surface(112, 37, g => {
     poly(g, [3, 20, 24, 5, 87, 5, 109, 20, 87, 33, 24, 33], '#171C6027');
-    poly(g, [2, 16, 22, 2, 87, 2, 108, 16, 87, 28, 22, 28], '#8E7A5D', '#5B5E62');
-    poly(g, [6, 14, 25, 3, 85, 3, 103, 14, 85, 23, 25, 23], '#D1B992', '#F8E4BA');
-    rect(g, 27, 6, 53, 15, '#3D5260', 7); metal(g, 29, 11, 49, 4);
+    poly(g, [2, 16, 22, 2, 87, 2, 108, 16, 87, 28, 22, 28], F.steel, F.muted);
+    poly(g, [6, 14, 25, 3, 85, 3, 103, 14, 85, 23, 25, 23], F.enamel, F.edge);
+    rect(g, 27, 6, 53, 15, F.recess, 7); metal(g, 29, 11, 49, 4);
     rect(g, 39, 6, 29, 14, C.teal, 5, '#22767A');
     for (let x = 42; x < 68; x += 2.2) line(g, [x, 7, x - 2, 19], '#DFEDCB90', .7);
     bolt(g, 19, 14, 2.4); bolt(g, 89, 14, 2.4);

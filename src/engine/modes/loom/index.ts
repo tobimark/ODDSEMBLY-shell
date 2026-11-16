@@ -13,9 +13,9 @@ const SAMPLES: Record<ToolName, string> = {
 };
 
 /**
- * Loom = the first catalogue world. The mechanical assembly and its programme are
- * inherited unchanged from the Astra review-v2 baseline; only the hosting
- * interface is new, so the established visuals keep their exact geometry.
+ * Loom = the first catalogue world. Astra's constrained motion and weave programme
+ * are retained; the Precision Flat assembly shares its finish and stationary
+ * chassis with the event instrument. The engine only sees the VisualMode contract.
  */
 export class LoomMode implements VisualMode {
   readonly meta = MODE_META.loom;

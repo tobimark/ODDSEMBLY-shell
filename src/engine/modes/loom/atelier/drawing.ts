@@ -1,4 +1,5 @@
 import { Sprite, Texture } from 'pixi.js';
+import { FINISH as F } from './finish';
 
 export const C = { paper: '#FBF9F6', navy: '#171C60', teal: '#33CBCC', ink: '#323953', steel: '#919B9F', pale: '#E4E5E0', warm: '#C6B79D', dark: '#31364A' };
 export type Pen = CanvasRenderingContext2D;
@@ -26,59 +27,71 @@ export function circle(g: Pen, x: number, y: number, r: number, fill: string, st
 export function label(g: Pen, text: string, x: number, y: number, size = 9, color = C.ink, align: CanvasTextAlign = 'left') {
   g.font = `${size}px Consolas, monospace`; g.textAlign = align; g.fillStyle = color; g.fillText(text, x, y); g.textAlign = 'left';
 }
+/** Machined rail: flat web, narrow recessed return and one edge reflection. */
 export function metal(g: Pen, x: number, y: number, w: number, h: number, vertical = false) {
-  const grad = g.createLinearGradient(x, y, x + (vertical ? w : 0), y + (vertical ? 0 : h));
-  [[0, '#737E87'], [.12, '#D3D6D4'], [.29, '#FCFCF6'], [.46, '#E4E6E1'], [.78, '#A9B0AE'], [1, '#636D7C']].forEach(([s, c]) => grad.addColorStop(s as number, c as string));
-  rect(g, x, y, w, h, grad, Math.min(3, h / 2), '#7D8691');
-  line(g, [x + 1, y + 1, x + w - 1, y + 1], '#FFFFFF', .65);
+  rect(g, x, y, w, h, F.steel, Math.min(2,h/2), F.edge);
+  if (vertical) {
+    rect(g,x+w-2,y+1,1,h-2,F.recess); line(g,[x+1.5,y+2,x+1.5,y+h-2],F.highlight,.6);
+    if(w>8) line(g,[x+w*.45,y+2,x+w*.45,y+h-2],F.fine,.4);
+  } else {
+    rect(g,x+1,y+h-2,w-2,1,F.recess); line(g,[x+2,y+1.5,x+w-2,y+1.5],F.highlight,.6);
+    if(h>8) line(g,[x+2,y+h*.6,x+w-2,y+h*.6],F.fine,.4);
+  }
 }
 export function bolt(g: Pen, x: number, y: number, r = 3.3) {
-  circle(g, x + .6, y + 1.1, r + 1, '#6D768850'); circle(g, x, y, r + .8, '#E7E6DF', '#92999D', .5);
-  const pts: number[] = []; for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3; pts.push(x + Math.cos(a) * r, y + Math.sin(a) * r); }
-  poly(g, pts, '#D1D5D3', '#65717E', .65); line(g, [x - r * .45, y + r * .3, x + r * .45, y - r * .3], '#555F70', .8);
-  line(g, [x - r * .5, y - r * .65, x + r * .4, y - r * .65], '#FFFFFF', .7);
+  circle(g,x,y,r+.7,F.enamel,F.edge,.55);
+  const pts:number[]=[];for(let i=0;i<6;i++){const a=i*Math.PI/3;pts.push(x+Math.cos(a)*r*.75,y+Math.sin(a)*r*.75);}
+  poly(g,pts,F.steel,F.muted,.45);
+  line(g,[x-r*.4,y+r*.25,x+r*.4,y-r*.25],F.muted,.55);
 }
-/** Cast face, inset gasket, return face, and machined fastening land. */
-export function plate(g: Pen, x: number, y: number, w: number, h: number, dark = false, screws = true) {
-  rect(g, x + 4, y + 8, w + 2, h + 2, '#171C6019', 7);
-  poly(g, [x + w, y, x + w + 8, y - 7, x + w + 8, y + h - 7, x + w, y + h], dark ? '#11183D' : '#929A9F');
-  poly(g, [x, y, x + 8, y - 7, x + w + 8, y - 7, x + w, y], dark ? '#545D81' : '#FFFFFF');
-  rect(g, x, y, w, h, dark ? C.navy : '#E9E9E2', 5, dark ? '#11183D' : '#7C858D');
-  rect(g, x + 3, y + 3, w - 6, h - 6, dark ? '#242C66' : '#F6F5EF', 3, dark ? '#6C7795' : '#FFFFFF');
-  if (screws) for (const a of [x + 9, x + w - 9]) for (const b of [y + 9, y + h - 9]) bolt(g, a, b, 2.6);
+/** Folded enamel shell, 1.2px seam; no extruded perspective faces. */
+export function plate(g: Pen, x: number, y: number, w: number, h: number, structural = false, screws = true) {
+  rect(g,x+1.2,y+1.8,w,h,F.shadow,3);
+  rect(g,x,y,w,h,F.enamel,3,structural ? F.muted : F.edge);
+  rect(g,x+3,y+3,w-6,h-6,F.paper,1.5,F.fine);
+  if(structural) {
+    if(h>w) { line(g,[x+5,y+17,x+5,y+h-17],F.ink,1.1); line(g,[x+w-5,y+17,x+w-5,y+h-17],F.fine,.6); }
+    else line(g,[x+17,y+h-4,x+w-17,y+h-4],F.ink,.9);
+  }
+  if(screws) for(const a of [x+9,x+w-9])for(const b of [y+9,y+h-9])bolt(g,a,b,2.6);
 }
-export function bearing(g: Pen, x: number, y: number, r = 18) {
-  plate(g, x - r - 5, y - r - 5, r * 2 + 10, r * 2 + 10, false, false);
-  for (const sx of [-1, 1]) for (const sy of [-1, 1]) bolt(g, x + sx * r, y + sy * r, 2.4);
-  circle(g, x, y, r - 1, '#8D969C', '#626B79'); circle(g, x, y - .7, r - 4, '#EFF0EA', '#FFFFFF');
-  circle(g, x, y, r - 8, '#485266', '#808C94'); circle(g, x, y, r - 10, '#C2C9C7'); bolt(g, x, y, 3.5);
+export function bearing(g: Pen, x: number, y: number, r=18) {
+  plate(g,x-r-5,y-r-5,r*2+10,r*2+10,false,false);
+  for(const sx of [-1,1])for(const sy of [-1,1])bolt(g,x+sx*r,y+sy*r,2.4);
+  circle(g,x,y,r-1,F.steel,F.edge,.75);
+  circle(g,x,y,r-4,F.paper,F.muted,.6);
+  circle(g,x,y,r-7,F.enamel,F.fine,.5);
+  circle(g,x,y,r-10,F.steel,F.muted,.65);
+  bolt(g,x,y,3.2);
 }
-export function gearSprite(radius: number, teeth: number, dark = false): Sprite {
-  const b = radius + 10;
-  const s = surface(b * 2, b * 2, g => {
-    g.translate(b, b); const pts: number[] = [];
-    for (let i = 0; i < teeth * 4; i++) { const a = i / (teeth * 4) * Math.PI * 2; const r = radius - ((i % 4 === 0 || i % 4 === 3) ? 4 : 0); pts.push(Math.cos(a) * r, Math.sin(a) * r); }
-    g.save(); g.translate(1.5, 3); poly(g, pts, '#3A4255'); g.restore();
-    poly(g, pts, dark ? '#46526C' : '#BCC4C3', '#596478'); circle(g, 0, 0, radius - 9, dark ? '#333F60' : '#E5E7E0', '#F8F9F2');
-    for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3; circle(g, Math.cos(a) * radius * .57, Math.sin(a) * radius * .57, radius * .15, '#4A5365', '#FFFFFF70'); }
-    circle(g, 0, 0, radius * .28, '#F1F0E8', '#747D8B'); circle(g, 0, 0, radius * .18, '#89959C'); bolt(g, 0, 0, 5);
-  }); s.anchor.set(.5); return s;
+export function gearSprite(radius:number,teeth:number,dark=false):Sprite {
+  const b=radius+10;
+  const s=surface(b*2,b*2,g=>{
+    g.translate(b,b);const pts:number[]=[];
+    for(let i=0;i<teeth*4;i++){const a=i/(teeth*4)*Math.PI*2;const r=radius-((i%4===0||i%4===3)?4:0);pts.push(Math.cos(a)*r,Math.sin(a)*r);}
+    poly(g,pts,F.steel,F.muted,.8);
+    circle(g,0,0,radius-8,F.enamel,F.fine,.55);
+    for(let i=0;i<6;i++){const a=i*Math.PI/3;const x=Math.cos(a)*radius*.57,y=Math.sin(a)*radius*.57;
+      g.globalCompositeOperation='destination-out';circle(g,x,y,radius*.14,'#000');g.globalCompositeOperation='source-over';
+      g.beginPath();g.arc(x,y,radius*.14,0,Math.PI*2);g.strokeStyle=F.edge;g.lineWidth=.6;g.stroke();}
+    circle(g,0,0,radius*.28,F.paper,F.muted,.65);bolt(g,0,0,4);
+    if(dark) line(g,[0,-radius*.33,0,-radius*.46],F.ink,1.2);
+  });s.anchor.set(.5);return s;
 }
-export function flywheelSprite(): Sprite {
-  const s = surface(234, 234, g => {
-    g.translate(117, 117);
-    circle(g, 3, 5, 109, '#171C601C');
-    circle(g, 0, 0, 108, '#636F7B', '#1A2446', 1.3); circle(g, 0, 0, 102, '#DBDFD9', '#FFFFFF', 1.5);
-    circle(g, 0, 0, 96, C.navy);
-    g.globalCompositeOperation = 'destination-out'; circle(g, 0, 0, 83, '#000000'); g.globalCompositeOperation = 'source-over';
-    for (let i = 0; i < 6; i++) {
-      g.save(); g.rotate(i * Math.PI / 3);
-      poly(g, [8, -11, 84, -7, 89, 2, 80, 11, 9, 14], '#8994A3', '#586578');
-      poly(g, [8, -12, 82, -9, 86, -2, 79, 5, 9, 8], '#F2F1E9', '#FFFFFF');
-      bolt(g, 90, 0, 2.8); g.restore();
+export function flywheelSprite():Sprite {
+  const s=surface(234,234,g=>{
+    g.translate(117,117);
+    circle(g,0,0,108,F.enamel,F.muted,.9);
+    circle(g,0,0,104,F.paper,F.fine,.6);
+    circle(g,0,0,98,F.steel,F.ink,1);
+    g.globalCompositeOperation='destination-out';circle(g,0,0,86,'#000');g.globalCompositeOperation='source-over';
+    for(let i=0;i<6;i++){
+      g.save();g.rotate(i*Math.PI/3);
+      poly(g,[16,-5,87,-7,92,0,87,7,16,5],F.enamel,F.edge,.7);
+      line(g,[28,0,79,0],F.fine,.5);bolt(g,92,0,2.4);g.restore();
     }
-    circle(g, 0, 0, 28, '#B3BDC0', '#FFFFFF'); circle(g, 0, 0, 21, C.navy, '#5D6D86'); bolt(g, 0, 0, 7);
-    circle(g, 66, 0, 9, '#66798C', '#FFFFFF'); circle(g, 66, 0, 5, C.teal, '#1F727B');
-    for (let i = 0; i < 120; i++) { const a = i * Math.PI / 60; const r = i % 5 ? 104 : 100; line(g, [Math.cos(a) * r, Math.sin(a) * r, Math.cos(a) * 107, Math.sin(a) * 107], '#F6F4EB', .6); }
-  }); s.anchor.set(.5); return s;
+    circle(g,0,0,26,F.enamel,F.muted,.8);circle(g,0,0,19,F.paper,F.fine,.6);bolt(g,0,0,5);
+    circle(g,66,0,6,F.paper,F.muted,.7);circle(g,66,0,2.8,C.teal);
+    for(let i=0;i<120;i++){const a=i*Math.PI/60;line(g,[Math.cos(a)*(i%5?105:102),Math.sin(a)*(i%5?105:102),Math.cos(a)*107,Math.sin(a)*107],F.muted,.45);}
+  });s.anchor.set(.5);return s;
 }

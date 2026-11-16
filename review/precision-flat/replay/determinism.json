@@ -1,0 +1,280 @@
+{
+  "schema": "kunlunmeta-v2-replay-determinism/1",
+  "generatedAt": "2026-11-16T08:49:37.703Z",
+  "command": "node scripts/replay-proof.mjs --modes=loom --out=review/precision-flat/replay",
+  "method": "headless Edge, ?deterministic=1&replay=1&ui=0, fixed 1/60 s manual tick batches, two fresh browser sessions, PNG SHA-256 equality",
+  "dtSeconds": 0.016666666666666666,
+  "marksSeconds": {
+    "loom": [
+      2,
+      8,
+      21
+    ]
+  },
+  "softwareRendering": false,
+  "modes": {
+    "loom": {
+      "mode": "loom",
+      "root": "dist",
+      "session": {
+        "query": "&replay=1",
+        "file": "dist/replay/loom-session.json",
+        "modeSpecific": true
+      },
+      "marksSeconds": [
+        2,
+        8,
+        21
+      ],
+      "status": "pass",
+      "runs": {
+        "a": {
+          "marks": {
+            "2s": {
+              "file": "review/precision-flat/replay/loom-a-2s.png",
+              "sha256": "022fbaf1c55dccbdd2234d5129b775632375b8f87373aab6f0d00718a804481b"
+            },
+            "8s": {
+              "file": "review/precision-flat/replay/loom-a-8s.png",
+              "sha256": "ea1597a8c627da47aef4e63619b835c3bd14be27311acc270238299519b2a021"
+            },
+            "21s": {
+              "file": "review/precision-flat/replay/loom-a-21s.png",
+              "sha256": "e4037d31b8779ca50ca51278a5511fa6a27ccaad1774e25755e057f6fc951d14"
+            }
+          },
+          "facts": {
+            "replay": {
+              "loaded": true,
+              "cursor": 12,
+              "total": 12,
+              "done": true
+            },
+            "events": 12,
+            "engineTime": 21.00000000000009,
+            "state": "running",
+            "modeTelemetry": {
+              "mode": "loom",
+              "phase": 0,
+              "picks": 12,
+              "queued": 0,
+              "active": null,
+              "stage": "READY",
+              "shed": 0,
+              "beat": 0,
+              "travel": 0,
+              "angle": 75.39822368615529
+            },
+            "audioState": "running",
+            "beatEventIds": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "beatCount": 12,
+            "stub": false
+          },
+          "errors": {
+            "exceptions": [],
+            "consoleErrors": [],
+            "logErrors": [],
+            "total": 0
+          },
+          "environment": {
+            "renderer": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "software": false
+          }
+        },
+        "b": {
+          "marks": {
+            "2s": {
+              "file": "review/precision-flat/replay/loom-b-2s.png",
+              "sha256": "022fbaf1c55dccbdd2234d5129b775632375b8f87373aab6f0d00718a804481b"
+            },
+            "8s": {
+              "file": "review/precision-flat/replay/loom-b-8s.png",
+              "sha256": "ea1597a8c627da47aef4e63619b835c3bd14be27311acc270238299519b2a021"
+            },
+            "21s": {
+              "file": "review/precision-flat/replay/loom-b-21s.png",
+              "sha256": "e4037d31b8779ca50ca51278a5511fa6a27ccaad1774e25755e057f6fc951d14"
+            }
+          },
+          "facts": {
+            "replay": {
+              "loaded": true,
+              "cursor": 12,
+              "total": 12,
+              "done": true
+            },
+            "events": 12,
+            "engineTime": 21.00000000000009,
+            "state": "running",
+            "modeTelemetry": {
+              "mode": "loom",
+              "phase": 0,
+              "picks": 12,
+              "queued": 0,
+              "active": null,
+              "stage": "READY",
+              "shed": 0,
+              "beat": 0,
+              "travel": 0,
+              "angle": 75.39822368615529
+            },
+            "audioState": "running",
+            "beatEventIds": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "beatCount": 12,
+            "stub": false
+          },
+          "errors": {
+            "exceptions": [],
+            "consoleErrors": [],
+            "logErrors": [],
+            "total": 0
+          },
+          "environment": {
+            "renderer": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "software": false
+          }
+        }
+      },
+      "comparison": [
+        {
+          "mark": "2s",
+          "equal": true,
+          "hashA": "022fbaf1c55dccbdd2234d5129b775632375b8f87373aab6f0d00718a804481b",
+          "hashB": "022fbaf1c55dccbdd2234d5129b775632375b8f87373aab6f0d00718a804481b",
+          "sizeA": 739400,
+          "sizeB": 739400
+        },
+        {
+          "mark": "8s",
+          "equal": true,
+          "hashA": "ea1597a8c627da47aef4e63619b835c3bd14be27311acc270238299519b2a021",
+          "hashB": "ea1597a8c627da47aef4e63619b835c3bd14be27311acc270238299519b2a021",
+          "sizeA": 828566,
+          "sizeB": 828566
+        },
+        {
+          "mark": "21s",
+          "equal": true,
+          "hashA": "e4037d31b8779ca50ca51278a5511fa6a27ccaad1774e25755e057f6fc951d14",
+          "hashB": "e4037d31b8779ca50ca51278a5511fa6a27ccaad1774e25755e057f6fc951d14",
+          "sizeA": 743375,
+          "sizeB": 743375
+        }
+      ],
+      "checks": [
+        {
+          "id": "mark 2s: pixel-identical across fresh sessions",
+          "ok": true,
+          "detail": "sha256 022fbaf1c55dccbd…/022fbaf1c55dccbd… sizes 739400/739400"
+        },
+        {
+          "id": "mark 8s: pixel-identical across fresh sessions",
+          "ok": true,
+          "detail": "sha256 ea1597a8c627da47…/ea1597a8c627da47… sizes 828566/828566"
+        },
+        {
+          "id": "mark 21s: pixel-identical across fresh sessions",
+          "ok": true,
+          "detail": "sha256 e4037d31b8779ca5…/e4037d31b8779ca5… sizes 743375/743375"
+        },
+        {
+          "id": "replay cursor 12/12 in both runs",
+          "ok": true,
+          "detail": "A={\"loaded\":true,\"cursor\":12,\"total\":12,\"done\":true} B={\"loaded\":true,\"cursor\":12,\"total\":12,\"done\":true}"
+        },
+        {
+          "id": "engine received exactly 12 replay events",
+          "ok": true,
+          "detail": "A=12 B=12"
+        },
+        {
+          "id": "virtual clock identical",
+          "ok": true,
+          "detail": "A=21.00000000000009 B=21.00000000000009"
+        },
+        {
+          "id": "mode telemetry identical",
+          "ok": true,
+          "detail": "{\"mode\":\"loom\",\"phase\":0,\"picks\":12,\"queued\":0,\"active\":null,\"stage\":\"READY\",\"shed\":0,\"beat\":0,\"travel\":0,\"angle\":75.39822368615529}"
+        },
+        {
+          "id": "audio beat eventId sequence identical",
+          "ok": true,
+          "detail": "A=[1,2,3,4,5,6,7,8,9,10,11,12] B=[1,2,3,4,5,6,7,8,9,10,11,12]"
+        },
+        {
+          "id": "no uncaught exceptions in either run",
+          "ok": true,
+          "detail": "{\"a\":[],\"b\":[]}"
+        },
+        {
+          "id": "no console errors in either run",
+          "ok": true,
+          "detail": "{\"a\":[],\"b\":[]}"
+        },
+        {
+          "id": "12 audio beat marks recorded",
+          "ok": true,
+          "detail": "A=12 B=12"
+        },
+        {
+          "id": "beat marks cover eventIds 1..12",
+          "ok": true,
+          "detail": "[1,2,3,4,5,6,7,8,9,10,11,12] (bookkeeping marks: [])"
+        },
+        {
+          "id": "Loom: 12 picks = 12 cloth commits",
+          "ok": true,
+          "detail": "A=12 B=12"
+        },
+        {
+          "id": "Loom: queue fully drained",
+          "ok": true,
+          "detail": "A=0 B=0"
+        }
+      ],
+      "notes": []
+    }
+  },
+  "summary": {
+    "statuses": {
+      "loom": "pass"
+    },
+    "checks": 14,
+    "failures": 0,
+    "failureIds": [],
+    "pass": true,
+    "partial": false,
+    "finishedAt": "2026-11-16T08:49:50.415Z",
+    "durationSeconds": 12.712
+  },
+  "limitations": [
+    "PNG equality is measured within this machine/driver/browser build; it proves replay determinism, not cross-machine rendering parity."
+  ]
+}

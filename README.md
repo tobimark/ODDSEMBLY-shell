@@ -8,6 +8,10 @@
 
 ## 快速开始
 
+本轮视觉版本：**Precision Flat Mechanical**。事件刻度机构与 Loom 共用浅色薄壳、细线轴承、固定安装鞍座和贯通底座。
+查看 [视觉规范](docs/PRECISION_FLAT_MECHANICAL.md) 与 [本轮交付、截图和回归结果](review/precision-flat/DELIVERY.md)。
+原 DSH 对照点保留在 `feat/loom-event-dial` / `c6d93db`。
+
 需要 Node.js 22+。
 
 ```bash
@@ -74,7 +78,7 @@ window.__engine.getTelemetry();    // 织机遥测快照
 src/engine/
   core/      VisualEngine · EventBus · ReplayPlayer · AudioEngine · AgentSimulator
              Spring/Tween · 程序化绘图库 · 模式注册表 · 设计空间
-  modes/loom/ Astra Loom（机构 + 织物 + 音频，几何原样迁移）
+  modes/loom/ Precision Flat Loom（保留机构约束、织物与音频；统一装配和绘制）
   gallery/    归档的 Chips / Westworld 原型（不参与构建，可恢复）
   theme.ts    KunlunMeta 品牌色板
 ```

@@ -65,7 +65,7 @@ export class Textile {
   }
   private drawCloth() {
     const g = this.c; const w = WEAVE.w; g.clearRect(0, 0, w, 170);
-    g.fillStyle = '#D2D1BE'; g.fillRect(0, 0, w, 170);
+    g.fillStyle = '#E5E2D6'; g.fillRect(0, 0, w, 170);
     const eventColors: Record<ToolName, string> = { Read: '#A7BAB8', Edit: '#4A6175', Write: '#33CBCC', Bash: '#171C60', Search: '#BCAC8E' };
     // 2/2 broken twill. The diamond repeat is woven from the same warp palette.
     for (let r = 0; r < 73; r++) {
@@ -79,8 +79,8 @@ export class Textile {
         const diamond = mx + my;
         const band = diamond > 16 && diamond < 23 || diamond > 31 && diamond < 36;
         const over = ((i + (patternX % 48 < 24 ? globalRow : -globalRow)) % 4 + 4) % 4 < 2;
-        let color = band ? C.navy : diamond < 15 ? (patternX % 48 < 24 ? '#458F93' : '#78B9AE') : YARNS[Math.floor(i / 7)];
-        if (!over) color = band ? '#617084' : '#C5C9B7';
+        let color = band ? '#7A8698' : diamond < 15 ? (patternX % 48 < 24 ? '#82AAA7' : '#B0C8BC') : YARNS[Math.floor(i / 7)];
+        if (!over) color = band ? '#ADB4B7' : '#DAD9CA';
         g.fillStyle = '#343D4E24'; g.fillRect(x + .7, y + .7, 5.5, 1.7);
         g.fillStyle = color; g.fillRect(x, y, over ? 4.8 : 6.2, over ? 1.8 : .85);
         g.fillStyle = '#FFFFFF30'; g.fillRect(x, y, 4.1, .35);
@@ -88,7 +88,7 @@ export class Textile {
     }
     // Reinforced selvedge; subtle curled edge belongs to the cloth, not a UI border.
     for (const x of [0, 2.1, 4, w - 5, w - 3, w - 1]) line(g, [x, 0, x, 170], '#E8DDC4', 1.2);
-    const shade = g.createLinearGradient(0, 122, 0, 146); shade.addColorStop(0, '#171C6000'); shade.addColorStop(.45, '#FFFFFF18'); shade.addColorStop(1, '#171C6066');
+    const shade = g.createLinearGradient(0, 122, 0, 146); shade.addColorStop(0, '#171C6000'); shade.addColorStop(.45, '#FFFFFF18'); shade.addColorStop(1, '#171C601A');
     g.fillStyle = shade; g.fillRect(0, 122, w, 24);
     this.cloth.texture.source.update();
   }

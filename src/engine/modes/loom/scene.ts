@@ -5,6 +5,8 @@ import { C, bearing, flywheelSprite, gearSprite, label, line, metal, surface } f
 import { Mechanism } from './atelier/mechanism';
 import { solveLinkage } from './atelier/linkage';
 import { Textile, WEAVE } from './atelier/textile';
+import { sharedChassis } from './atelier/integration';
+import { FINISH as F, MOUNT } from './atelier/finish';
 import { EventDial } from './atelier/eventDial';
 
 /** Original procedural assembly. Canvas creates material textures; Pixi owns
@@ -33,8 +35,9 @@ export class LoomScene extends Container {
     super();
     const sheet = sheetBase();
     const base = loomPlate();
-    this.world.scale.set(0.92);
-    this.world.position.set(235, 30);
+    const chassis = sharedChassis();
+    this.world.scale.set(MOUNT.scale);
+    this.world.position.set(MOUNT.x, MOUNT.y);
     this.wheel.position.set(221, 660); this.gearA.position.set(221, 509); this.gearB.position.set(281, 509);
     this.shaftA.position.set(307, 401); this.shaftB.position.set(307, 513);
     this.reed.position.set(308, 606); this.shuttle.position.set(366, 675);
@@ -52,16 +55,17 @@ export class LoomScene extends Container {
       for (const x of [344, 1188]) metal(g, x, 662, 7, 31, true);
     });
     race.position.set(302, 651);
-    this.stageLabel.position.set(1250, 487); this.pickLabel.position.set(1270, 852);
+    this.stageLabel.position.set(1020, 930); this.pickLabel.position.set(1270, 852);
     this.world.addChild(base, this.textile.cloth, this.textile.warp, this.shaftB, this.shaftA, belt, this.wheel, this.gearA, this.gearB, this.linkage, this.reed, this.weft, this.shuttle, this.textile.front, race, this.needle, this.stageLabel, this.pickLabel);
-    this.addChild(sheet, this.dial.body, this.world, this.dial.front);
-    this.textures = [sheet, base, belt, race, this.wheel, this.gearA, this.gearB, this.shaftA, this.shaftB, this.reed, this.shuttle];
+    this.addChild(sheet, this.dial.body, chassis, this.world, this.dial.front);
+    this.textures = [sheet, chassis, base, belt, race, this.wheel, this.gearA, this.gearB, this.shaftA, this.shaftB, this.reed, this.shuttle];
     this.mechanism.onPick = e => { this.textile.commit(e.type); this.onBeat(e); this.pickLabel.text = String(this.mechanism.picks).padStart(4, '0'); };
     this.pose();
   }
 
   setStatus(_s: EngineStatus) { /* Counters stay in the quiet React transport. */ }
-  trigger(e: ToolEvent) { this.mechanism.push(e); }
+  private received = 0;
+  trigger(e: ToolEvent) { this.mechanism.push(e); this.dial.setRead(e.type, ++this.received); this.dial.setQueue(this.mechanism.queue.length); }
   setRunning(_on: boolean) { /* The event queue powers the shaft. */ }
   setStopped() { this.mechanism.stop(); this.pose(); }
   get telemetry() { return this.mechanism.snapshot(); }
@@ -69,6 +73,7 @@ export class LoomScene extends Container {
 
   private pose() {
     const m = this.mechanism;
+    this.dial.setQueue(m.queue.length);
     const lift = m.shed * 19 * m.direction;
     this.shaftA.y = 401 - lift; this.shaftB.y = 513 + lift;
     this.reed.y = 606 + m.beat * 29;
@@ -79,17 +84,17 @@ export class LoomScene extends Container {
     this.textile.cloth.y = WEAVE.fell + (m.active && m.committed ? -2 + m.takeup * 2 : 0);
     const g = this.linkage; g.clear();
     const rod = (x: number, y: number, ex: number, ey: number, w = 6) => {
-      g.moveTo(x + 2, y + 3).lineTo(ex + 2, ey + 3).stroke({ color: 0x171C60, alpha: .16, width: w + 2 });
-      g.moveTo(x, y).lineTo(ex, ey).stroke({ color: 0x5E6D7D, width: w });
-      g.moveTo(x - .8, y - 1).lineTo(ex - .8, ey - 1).stroke({ color: 0xD8DDD7, width: w - 2 });
-      for (const [a, b] of [[x, y], [ex, ey]]) { g.circle(a, b, w + 1).fill(0xD0D6D0).stroke({ color: 0x5A697B, width: .8 }); g.circle(a, b, 2.2).fill(0x667486); }
+      g.moveTo(x + .5, y + .7).lineTo(ex + .5, ey + .7).stroke({ color: 0x171C60, alpha: .04, width: w + .5 });
+      g.moveTo(x, y).lineTo(ex, ey).stroke({ color: F.edge, width: w });
+      g.moveTo(x - .8, y - 1).lineTo(ex - .8, ey - 1).stroke({ color: F.enamel, width: w - 1.3 });
+      for (const [a, b] of [[x, y], [ex, ey]]) { g.circle(a, b, w + 1).fill(F.enamel).stroke({ color: F.muted, width: .6 }); g.circle(a, b, 2.2).fill(0x667486); }
     };
     // Three explicitly servo-driven slider cranks. The decorative transmission
     // on the left no longer pretends to drive these independently commanded axes.
     for (const [base, target] of [[419, this.shaftA.y + 18], [531, this.shaftB.y + 18], [649, this.reed.y + 43]]) {
       const k = solveLinkage({ x: 1260, y: base + 70 }, { x: 1220, y: target });
-      g.roundRect(1241, base + 51, 38, 38, 5).fill(0xD5DAD5).stroke({color:0x7D8996,width:1});
-      g.circle(1260, base + 70, 16).fill(0x171C60).stroke({color:0xE7E9E1,width:2});
+      g.roundRect(1241, base + 51, 38, 38, 5).fill(F.enamel).stroke({color:0x7D8996,width:1});
+      g.circle(1260, base + 70, 16).fill(F.steel).stroke({color:F.muted,width:.8});
       rod(k.center.x, k.center.y, k.pin.x, k.pin.y, 4);
       rod(k.pin.x, k.pin.y, k.slider.x, k.slider.y, 4);
     }

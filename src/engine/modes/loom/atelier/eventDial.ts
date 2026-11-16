@@ -15,6 +15,7 @@
  * (1472×1008); the dial centre deliberately sits off-sheet at the upper left.
  */
 import { Container, Graphics, Sprite, Text } from 'pixi.js';
+import { FINISH as F } from './finish';
 import { C, bolt, circle, label, line, metal, plate, poly, rect, surface } from './drawing';
 
 export const DIAL = {
@@ -33,7 +34,7 @@ export const DIAL = {
   angle: 40,
   /** control box (front layer) */
   box: { x: 88, y: 585, w: 245, h: 205 },
-  queue: { x: 482, y: 838, w: 118, h: 52 },
+  queue: { x: 353, y: 834, w: 138, h: 36 },
 } as const;
 
 const P = (r: number, deg: number, cx = DIAL.cx, cy = DIAL.cy): [number, number] => [
@@ -46,33 +47,23 @@ function dialBody(): Sprite {
   const { cx, cy } = DIAL;
   return surface(1472, 1008, g => {
     // contact shadow onto the sheet
-    g.save(); g.shadowColor = '#2A241628'; g.shadowBlur = 30; g.shadowOffsetY = 12;
-    g.beginPath(); g.arc(cx, cy, DIAL.lipOut, 0, Math.PI * 2); g.fillStyle = '#F0EBE0'; g.fill();
+    g.save(); g.shadowColor = '#2A241628'; g.shadowBlur = 2; g.shadowOffsetY = 1.2;
+    g.beginPath(); g.arc(cx, cy, DIAL.lipOut, 0, Math.PI * 2); g.fillStyle = '#E8E8E0'; g.fill();
     g.restore();
 
     // radial band stack (outer → inner)
-    circle(g, cx, cy, DIAL.lipOut, '#F3EEE4', '#C9C2B2', 1);
-    circle(g, cx, cy, DIAL.outerOut, '#FAF7EF', '#C9C2B2', 0.7);
-    circle(g, cx, cy, DIAL.knurlOut, '#F0EBE0', '#BDB5A4', 0.8);
-    circle(g, cx, cy, DIAL.tickOut, '#F8F4EA', '#C9C2B2', 0.7);
-    circle(g, cx, cy, DIAL.sepOut, '#E8E2D5', '#B9B2A2', 0.7);
-    circle(g, cx, cy, DIAL.faceOut, '#FCFAF3', '#C9C2B2', 0.9);
-    circle(g, cx, cy, DIAL.blue - 1, '#F7F2E6', '#DDD5C3', 0.7);
+    circle(g, cx, cy, DIAL.lipOut, '#F5F3EC', '#BFC2BA', 1);
+    circle(g, cx, cy, DIAL.outerOut, '#FBF9F6', '#BFC2BA', 0.7);
+    circle(g, cx, cy, DIAL.knurlOut, '#E8E8E0', '#AEB3AE', 0.8);
+    circle(g, cx, cy, DIAL.tickOut, '#F5F3EC', '#BFC2BA', 0.7);
+    circle(g, cx, cy, DIAL.sepOut, '#DEDCD2', '#B9B2A2', 0.7);
+    circle(g, cx, cy, DIAL.faceOut, '#FBF9F6', '#BFC2BA', 0.9);
+    circle(g, cx, cy, DIAL.blue - 1, '#F5F3EC', '#DDD5C3', 0.7);
 
-    // curvature shading across the drum, clipped to the ring
-    g.save();
-    g.beginPath(); g.arc(cx, cy, DIAL.lipOut, 0, Math.PI * 2); g.clip();
-    const shade = g.createRadialGradient(cx, cy, DIAL.blue - 60, cx, cy, DIAL.lipOut + 8);
-    shade.addColorStop(0, 'rgba(23,28,96,0)');
-    shade.addColorStop(0.3, 'rgba(23,28,96,0.012)');
-    shade.addColorStop(0.72, 'rgba(23,28,96,0.045)');
-    shade.addColorStop(1, 'rgba(23,28,96,0.075)');
-    g.fillStyle = shade; g.fillRect(0, 0, 1472, 1008);
-    g.restore();
     // soft recessed shadow inside the blue arc
     g.save();
     g.beginPath(); g.arc(cx, cy, DIAL.blue + 8, 0, Math.PI * 2);
-    g.shadowColor = 'rgba(30,34,48,0.20)'; g.shadowBlur = 16; g.shadowOffsetX = 6; g.shadowOffsetY = 8;
+    g.shadowColor = 'rgba(30,34,48,0.20)'; g.shadowBlur = 1; g.shadowOffsetX = .5; g.shadowOffsetY = 1;
     g.strokeStyle = 'rgba(247,242,230,0.9)'; g.lineWidth = 7; g.stroke();
     g.restore();
     g.save(); g.beginPath(); g.arc(cx, cy, DIAL.blue + 7, 0, Math.PI * 2);
@@ -140,9 +131,9 @@ function dialBody(): Sprite {
     // ---- blue reference arc
     g.save();
     g.beginPath(); g.arc(cx, cy, DIAL.blue, 0, Math.PI * 2);
-    g.strokeStyle = '#3F6FC2'; g.lineWidth = 4.4; g.stroke();
+    g.strokeStyle = '#171C60'; g.lineWidth = 4.4; g.stroke();
     g.beginPath(); g.arc(cx, cy, DIAL.blue - 2.6, 0, Math.PI * 2);
-    g.strokeStyle = '#8FB0E0AA'; g.lineWidth = 1.1; g.stroke();
+    g.strokeStyle = '#7888A060'; g.lineWidth = 1.1; g.stroke();
     g.restore();
 
     // ---- inner drum: panel seams, concentric guides, inspection slots
@@ -176,7 +167,7 @@ function dialBody(): Sprite {
       const [x, y] = P(r, deg);
       g.save(); g.translate(x, y); g.rotate(((deg + 90) * Math.PI) / 180);
       rect(g, -26, -19, 52, 38, '#F6F1E5', 4, '#B4AC9A');
-      rect(g, -20, -13, 40, 26, '#FCFAF3', 3, '#C9C2B2');
+      rect(g, -20, -13, 40, 26, '#FBF9F6', 3, '#BFC2BA');
       bolt(g, -15, -8, 2.2); bolt(g, 15, -8, 2.2); bolt(g, -15, 8, 2.2); bolt(g, 15, 8, 2.2);
       g.restore();
     }
@@ -187,19 +178,9 @@ function dialBody(): Sprite {
 function windowPanel(): Sprite {
   const w = 560; const h = 116;
   return surface(w, h, g => {
-    g.save();
-    g.shadowColor = '#2A241620'; g.shadowBlur = 10; g.shadowOffsetY = 4;
-    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 13);
-    const grad = g.createLinearGradient(0, 0, w, h);
-    grad.addColorStop(0, '#F4F1EA'); grad.addColorStop(0.55, '#E9E6DD'); grad.addColorStop(1, '#DCD8CE');
-    g.fillStyle = grad; g.fill();
-    g.restore();
-    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 13);
-    g.strokeStyle = '#1F242D'; g.lineWidth = 2.4; g.stroke();
-    g.beginPath(); g.roundRect(8, 8, w - 16, h - 16, 9);
-    g.strokeStyle = '#8F8B80'; g.lineWidth = 0.9; g.stroke();
-    g.beginPath(); g.roundRect(11, 11, w - 22, h - 22, 8);
-    g.strokeStyle = '#FFFFFF99'; g.lineWidth = 0.8; g.stroke();
+    plate(g,2,2,w-4,h-4,false,false);
+    rect(g,12,12,w-24,h-24,F.enamel,3,F.fine);
+    line(g,[18,h-16,w-18,h-16],F.ink,.8);
     for (const [x, y] of [[18, 18], [w - 18, 18], [18, h - 18], [w - 18, h - 18]] as const) bolt(g, x, y, 2.6);
     // corner brackets and a centre index mark
     for (const [x, y, sx, sy] of [[10, 10, 1, 1], [w - 10, 10, -1, 1], [10, h - 10, 1, -1], [w - 10, h - 10, -1, -1]] as const) {
@@ -216,15 +197,15 @@ function carriage(): Sprite {
     // clamp on the scale band
     g.save(); g.translate(34, 60);
     rect(g, -28, -22, 56, 44, '#F7F3E8', 5, '#B0A896');
-    rect(g, -22, -16, 44, 32, '#FDFBF4', 3, '#C9C2B2');
+    rect(g, -22, -16, 44, 32, '#FDFBF4', 3, '#BFC2BA');
     circle(g, 0, 0, 5, '#DCD6C6', '#8F8878', 0.9);
     bolt(g, -16, -10, 2.3); bolt(g, 16, -10, 2.3); bolt(g, -16, 10, 2.3); bolt(g, 16, 10, 2.3);
     g.restore();
     // link bar
     g.save(); g.translate(34, 60);
-    line(g, [28, -2, 262, -3], '#4F5A66', 10);
-    line(g, [28, -5, 262, -6], '#D8DDD5', 4);
-    line(g, [28, 3, 262, 2], '#2A323C22', 4);
+    line(g, [28, -2, 262, -3], F.edge, 7);
+    line(g, [28, -2, 262, -3], F.enamel, 5.5);
+    line(g, [28, -2, 262, -3], F.fine, .5);
     for (const x of [32, 96, 160, 258]) {
       circle(g, x, 0, 7, '#CDD3CD', '#6C7884', 0.9);
       circle(g, x, 0, 2.4, '#59636E');
@@ -233,7 +214,7 @@ function carriage(): Sprite {
     // joint block
     g.save(); g.translate(300, 60);
     rect(g, -30, -24, 60, 48, '#F5F1E6', 6, '#AEA694');
-    rect(g, -23, -17, 46, 34, '#FCFAF3', 4, '#C9C2B2');
+    rect(g, -23, -17, 46, 34, '#FBF9F6', 4, '#BFC2BA');
     circle(g, 0, 0, 11, '#DFD9CA', '#8F8878', 1);
     circle(g, 0, 0, 4, '#59636E');
     bolt(g, -18, -12, 2.2); bolt(g, 18, -12, 2.2); bolt(g, -18, 12, 2.2); bolt(g, 18, 12, 2.2);
@@ -245,8 +226,8 @@ function carriage(): Sprite {
 function controlBox(): Sprite {
   const { w, h } = DIAL.box;
   return surface(w, h, g => {
-    g.save(); g.shadowColor = '#2A241620'; g.shadowBlur = 12; g.shadowOffsetY = 5;
-    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 12); g.fillStyle = '#FBF7EE'; g.fill(); g.restore();
+    g.save(); g.shadowColor = '#2A241620'; g.shadowBlur = 1; g.shadowOffsetY = 1;
+    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 12); g.fillStyle = '#FBF9F6'; g.fill(); g.restore();
     g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 12);
     g.strokeStyle = '#B4AC9A'; g.lineWidth = 1.2; g.stroke();
     g.beginPath(); g.roundRect(7, 7, w - 14, h - 14, 9);
@@ -254,9 +235,9 @@ function controlBox(): Sprite {
     for (const [x, y] of [[13, 13], [w - 13, 13], [13, h - 13], [w - 13, h - 13]] as const) bolt(g, x, y, 2.8);
 
     // coil / transformer module
-    rect(g, 14, 18, 104, 66, '#EFE9DC', 4, '#BDB5A4');
+    rect(g, 14, 18, 104, 66, '#EFE9DC', 4, '#AEB3AE');
     rect(g, 18, 22, 96, 10, '#FDFBF4', 2, '#D4CDBD');
-    line(g, [22, 27, 104, 27], '#C9C2B2', 0.7);
+    line(g, [22, 27, 104, 27], '#BFC2BA', 0.7);
     for (const x0 of [24, 66]) {
       rect(g, x0, 42, 24, 28, '#F7F3E9', 2, '#A79F8B');
       for (let i = 0; i < 6; i++) line(g, [x0 + 2, 46 + i * 4, x0 + 22, 46 + i * 4], '#8F8878', 0.8);
@@ -264,7 +245,7 @@ function controlBox(): Sprite {
       rect(g, x0, 64, 24, 6, '#DCD5C4', 2, '#A79F8B');
     }
     metal(g, 56, 42, 8, 28, true);
-    line(g, [18, 76, 114, 76], '#BDB5A4', 0.8); line(g, [18, 72, 114, 72], '#C9C2B2', 0.6);
+    line(g, [18, 76, 114, 76], '#AEB3AE', 0.8); line(g, [18, 72, 114, 72], '#BFC2BA', 0.6);
 
     // gauge
     const gx = 182; const gy = 52; const gr = 28;
@@ -285,13 +266,13 @@ function controlBox(): Sprite {
     // key grille
     rect(g, 132, 104, 100, 40, '#F1EBDF', 5, '#B4AC9A');
     for (let i = 0; i < 9; i++) {
-      rect(g, 138 + i * 10.4, 109, 6.4, 30, '#FBF7EE', 2, '#C9C2B2');
+      rect(g, 138 + i * 10.4, 109, 6.4, 30, '#FBF9F6', 2, '#BFC2BA');
     }
 
     // inscription slot
-    rect(g, 14, 92, 104, 28, '#F6F1E5', 4, '#BDB5A4');
+    rect(g, 14, 92, 104, 28, '#F6F1E5', 4, '#AEB3AE');
     rect(g, 20, 98, 62, 7, '#FDFBF4', 2, '#D4CDBD');
-    line(g, [22, 101, 76, 101], '#C9C2B2', 0.6);
+    line(g, [22, 101, 76, 101], '#BFC2BA', 0.6);
     bolt(g, 106, 106, 2.2);
     line(g, [20, 112, 96, 112], '#D8D1C0', 0.6);
 
@@ -305,7 +286,7 @@ function controlBox(): Sprite {
     // punch-card connector row
     rect(g, 14, 128, 112, 28, '#EFE9DC', 4, '#B4AC9A');
     for (let i = 0; i < 10; i++) {
-      rect(g, 19 + i * 10.6, 132, 8, 20, i % 2 ? '#E2DCCD' : '#FBF7EE', 1.5, '#C9C2B2');
+      rect(g, 19 + i * 10.6, 132, 8, 20, i % 2 ? '#E2DCCD' : '#FBF9F6', 1.5, '#BFC2BA');
       bolt(g, 23 + i * 10.6, 142, 1.1);
     }
     circle(g, 116, 142, 3.4, '#D9D3C2', '#8F8878', 0.7);
@@ -320,16 +301,16 @@ function controlBox(): Sprite {
 function queueUnit(): Sprite {
   const { w, h } = DIAL.queue;
   return surface(w, h, g => {
-    g.save(); g.shadowColor = '#2A241618'; g.shadowBlur = 8; g.shadowOffsetY = 3;
-    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 7); g.fillStyle = '#FBF7EE'; g.fill(); g.restore();
+    g.save(); g.shadowColor = '#2A241618'; g.shadowBlur = 1; g.shadowOffsetY = 1;
+    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 7); g.fillStyle = '#FBF9F6'; g.fill(); g.restore();
     g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 7);
     g.strokeStyle = '#A79F8B'; g.lineWidth = 1; g.stroke();
-    label(g, '队列', 12, 33, 12, '#5C6168');
-    line(g, [46, 14, 46, h - 12], '#C9C2B2', 0.7);
+    label(g, 'QUEUE', 10, 22, 8, '#5C6168');
+    line(g, [46, 14, 46, h - 12], '#BFC2BA', 0.7);
     // spool coupler on top of the plate
-    rect(g, 70, 6, 34, 14, '#CFC8B6', 3, '#8F8878');
-    rect(g, 76, 4, 22, 5, '#E7E1D4', 2, '#B4AC9A');
-    bolt(g, 100, 34, 2.2);
+    rect(g, 60, 6, 12, 22, '#CFC8B6', 3, '#8F8878');
+    rect(g, 63, 9, 6, 16, '#E7E1D4', 2, '#B4AC9A');
+    bolt(g, 126, 18, 2.2);
   });
 }
 
@@ -347,15 +328,15 @@ export class EventDial {
   private readonly conduit = new Graphics();
   private readonly cables = new Graphics();
   private readonly readText = new Text({
-    text: 'READ',
+    text: 'IDLE',
     style: { fontFamily: '"Arial Narrow", "Roboto Condensed", "Segoe UI", sans-serif', fontSize: 22, fontWeight: '700', fill: '#1E2330', letterSpacing: 3.6 },
   });
   private readonly multText = new Text({
-    text: '×21',
+    text: '×0',
     style: { fontFamily: '"Arial Narrow", "Roboto Condensed", "Segoe UI", sans-serif', fontSize: 20, fontWeight: '700', fill: '#1E2330', letterSpacing: 1.2 },
   });
   private readonly sessionText = new Text({
-    text: 'S01/12',
+    text: 'EVENT / 000',
     style: { fontFamily: 'Consolas, "SFMono-Regular", monospace', fontSize: 9, fill: '#67624F', letterSpacing: 1.3 },
   });
   private readonly queueCount = new Text({
@@ -365,6 +346,7 @@ export class EventDial {
   private readonly badge = new Graphics();
   private readonly gaugeNeedle = new Graphics();
   private angle: number = DIAL.angle;
+  private queueValue = -1;
 
   constructor() {
     this.body.addChild(dialBody());
@@ -390,7 +372,7 @@ export class EventDial {
     const queue = queueUnit();
     queue.position.set(DIAL.queue.x, DIAL.queue.y);
     this.front.addChild(box, queue, this.cables, this.gaugeNeedle, this.queueCount);
-    this.queueCount.position.set(DIAL.queue.x + 72, DIAL.queue.y + 34);
+    this.queueCount.position.set(DIAL.queue.x + 88, DIAL.queue.y + 9);
     this.gaugeNeedle.position.set(DIAL.box.x + 182, DIAL.box.y + 52);
     this.gaugeNeedle.rotation = -1.0;
     this.setAngle(DIAL.angle);
@@ -421,36 +403,36 @@ export class EventDial {
     this.readText.text = type.toUpperCase();
     this.multText.text = `×${count}`;
     const x = this.sessionText.position.x;
-    this.sessionText.text = `S01/${count}`;
+    this.sessionText.text = `EVENT / ${String(count).padStart(3, "0")}`;
     void x;
   }
 
   setSession(text: string): void { this.sessionText.text = text; }
-  setQueue(n: number): void { this.queueCount.text = String(n); }
+  setQueue(n: number): void { if(n===this.queueValue)return; this.queueValue=n; this.queueCount.text=String(n); }
 
   private strand(g: Graphics, pts: number[], color: string, width: number): void {
     g.moveTo(pts[0], pts[1]);
     for (let i = 2; i < pts.length; i += 2) g.lineTo(pts[i], pts[i + 1]);
-    g.stroke({ color, width });
+    g.stroke({ color, width, cap: "round", join: "round" });
   }
 
   private drawConduit(rad: number): void {
     // joint world position (carriage block at the outer edge of the ring)
-    const jx = DIAL.cx + Math.cos(rad) * (DIAL.headR + 310);
-    const jy = DIAL.cy + Math.sin(rad) * (DIAL.headR + 310);
+    const jx = DIAL.cx + Math.cos(rad) * (DIAL.headR + 170) - Math.sin(rad) * 130;
+    const jy = DIAL.cy + Math.sin(rad) * (DIAL.headR + 170) + Math.cos(rad) * 130;
     const g = this.conduit;
     g.clear();
     const path: Array<[number, number]> = [
-      [jx, jy], [jx + 6, jy + 52], [jx - 12, jy + 92],
-      [jx - 22, jy + 150], [DIAL.box.x + 126, DIAL.box.y - 14], [DIAL.box.x + 124, DIAL.box.y + 4],
+      [jx,jy], [jx,jy+18], [jx+14,jy+36], [jx+14,DIAL.box.y-34],
+      [DIAL.box.x+124,DIAL.box.y-20], [DIAL.box.x+124,DIAL.box.y+4],
     ];
     // flexible conduit: dark outline, five strands, highlight and collars
-    this.strand(g, path.flat(), '#6F7A78', 9);
+    this.strand(g, path.flat(), F.edge, 6);
     for (let i = -2; i <= 2; i++) {
-      const off = i * 2.1;
+      const off = i * 1.3;
       const pts: number[] = [];
       path.forEach(([x, y], k) => pts.push(x + off * (k < 3 ? 1 : 0.4), y + off * (k < 3 ? 0 : 1)));
-      this.strand(g, pts, i === 0 ? '#E2DDD0' : '#B9B2A2', i === 0 ? 2 : 1.6);
+      this.strand(g, pts, i === 0 ? '#E2DDD0' : '#B9B2A2', i === 0 ? 1.5 : .8);
     }
     this.strand(g, path.flat(), '#FFFFFF', 0.8);
     for (const k of [1, 2, 3, 4, 5]) {
@@ -467,21 +449,17 @@ export class EventDial {
     const g = this.cables;
     g.clear();
     const bx = DIAL.box.x; const by = DIAL.box.y; const bw = DIAL.box.w; const bh = DIAL.box.h;
-    // two signal lines from the box toward the loom base
-    this.strand(g, [bx + bw - 4, by + 160, bx + bw + 40, by + 166, bx + bw + 60, by + 176], '#AEB6B4', 2.2);
-    this.strand(g, [bx + bw - 4, by + 168, bx + bw + 40, by + 174, bx + bw + 60, by + 182], '#C9CFC9', 1.4);
-    // cable from the box gland down, then right to the queue coupler
+    // A single routed data loom terminates at J01, then enters the covered base bus.
+    // It is an electrical harness, not a mechanical transmission.
     const q = DIAL.queue;
-    const path: Array<[number, number]> = [
-      [bx + bw - 24, by + bh - 4], [bx + bw - 24, by + bh + 26], [bx + bw - 46, by + bh + 38],
-      [q.x - 24, q.y + 18], [q.x + 12, q.y + 8],
-    ];
-    for (let i = 0; i < 2; i++) {
-      const pts: number[] = [];
-      path.forEach(([x, y]) => pts.push(x + i * 1.6, y));
-      this.strand(g, pts, i ? '#C9CFC9' : '#AEB6B4', i ? 1.2 : 2);
+    const pts=[bx+bw-24,by+bh-4,bx+bw-24,816,338,816,338,q.y+18,q.x,q.y+18];
+    this.strand(g,pts,F.edge,4);this.strand(g,pts,F.enamel,2.2);
+    this.strand(g,[q.x+q.w,q.y+18,511,q.y+18,511,838],F.edge,3.5);
+    this.strand(g,[q.x+q.w,q.y+18,511,q.y+18,511,838],F.enamel,1.8);
+    for(const [x,y] of [[bx+bw-24,by+bh-4],[q.x,q.y+18],[q.x+q.w,q.y+18],[511,838]]) {
+      g.roundRect(x-5,y-5,10,10,2).fill(F.steel).stroke({color:F.muted,width:.6});
+      for(let i=-2;i<=2;i+=2)g.moveTo(x+i,y-4).lineTo(x+i,y+4).stroke({color:F.fine,width:.5});
     }
-    g.circle(bx + bw - 24, by + bh - 4, 3.4).fill(0xd9d3c2).stroke({ color: 0x8f8878, width: 0.7 });
     // gauge needle
     const gn = this.gaugeNeedle;
     gn.clear();
