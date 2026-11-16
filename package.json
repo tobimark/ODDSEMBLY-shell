@@ -15,6 +15,7 @@
     "review:precision": "node scripts/review-precision.mjs",
     "review:dial": "node scripts/review-event-dial.mjs",
     "shot:dial-motion": "node scripts/shot-dial-motion.mjs",
+    "record:dial": "node scripts/record-dial.mjs",
     "rollback:dial": "node scripts/rollback-event-dial.mjs",
     "bridge": "node scripts/agent-bridge.mjs",
     "agent:demo": "node scripts/agent-bridge.mjs --demo"

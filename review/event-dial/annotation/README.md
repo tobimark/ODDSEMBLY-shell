@@ -1,5 +1,10 @@
 # 事件转盘标注图（给外部评审用）
 
+> ⚠️ 本目录的 `annotated-*.png` 对应 **22:00 之前**的“底部远程读数器”布局，已被
+> **盘面安装版**取代。新版静帧/放大/录屏见 `../recording/static-full-2x.png`、
+> `../11-dial-detail-2x.png`、`../recording/dial-readout-fixed.mp4`；
+> 本目录保留用于对照上一轮评审。
+
 本目录把 `../04-hold-s01.png`（READ ×1 / S01/12 / ring 30°）拆成可评审的区域标注。
 实现与回滚见 [docs/EVENT_DIAL.md](../../../docs/EVENT_DIAL.md)、[docs/ROLLBACK.md](../../../docs/ROLLBACK.md)。
 直接发给 ChatGPT 的说明稿：[review-brief.md](review-brief.md)。

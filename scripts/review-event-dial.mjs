@@ -141,8 +141,8 @@ await b.evaluate(`(()=>{
   for(let i=0;i<42;i++)window.__engine.tick(1/60);
 })()`);
 await shot('10-detail-2x.png');
-await b.screenshot(path.join(out, '11-dial-detail-2x.png'), { clip: { x: 20, y: 80, width: 480, height: 540, scale: 1 } });
-await b.screenshot(path.join(out, '12-readout-detail-2x.png'), { clip: { x: 10, y: 790, width: 360, height: 190, scale: 1 } });
+await b.screenshot(path.join(out, '11-dial-detail-2x.png'), { clip: { x: 0, y: 0, width: 440, height: 440, scale: 1 } });
+await b.screenshot(path.join(out, '12-readout-detail-2x.png'), { clip: { x: 0, y: 10, width: 230, height: 190, scale: 1 } });
 
 const errors = b.errorsSince(mark);
 assert.equal(errors.total, 0, JSON.stringify(errors));

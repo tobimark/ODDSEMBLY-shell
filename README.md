@@ -18,7 +18,7 @@ Loom 左侧的大型事件刻度机构是「**12 槽索引鼓 + 固定读数器*
 
 - 新工具事件 → **105 ms** 显示延迟 → **180 ms** 索引步进（30°/格）→ 读数停留 ≈2 s 后回到 IDLE；
 - 同工具调用就地合并为 `×N`（不转轮）；`Sxx/12` 为当前槽位/12 槽；
-- 读数器是一块**固定在共享底座上的轴对齐矩形面板**，结构上没有 rotation，不随转轮运动；
+- 读数器是一块**装在转盘内鼓面上的固定矩形面板**（带 bezel/支脚/信号线，靠近 40° 读头），结构上没有 rotation，不随转轮运动；
 - 工具色：Read `#789ED0`、Bash `#77BA89`、Edit `#C686C0`、Write `#D5A868`、Search `#5AB2B6`；
 - 遥测：`window.__engine.getModeTelemetry().dial`；细节与证据见 [docs/EVENT_DIAL.md](docs/EVENT_DIAL.md)；
 - 回滚：`?motion=off` 关闭步进动效；完整回滚见 [docs/ROLLBACK.md](docs/ROLLBACK.md)（基线 tag `pre-dynamic-dial`）。
@@ -26,6 +26,7 @@ Loom 左侧的大型事件刻度机构是「**12 槽索引鼓 + 固定读数器*
 ```bash
 npm run review:dial       # 11 个确定性状态断言 + 截图（review/event-dial/）
 npm run shot:dial-motion  # 180 ms 步进逐帧 contact sheet
+npm run record:dial       # 30 fps 11 s 录屏（读数器固定、转轮索引/回绕）
 ```
 
 需要 Node.js 22+。

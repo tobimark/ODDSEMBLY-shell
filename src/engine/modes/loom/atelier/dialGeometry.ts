@@ -26,12 +26,15 @@ export const DIAL = {
   /** visible arc of the ring inside the 1472×1008 sheet */
   arc: { minDeg: 12, maxDeg: 70 },
   /**
-   * Fixed rectangular readout panel, mounted on the shared chassis bed next to
-   * the console (research §9.2 option A). Axis-aligned and never transformed:
-   * the geometry type carries no rotation field, so the readout can never end
-   * up inside the rotating tree.
+   * Fixed rectangular readout, mounted on the inner drum face and tied to the
+   * 40° read head by a fixed bracket. Axis-aligned and never transformed: the
+   * geometry type carries no rotation field, so the readout can never end up
+   * inside the rotating tree. The rect fits entirely inside the visible inner
+   * drum (all four corners r ≤ 972 < blue arc 980).
    */
-  panel: { x: 24, y: 812, w: 320, h: 150 },
+  panel: { x: 8, y: 30, w: 190, h: 126 },
+  /** fixed bracket from the panel's lower right corner to the read-head root */
+  panelBracket: { x: 168, y: 156, headR: 1078 },
   /** 12 card windows on the rotating index drum */
   card: { rIn: 1012, rOut: 1128, halfSpanDeg: 12 },
   /** control box (front layer) */

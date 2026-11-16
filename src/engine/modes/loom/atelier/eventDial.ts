@@ -56,7 +56,7 @@ const SANS = '"Arial Narrow", "Roboto Condensed", "Segoe UI", sans-serif';
 const MONO = 'Consolas, "SFMono-Regular", monospace';
 
 /** Accent arc span: the reference window covers 24.0°–53.9° of the blue arc. */
-const ACCENT = { fromDeg: 22, toDeg: 58 } as const;
+const ACCENT = { fromDeg: 37, toDeg: 43 } as const;
 
 /** Angular position of card window `slot` on the rotor (local degrees). */
 const cardSlotDeg = (slot: number): number => DIAL.headDeg - slot * DIAL_SLOT_PITCH;
@@ -95,11 +95,11 @@ function statorBody(): Sprite {
     // ---- outer fine-ruled band: dense hairlines, index wedges, screws
     for (let d = 12; d <= 70; d += 0.16) {
       const a = polar(DIAL.knurlOut + 2, d); const b = polar(DIAL.outerOut - 3, d);
-      line(g, [a[0], a[1], b[0], b[1]], '#8F887866', 0.6);
+      line(g, [a[0], a[1], b[0], b[1]], '#8F88783D', 0.55);
     }
     for (let d = 15; d <= 65; d += 9) {
       const a = polar(DIAL.knurlOut + 14, d); const b = polar(DIAL.outerOut - 14, d);
-      line(g, [a[0], a[1], b[0], b[1]], '#6B6F76', 1.8);
+      line(g, [a[0], a[1], b[0], b[1]], '#7E8288', 1.15);
     }
     for (let d = 14; d <= 67; d += 4) {
       const [x, y] = polar(DIAL.outerOut - 12, d);
@@ -113,9 +113,9 @@ function statorBody(): Sprite {
     for (let d = 12; d <= 70; d += 0.22) {
       const a = polar(DIAL.tickOut + 2, d - 0.45); const b = polar(DIAL.knurlOut - 2, d + 0.45);
       const strong = Math.round(d * 10) % 4 === 0;
-      line(g, [a[0], a[1], b[0], b[1]], strong ? '#9E9684' : '#CFC7B5', strong ? 1.5 : 1);
+      line(g, [a[0], a[1], b[0], b[1]], strong ? '#ADA58F' : '#D6CFBE', strong ? 1.2 : 0.85);
       const a2 = polar(DIAL.tickOut + 2, d + 0.1); const b2 = polar(DIAL.knurlOut - 2, d + 0.1);
-      line(g, [a2[0], a2[1], b2[0], b2[1]], '#FFFFFF88', 0.7);
+      line(g, [a2[0], a2[1], b2[0], b2[1]], '#FFFFFF66', 0.6);
     }
     for (const r of [DIAL.tickOut, DIAL.knurlOut - 1]) {
       g.save(); g.beginPath(); g.arc(cx, cy, r, (12 * Math.PI) / 180, (70 * Math.PI) / 180); g.strokeStyle = '#B4AC9A'; g.lineWidth = 0.9; g.stroke(); g.restore();
@@ -171,13 +171,31 @@ function statorBody(): Sprite {
       g.beginPath(); g.arc(cx, cy, DIAL.lipOut - 8, a0, a1); g.strokeStyle = '#E7E1D4'; g.lineWidth = 3; g.stroke(); g.restore();
     }
 
-    // ---- fixed clamps holding the stationary housing (they never rotate)
-    for (const [deg, r] of [[16, DIAL.faceOut - 36], [23, DIAL.faceOut - 26], [30, DIAL.faceOut - 20], [48, DIAL.faceOut - 18], [57, DIAL.faceOut - 28]] as const) {
+    // ---- fixed clearance ring between the rotating card windows (r ≤ 1128)
+    //      and the rotating separator (r ≥ 1140): the stator keeps a visible
+    //      4–8 px gap so fixed hardware can never be mistaken for a rotor part.
+    g.save();
+    g.beginPath(); g.arc(cx, cy, DIAL.card.rOut + 4, 0, Math.PI * 2);
+    g.strokeStyle = '#FFFFFFB0'; g.lineWidth = 1.1; g.stroke();
+    g.beginPath(); g.arc(cx, cy, DIAL.card.rOut + 8, 0, Math.PI * 2);
+    g.strokeStyle = '#8F887840'; g.lineWidth = 0.7; g.stroke();
+    g.restore();
+
+    // ---- fixed clamps now live entirely on the stationary outer housing
+    //      (r 1220–1290); nothing fixed intrudes into the rotating bands.
+    for (const [deg, r] of [[23, 1244], [30, 1240], [48, 1240], [57, 1248]] as const) {
       const [x, y] = polar(r, deg);
       g.save(); g.translate(x, y); g.rotate(((deg + 90) * Math.PI) / 180);
-      rect(g, -26, -19, 52, 38, '#F6F1E5', 4, '#B4AC9A');
-      rect(g, -20, -13, 40, 26, '#FBF9F6', 3, '#BFC2BA');
-      bolt(g, -15, -8, 2.2); bolt(g, 15, -8, 2.2); bolt(g, -15, 8, 2.2); bolt(g, 15, 8, 2.2);
+      // shadow of the clamp foot on the housing
+      g.save(); g.translate(1.5, 2.2);
+      rect(g, -25, -18, 50, 36, '#2A241614', 4);
+      g.restore();
+      rect(g, -25, -18, 50, 36, '#F6F1E5', 4, '#B4AC9A');
+      rect(g, -19, -12, 38, 24, '#FBF9F6', 3, '#BFC2BA');
+      bolt(g, -14, -7, 2.1); bolt(g, 14, -7, 2.1); bolt(g, -14, 7, 2.1); bolt(g, 14, 7, 2.1);
+      // short standoff toward the fixed guide ring (never crosses the card band)
+      const [ix, iy] = polar(r - 22, deg);
+      line(g, [0, -18, ix - x, iy - y], '#B4AC9A', 2.2);
       g.restore();
     }
   });
@@ -266,22 +284,24 @@ function dialRotor(): Container {
   return rotor;
 }
 
-/** Fixed rectangular readout panel, baked shell only (text is live). */
+/** Fixed compact readout shell, baked once; text stays live and horizontal. */
 function readoutPanel(w: number, h: number): Sprite {
   return surface(w, h, g => {
-    g.save(); g.shadowColor = '#2A241622'; g.shadowBlur = 2; g.shadowOffsetY = 1.4;
-    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 8); g.fillStyle = F.enamel; g.fill(); g.restore();
-    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 8); g.strokeStyle = F.edge; g.lineWidth = 1.2; g.stroke();
-    rect(g, 8, 8, w - 16, h - 16, F.paper, 4, F.fine);
-    for (const [x, y] of [[13, 13], [w - 13, 13], [13, h - 13], [w - 13, h - 13]] as const) bolt(g, x, y, 2.5);
-    label(g, 'EVENT READOUT', 15, 22, 7.5, F.muted);
-    line(g, [14, 29, w - 14, 29], F.fine, 0.7);
-    line(g, [14, h - 26, w - 14, h - 26], F.fine, 0.7);
-    label(g, '12-SLOT INDEX', w - 30, h - 9, 6.2, '#A39C89', 'right');
-    // two mounting tabs read as "bolted to the shared bed"
-    g.beginPath(); g.roundRect(w / 2 - 26, h - 14, 52, 10, 3); g.fillStyle = F.steel; g.fill();
-    g.strokeStyle = F.edge; g.lineWidth = 0.7; g.stroke();
-    bolt(g, w / 2 - 15, h - 9, 2.1); bolt(g, w / 2 + 15, h - 9, 2.1);
+    g.save(); g.shadowColor = '#2A24162A'; g.shadowBlur = 2.4; g.shadowOffsetX = .8; g.shadowOffsetY = 1.5;
+    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 7); g.fillStyle = F.enamel; g.fill(); g.restore();
+    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 7); g.strokeStyle = F.edge; g.lineWidth = 1.1; g.stroke();
+    rect(g, 7, 7, w - 14, h - 14, F.paper, 4, F.fine);
+    for (const [x, y] of [[10, 10], [w - 10, 10], [10, h - 10], [w - 10, h - 10]] as const) bolt(g, x, y, 2.1);
+    label(g, 'EVENT READOUT', 11, 16.5, 6.2, F.muted);
+    line(g, [10, 21.5, w - 10, 21.5], F.fine, 0.6);
+    line(g, [10, h - 19, w - 10, h - 19], F.fine, 0.6);
+    label(g, 'READ HEAD · 40°', 11, h - 8, 5.4, '#A39C89');
+    // two lugs bolt the panel to the inner drum face
+    for (const x of [w / 2 - 28, w / 2 + 12]) {
+      g.beginPath(); g.roundRect(x, h - 15, 16, 10, 2); g.fillStyle = F.steel; g.fill();
+      g.strokeStyle = F.edge; g.lineWidth = 0.6; g.stroke();
+      bolt(g, x + 8, h - 10, 1.8);
+    }
   });
 }
 
@@ -405,6 +425,7 @@ export class EventDial {
   private readonly slotTint = new Graphics();
   private readonly accent = new Graphics();
   private readonly pointer = new Graphics();
+  private readonly mount = new Graphics();
   private readonly plumbing = new Graphics();
   private readonly harness = new Graphics();
   private readonly readout = new Container();
@@ -432,7 +453,7 @@ export class EventDial {
     const stator = statorBody();
     this.rotor = dialRotor();
     this.rotor.addChild(this.slotTint);
-    this.body.addChild(stator, this.rotor, this.accent, this.pointer, this.plumbing);
+    this.body.addChild(stator, this.rotor, this.accent, this.pointer, this.mount, this.plumbing);
     this.textures.push(stator);
 
     const box = controlBox();
@@ -447,30 +468,30 @@ export class EventDial {
 
     this.typeText = new Text({
       text: 'IDLE',
-      style: { fontFamily: SANS, fontSize: 26, fontWeight: '700', fill: '#8B9398', letterSpacing: 2.4 },
+      style: { fontFamily: SANS, fontSize: 22, fontWeight: '700', fill: '#8B9398', letterSpacing: 1.4 },
     });
-    this.typeText.position.set(16, 42);
+    this.typeText.position.set(10, 25);
     this.multText = new Text({
       text: '',
-      style: { fontFamily: SANS, fontSize: 20, fontWeight: '700', fill: '#1E2330', letterSpacing: 1.2 },
+      style: { fontFamily: SANS, fontSize: 13, fontWeight: '700', fill: '#1E2330', letterSpacing: 0.7 },
     });
     this.multText.anchor.set(1, 0);
-    this.multText.position.set(panel.w - 16, 48);
+    this.multText.position.set(panel.w - 10, 28);
     this.stepText = new Text({
       text: '',
-      style: { fontFamily: MONO, fontSize: 10, fill: '#67624F', letterSpacing: 1.2 },
+      style: { fontFamily: MONO, fontSize: 8.2, fill: '#67624F', letterSpacing: 1 },
     });
-    this.stepText.position.set(16, 88);
+    this.stepText.position.set(10, 57);
     this.detailText = new Text({
       text: '',
-      style: { fontFamily: MONO, fontSize: 9, fill: '#78818A', letterSpacing: 0.4 },
+      style: { fontFamily: MONO, fontSize: 8, fill: '#78818A', letterSpacing: 0.2 },
     });
-    this.detailText.position.set(16, 106);
+    this.detailText.position.set(10, 70);
     this.ageText = new Text({
       text: '',
-      style: { fontFamily: MONO, fontSize: 8, fill: '#98A0A6', letterSpacing: 0.8 },
+      style: { fontFamily: MONO, fontSize: 7.4, fill: '#98A0A6', letterSpacing: 0.5 },
     });
-    this.ageText.position.set(16, 130);
+    this.ageText.position.set(10, 84);
 
     this.readout.addChild(this.rule, this.chip, this.typeText, this.multText, this.stepText, this.detailText, this.ageText, this.flash);
     this.readout.position.set(panel.x, panel.y);
@@ -484,6 +505,7 @@ export class EventDial {
     this.front.addChild(box, queue, this.harness, this.queueCount, this.readout);
 
     this.drawPointer();
+    this.drawMount();
     this.drawPlumbing();
     this.drawHarness();
     this.update(0);
@@ -566,7 +588,7 @@ export class EventDial {
       this.detailText.text = '';
       this.ageText.text = '';
       this.paintChip(DEFAULT_TOOL_COLOR, 0.35);
-      this.paintRule(DEFAULT_TOOL_COLOR, 0.28);
+      this.paintRule();
       this.paintTint(DEFAULT_TOOL_COLOR, 0, 0);
       this.paintAccent(DEFAULT_TOOL_COLOR);
       return;
@@ -576,10 +598,10 @@ export class EventDial {
     this.typeText.style.fill = '#1E2330';
     this.multText.text = `×${ro.count}`;
     this.stepText.text = ro.step ? `S${pad2(ro.step.index)}/${ro.step.total}` : 'S—/—';
-    this.detailText.text = truncate(ro.detail, 38);
+    this.detailText.text = truncate(ro.detail, 28);
     this.ageText.text = formatAge(ro.ageMs);
     this.paintChip(ro.color, 1);
-    this.paintRule(ro.color, 0.85);
+    this.paintRule();
     this.paintTint(ro.color, slot, 1);
     this.paintAccent(ro.color);
     this.flashStartMs = this.state.clockMs;
@@ -589,14 +611,14 @@ export class EventDial {
   private paintChip(color: string, alpha: number): void {
     const g = this.chip;
     g.clear();
-    g.roundRect(DIAL.panel.w - 34, 15, 18, 9, 2).fill({ color, alpha }).stroke({ color: '#FFFFFF', width: 0.6, alpha: 0.7 });
+    g.roundRect(DIAL.panel.w - 31, 11, 14, 7, 2).fill({ color, alpha }).stroke({ color: '#FFFFFF', width: 0.5, alpha: 0.7 });
   }
 
-  /** Thin tool-colour rule under the type row: ties panel and arc together. */
-  private paintRule(color: string, alpha: number): void {
+  /** Neutral divider under the type row; colour is carried by the chip only. */
+  private paintRule(): void {
     const g = this.rule;
     g.clear();
-    g.roundRect(16, 76, DIAL.panel.w - 32, 2.5, 1.2).fill({ color, alpha });
+    g.roundRect(10, 51, DIAL.panel.w - 20, 1.6, 0.8).fill({ color: '#BFC2BA', alpha: 0.85 });
   }
 
   /** Translucent tool tint on the card window currently under the read head. */
@@ -617,7 +639,7 @@ export class EventDial {
     const { cx, cy } = DIAL;
     const a0 = (ACCENT.fromDeg * Math.PI) / 180;
     const a1 = (ACCENT.toDeg * Math.PI) / 180;
-    g.arc(cx, cy, DIAL.blue, a0, a1).stroke({ color, width: 10 });
+    g.arc(cx, cy, DIAL.blue, a0, a1).stroke({ color, width: 9 });
     g.arc(cx, cy, DIAL.blue - 7, a0, a1).stroke({ color: '#FFFFFF', width: 1.4, alpha: 0.55 });
     g.arc(cx, cy, DIAL.blue + 6, a0, a1).stroke({ color, width: 1.4, alpha: 0.45 });
   }
@@ -629,42 +651,122 @@ export class EventDial {
     g.roundRect(1.5, 1.5, w - 3, h - 3, 8).stroke({ color, width: 2 });
   }
 
-  /** Fixed read head: needle + arrow + bolted mount on the stationary housing. */
+  /** Fixed read head: bolted mount on the outer housing, an elevated arm that
+   *  clears the rotor, and a small read aperture + locating notch at r≈1080. */
   private drawPointer(): void {
     const g = this.pointer;
     const deg = DIAL.headDeg;
-    const [x0, y0] = polar(1002, deg);
-    const [x1, y1] = polar(1168, deg);
-    g.moveTo(x0, y0).lineTo(x1, y1).stroke({ color: 0x23283a, width: 2.2, cap: 'round' });
     const a = (deg * Math.PI) / 180;
     const nx = Math.cos(a); const ny = Math.sin(a);
     const tx = -Math.sin(a); const ty = Math.cos(a);
-    g.poly([
-      x1, y1,
-      x1 - nx * 18 + tx * 7.5, y1 - ny * 18 + ty * 7.5,
-      x1 - nx * 18 - tx * 7.5, y1 - ny * 18 - ty * 7.5,
-    ], true).fill(0x23283a);
-    g.circle(x0, y0, 3.2).fill(0x23283a);
-    // bolted mount riding the fixed outer housing, strapped to the needle root
-    const [mx, my] = polar(1204, deg);
-    const mtx = -Math.sin(a); const mty = Math.cos(a);
-    const mrx = Math.cos(a); const mry = Math.sin(a);
-    const [sx, sy] = polar(1176, deg);
-    g.moveTo(sx, sy).lineTo(mx - mrx * 9, my - mry * 9).stroke({ color: 0x23283a, width: 3 });
+    const P = (r: number, t = 0): [number, number] =>
+      [DIAL.cx + nx * r + tx * t, DIAL.cy + ny * r + ty * t];
+    const arm = (r0: number, r1: number, t: number, color: number, width: number, alpha = 1, ox = 0, oy = 0) => {
+      const [x0, y0] = P(r0, t); const [x1, y1] = P(r1, t);
+      g.moveTo(x0 + ox, y0 + oy).lineTo(x1 + ox, y1 + oy)
+        .stroke({ color, width, alpha, cap: 'round' });
+    };
+
+    // 1) shadow proves the arm is above the rotating card face
+    arm(1196, 1070, 1.5, 0x2a2416, 7, 0.17, 3.2, 4);
+    // 2) main elevated arm from the fixed outer housing to the read aperture
+    arm(1196, 1076, 0, 0x6b7075, 6.4);
+    arm(1196, 1076, 0, 0xb9bcb8, 2.8);
+    arm(1196, 1076, 0, 0xffffff, 1.1);
+    // 3) bolted mount on the stationary outer band (r≈1224)
+    const [mx, my] = P(1224);
     const corners: number[] = [];
-    for (const [u, v] of [[-27, -17], [27, -17], [27, 17], [-27, 17]] as const) {
-      corners.push(mx + mtx * u + mrx * v, my + mty * u + mry * v);
+    for (const [u, v] of [[-29, -18], [29, -18], [29, 18], [-29, 18]] as const) {
+      corners.push(mx + tx * u + nx * v, my + ty * u + ny * v);
     }
     g.poly(corners, true).fill(0xf6f1e5).stroke({ color: 0xb4ac9a, width: 1.1 });
     for (const [u, v] of [[-19, -9], [19, -9], [-19, 9], [19, 9]] as const) {
-      g.circle(mx + mtx * u + mrx * v, my + mty * u + mry * v, 2.2).fill(0xefe9db).stroke({ color: 0xa79e88, width: 0.7 });
+      g.circle(mx + tx * u + nx * v, my + ty * u + ny * v, 2.2)
+        .fill(0xefe9db).stroke({ color: 0xa79e88, width: 0.7 });
     }
+    // 4) fixed read aperture straddling the current card window edge
+    const [apx, apy] = P(1082);
+    g.circle(apx, apy, 6.2).fill(0xfdfbf4).stroke({ color: 0x6b7075, width: 1.2 });
+    const bar0 = P(1092, -18); const bar1 = P(1092, 18);
+    g.moveTo(bar0[0], bar0[1]).lineTo(bar1[0], bar1[1]).stroke({ color: 0x23283a, width: 1.8, cap: 'round' });
+    for (const t of [-18, 18]) {
+      const [lx, ly] = P(1092, t); const [ix, iy] = P(1074, t);
+      g.moveTo(lx, ly).lineTo(ix, iy).stroke({ color: 0x23283a, width: 1.5, cap: 'round' });
+    }
+    const [cxr, cyr] = P(1082);
+    g.circle(cxr, cyr, 2.1).fill(0x23283a);
+    // 5) needle tip inside the aperture
+    const [t0x, t0y] = P(1078); const [t1x, t1y] = P(1062, -4); const [t2x, t2y] = P(1062, 4);
+    g.poly([t0x, t0y, t1x, t1y, t2x, t2y], true).fill(0x23283a);
+    // 6) fixed locating bracket in the 4 px clearance gap between the card
+    //    windows (outer r=1128) and the rotating separator (inner r=1140)
+    const [nb0x, nb0y] = P(1136, -9); const [nb1x, nb1y] = P(1136, 9);
+    g.moveTo(nb0x, nb0y).lineTo(nb1x, nb1y).stroke({ color: 0x171c60, width: 1.5, alpha: 0.8 });
+    for (const t of [-9, 9]) {
+      const [lx, ly] = P(1136, t); const [ix, iy] = P(1128, t);
+      g.moveTo(lx, ly).lineTo(ix, iy).stroke({ color: 0x171c60, width: 1.2, alpha: 0.7 });
+    }
+  }
+
+  /** Fixed bracket/feet that mount the readout on the inner drum, plus a thin
+   *  signal cable to the read-head mount on the outer housing. */
+  private drawMount(): void {
+    const g = this.mount;
+    const p = DIAL.panel;
+    // machined bezel plate bolted to the inner drum face; the readout sits in it
+    const bx = p.x - 7; const by = p.y - 7; const bw = p.w + 14; const bh = p.h + 14;
+    g.roundRect(bx + 2, by + 3, bw, bh, 9).fill({ color: '#2A2416', alpha: 0.18 });
+    g.roundRect(bx, by, bw, bh, 9).fill(0xe8e8e0).stroke({ color: 0x9a9e9e, width: 1.2 });
+    g.roundRect(bx + 2.5, by + 2.5, bw - 5, bh - 5, 7).stroke({ color: 0xffffff, width: 0.8, alpha: 0.55 });
+    for (const [x, y] of [[bx + 4, by + bh / 2], [bx + bw - 4, by + bh / 2], [bx + bw / 2, by + 4], [bx + bw / 2, by + bh - 4]] as const) {
+      g.circle(x, y, 2.1).fill(0xefe9db).stroke({ color: 0xa79e88, width: 0.6 });
+    }
+    // panel shadow cast onto the bezel
+    g.roundRect(p.x + 4, p.y + 5, p.w - 4, p.h - 4, 7).fill({ color: '#2A2416', alpha: 0.14 });
+    // two feet bolted to the drum face
+    for (const fx of [p.x + 20, p.x + p.w - 22]) {
+      const fy = p.y + p.h;
+      g.roundRect(fx - 8, fy - 3, 16, 16, 3).fill(0xd9d3c2).stroke({ color: 0x8f8878, width: 0.9 });
+      g.circle(fx, fy + 9, 2.1).fill(0xefe9db).stroke({ color: 0xa79e88, width: 0.6 });
+      g.moveTo(fx, fy + 4).lineTo(fx, fy + 13).stroke({ color: 0xffffff, width: 0.8, alpha: 0.6 });
+    }
+    // thin signal cable: readout → read-head arm (one read assembly). It ends
+    // on a clamp attached to the arm, so the readout and head share a mount.
+    const [ax, ay] = polar(1156, DIAL.headDeg);
+    const path: Array<[number, number]> = [
+      [p.x + p.w - 8, p.y + p.h - 6],
+      [212, 196],
+      [244, 258],
+      [266, 314],
+      [ax, ay],
+    ];
+    const flat = path.flat();
+    const strand = (pts: number[], color: string, width: number, dx = 0, dy = 0) => {
+      g.moveTo(pts[0] + dx, pts[1] + dy);
+      for (let i = 2; i < pts.length; i += 2) g.lineTo(pts[i] + dx, pts[i + 1] + dy);
+      g.stroke({ color, width, cap: 'round', join: 'round' });
+    };
+    strand(flat, '#2A2416', 2.6, 1.8, 2.2);
+    strand(flat, F.edge, 2.0);
+    strand(flat, F.enamel, 0.9);
+    for (const [x, y] of path.slice(1, -1)) {
+      g.roundRect(x - 7, y - 2.2, 14, 4.4, 2).fill(0xd9d3c2).stroke({ color: 0x6f7a78, width: 0.7 });
+    }
+    // clamp where the cable meets the arm
+    const [tx, ty] = [Math.cos(((DIAL.headDeg + 90) * Math.PI) / 180), Math.sin(((DIAL.headDeg + 90) * Math.PI) / 180)];
+    const clamp: number[] = [];
+    for (const [u, v] of [[-10, -5], [10, -5], [10, 5], [-10, 5]] as const) {
+      clamp.push(ax + tx * u + Math.cos((DIAL.headDeg * Math.PI) / 180) * v,
+                 ay + ty * u + Math.sin((DIAL.headDeg * Math.PI) / 180) * v);
+    }
+    g.poly(clamp, true).fill(0xd9d3c2).stroke({ color: 0x8f8878, width: 0.8 });
+    g.circle(ax, ay, 2).fill(0x6f7a78);
   }
 
   /** Static read-head feed: mount → control-box collar. */
   private drawPlumbing(): void {
     const g = this.plumbing;
-    const [sx, sy] = polar(1204, DIAL.headDeg);
+    const [sx, sy] = polar(1224, DIAL.headDeg);
     const path: Array<[number, number]> = [
       [sx, sy],
       [352, 470],
@@ -693,30 +795,30 @@ export class EventDial {
     for (let i = 0; i < 3; i++) g.rect(DIAL.box.x + 116, DIAL.box.y - 11 + i * 3.6, 28, 1).fill(0xb4ac9a);
   }
 
-  /** Static harness: control box → queue coupler → console panel; fixed terminals. */
+  /** Static harness: control box → junction block → queue coupler; the readout
+   *  no longer sits on the bed, so its old panel links are gone. */
   private drawHarness(): void {
     const g = this.harness;
     const bx = DIAL.box.x; const by = DIAL.box.y; const bw = DIAL.box.w; const bh = DIAL.box.h;
     const q = DIAL.queue;
-    const p = DIAL.panel;
     const strand = (pts: number[], color: string, width: number) => {
       g.moveTo(pts[0], pts[1]);
       for (let i = 2; i < pts.length; i += 2) g.lineTo(pts[i], pts[i + 1]);
       g.stroke({ color, width, cap: 'round', join: 'round' });
     };
-    const pts = [bx + bw - 24, by + bh - 4, bx + bw - 24, 816, 338, 816, 338, q.y + 18, q.x, q.y + 18];
-    strand(pts, F.edge, 4); strand(pts, F.enamel, 2.2);
-    strand([q.x + q.w, q.y + 18, 511, q.y + 18, 511, 838], F.edge, 3.5);
-    strand([q.x + q.w, q.y + 18, 511, q.y + 18, 511, 838], F.enamel, 1.8);
-    for (const [x, y] of [[bx + bw - 24, by + bh - 4], [q.x, q.y + 18], [q.x + q.w, q.y + 18], [511, 838]]) {
+    const boxLink = [bx + bw - 24, by + bh - 4, bx + bw - 24, 806, 360, 806, 360, 818];
+    strand(boxLink, F.edge, 4.5); strand(boxLink, F.enamel, 2.4);
+    const queueLink = [360, 818, 392, 826, q.x + 34, q.y + 4];
+    strand(queueLink, F.edge, 4.5); strand(queueLink, F.enamel, 2.4);
+    strand([q.x + q.w - 18, q.y + q.h - 2, q.x + q.w - 18, 876], F.edge, 3.6);
+    strand([q.x + q.w - 18, q.y + q.h - 2, q.x + q.w - 18, 876], F.enamel, 1.9);
+    // junction block on the bed between the control box and the queue plate
+    g.roundRect(340, 806, 44, 22, 4).fill(F.steel).stroke({ color: F.muted, width: 0.8 });
+    g.roundRect(345, 811, 34, 12, 2).fill(F.enamel).stroke({ color: F.fine, width: 0.6 });
+    for (let i = 0; i < 3; i++) g.rect(349 + i * 9, 815, 5, 5).fill(F.fine);
+    for (const [x, y] of [[bx + bw - 24, by + bh - 4], [360, 818], [q.x + 34, q.y + 4], [q.x + q.w - 18, 876]]) {
       g.roundRect(x - 5, y - 5, 10, 10, 2).fill(F.steel).stroke({ color: F.muted, width: 0.6 });
       for (let i = -2; i <= 2; i += 2) g.moveTo(x + i, y - 4).lineTo(x + i, y + 4).stroke({ color: F.fine, width: 0.5 });
-    }
-    // console links: control box → readout panel, readout panel → queue plate
-    strand([210, by + bh, 210, p.y + 2], F.edge, 5); strand([210, by + bh, 210, p.y + 2], F.enamel, 2.6);
-    strand([p.x + p.w, p.y + 34, q.x + 2, q.y + 18], F.edge, 4); strand([p.x + p.w, p.y + 34, q.x + 2, q.y + 18], F.enamel, 2);
-    for (const [x, y] of [[210, by + bh], [210, p.y + 2], [p.x + p.w, p.y + 34], [q.x + 2, q.y + 18]]) {
-      g.roundRect(x - 5, y - 5, 10, 10, 2).fill(F.steel).stroke({ color: F.muted, width: 0.6 });
     }
   }
 

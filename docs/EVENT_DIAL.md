@@ -3,7 +3,7 @@
 本轮把 Loom 左侧的大型事件刻度机构从「静态读数窗」做成可回滚的动态转盘：
 
 - **会动的是 12 槽索引鼓**（`ringPhase`，每个新工具组前进 30°；180 ms `easeInOutCubic`）。
-- **读数器结构上不可旋转**：轴对齐矩形面板，装在共享底座上，类型里没有 rotation 字段。
+- **读数器结构上不可旋转**：轴对齐矩形面板，装在转盘内鼓面的加工面板上（40° 固定读头旁），类型里没有 rotation 字段。
 - **颜色=当前工具**：统一 `ToolPalette`（取原版运行时实测色）。
 - **动效参数来自原版实测**：105 ms 显示延迟 → 70–200 ms 换卡过渡放大为 180 ms → 单卡 ≈2 s 停留；同工具事件合并为 `×N`，不转轮。
 - 原版依据与逐条差异：`CrommaCode-Loom事件转盘-研究.md`（研究）§6、§8、§9。
@@ -42,7 +42,7 @@ EventDial.body (在织机后面)                 EventDial.front (压在织机�
 不变量：
 
 1. **任何 `Text` 都不在 rotor 子树里**（水平文字只能出现在不旋转层；反向旋转会发虚）。
-2. **`ReadoutPanel` 几何没有 rotation/parent-rotor 字段**；构造期定位一次。
+2. **`ReadoutPanel` 几何没有 rotation/parent-rotor 字段**；构造期定位在盘面 (8,30)，尺寸 190×126，全部落在内鼓面内（四角 r ≤ 972 < 蓝弧 980）。
 3. 所有旋转件姿态 = `f(state.angleDeg)` 的纯投影；模型是纯函数，可 node 直测。
 4. 「固定」指**设计空间**固定（1472×1008 等比缩放），不是 DOM 浮层。
 
@@ -80,6 +80,25 @@ IDLE ──event──► ARMING(105 ms) ──► MOVING(180 ms) ──► HOLD
 
 `textile.ts` 的纬线色是另一套纱线材质色板，本轮**未合并**（避免改动织物外观）。
 
+
+## 读数器装配（2026-11-16 修正）
+
+按最新评审要求，读数器从「共享底座左下的远程面板」改为**装在转盘内鼓面上的固定读数器**：
+
+- 面板 rect `x=8, y=30, 190×126`，四角均在内鼓面内（r ≤ 972 < 980），不覆盖卡窗；
+- 面板背后是一块**加工 bezel 板**（外扩 7 px、四颗边螺栓），面板四周有阴影，形成“嵌入盘面”的厚度感；
+- 下方两只支脚螺栓固定在内鼓面；右侧一根**细信号线**（带 3 个线夹）接到 40° 读头的臂上；
+- 读头改为：外壳 `r=1224` 螺栓座 → 上抬读臂（带投影）→ `r≈1082` 的固定读数窗口（白色孔 + 深色针 + 叉形窗口）→ `r≈1136` 的固定定位缺口（在 1128/1140 的 4 px 间隙中）；
+- 固定夹块全部移到 `r=1220–1290` 的外壳区，并在卡窗外沿与旋转分度环之间保留固定导环与 4–8 px 视觉间隙；
+- 工具色弧段从 22°–58° 缩短为 **37°–43°**（只标记“当前读数位”），真正的工具色留在当前卡窗叠色与读数器 chip；
+- 分隔线改为中性灰；面板字号：TYPE 22、×N 13、Sxx/12 8.2、detail 8、age 7.4；去掉 `12-SLOT INDEX` 装饰说明，改为 `READ HEAD · 40°`；
+- 卡窗刻度带/外圈细纹对比度降低约 25–35%，固定夹块与转子明确分层。
+
+动态验证：`review/event-dial/recording/dial-readout-fixed.mp4`（30 fps，11 s，330 帧）包含
+READ→BASH→BASH×N（不推轮）→EDIT/WRITE/SEARCH→12 组整圈→READ；读数器位置在整段中不变。
+逐帧截图为 `review/event-dial/recording/frames/`（可重建），静态图为 `static-full-2x.png` /
+`static-dial-2x.png`。
+
 ## 遥测 / 调试
 
 `window.__engine.getModeTelemetry().dial`：
@@ -103,7 +122,7 @@ npm run review:dial         # 浏览器内 11 状态断言 + 截图
 npm run shot:dial-motion    # 180 ms 步进逐帧
 ```
 
-- `npm test`：dialog 模型 10 条纯逻辑断言（idle/arm/move/hold/过期、同工具 ×N、Sxx/12、帧步长无关、reduced motion、12 组整圈）。
+- `npm test`：dialog 模型 11 条纯逻辑断言（idle/arm/move/hold/过期、同工具 ×N、Sxx/12、帧步长无关、reduced motion、12 组整圈、索引落位 40° 不变式）。
 - `review:dial`：idle、105 ms 延时、步进中间角、S01/12、×2 合并、S02/12、idle 过期、12 连发、reset、reduced motion、2× 细节；0 浏览器错误。
 - 机械/织物链路未改：`scene.update` 仍先推进 `Mechanism`，转盘只是多一个 `dial.update(dt)`。
 
@@ -122,6 +141,10 @@ npm run shot:dial-motion    # 180 ms 步进逐帧
 `annotated-console.png`（C1–C5）、`annotated-readout.png`（R1–R11）、
 `04-hold-s01.annotated.png`（原尺寸编号版）。直接可粘贴的评审说明见
 [review-brief.md](../review/event-dial/annotation/review-brief.md)。
+
+> 注：`annotation/` 下的旧标注图对应“底部远程读数器”版本（2026-11-16 22:00 之前）；
+> 盘面安装版请使用 `review/event-dial/recording/static-full-2x.png` 与
+> `review/event-dial/11-dial-detail-2x.png`。
 
 ## 与原实现的关系 / 回滚
 

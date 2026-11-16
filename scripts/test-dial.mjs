@@ -158,4 +158,15 @@ assert.equal(telemetry.slot, 12);
 assert.equal(telemetry.count, 1);
 console.log('ok 10 12 groups drive one full 360° turn; telemetry is flat/JSON-safe');
 
+
+/* 11 — every index lands the active card centre exactly under the 40° read head */
+const HEAD_DEG = 40;
+for (let ordinal = 1; ordinal <= 24; ordinal++) {
+  const slot = m.slotForOrdinal(ordinal);
+  const target = m.targetAngleFor(ordinal);
+  const screen = (((target + (HEAD_DEG - slot * 30)) % 360) + 360) % 360;
+  assert.ok(Math.abs(screen - HEAD_DEG) < 1e-9, `ordinal ${ordinal} lands at ${screen}°`);
+}
+console.log('ok 11 index lands the active card centre at 40° ± 0° (slot-local inverted)');
+
 console.log('PASS: dial model — idle/arm/move/hold/expire, same-tool ×N, Sxx/12, determinism, reduced motion.');

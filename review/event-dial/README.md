@@ -27,6 +27,20 @@
 给 ChatGPT / 设计评审的区域标注与说明稿：[annotation/README.md](annotation/README.md)，
 可直接粘贴的评审请求：[annotation/review-brief.md](annotation/review-brief.md)。
 
+
+## 动态录屏（读数器固定）
+
+| 文件 | 内容 |
+|---|---|
+| `recording/dial-readout-fixed.mp4` | 30 fps / 11 s / 330 帧真实画布录屏：READ → BASH 步进 → BASH ×N（不推轮）→ EDIT/WRITE/SEARCH → 12 组整圈 → READ；读数器位置全程不动 |
+| `recording/static-full-2x.png` | 录屏末态的全场景 2× 静帧 |
+| `recording/static-dial-2x.png` | 录屏末态的盘面 2× 放大 |
+| `recording/contact-sheet.jpg` | 7 个关键时刻拼图 |
+| `recording/recording-telemetry.json` | 末态遥测（angleDeg / slot / ordinal / count） |
+
+重建：`npm run record:dial`（需要 bundled ffmpeg 或 `FFMPEG` 环境变量）。
+逐帧 jpg 在 `recording/frames/`，可重建且未入库。
+
 ## 复现
 
 ```bash
