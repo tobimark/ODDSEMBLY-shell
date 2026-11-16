@@ -67,6 +67,7 @@ export default function App() {
       reset: () => engine.resetAll(),
       setMode: (m: ModeId) => engine.setMode(m),
       getMode: () => engine.activeModeId,
+      getModeInstance: (m?: ModeId) => engine.modeInstance(m),
       setSpeed: (s: number) => engine.setSpeed(s),
       setMuted: (m: boolean) => engine.setMuted(m),
       setZoom: (z: number) => engine.setZoom(z),
@@ -117,7 +118,14 @@ export default function App() {
   const hud = s?.hud ?? { transport: 'STANDBY', stage: 'IDLE', fields: [], caption: '', hint: '' };
   const replay = s?.replay;
 
-  const setMode = (m: ModeId) => { engineRef.current?.setMode(m); };
+  const setMode = (m: ModeId) => {
+    engineRef.current?.setMode(m);
+    try {
+      const url = new URL(location.href);
+      url.searchParams.set('mode', m);
+      history.replaceState(null, '', url);
+    } catch { /* ignore */ }
+  };
   const toggleDetail = () => {
     const next = !detail;
     setDetail(next);

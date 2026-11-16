@@ -412,6 +412,8 @@ export class VisualEngine {
   get status(): EngineStatus { return this.bus.status; }
   get currentMode(): VisualMode | undefined { return this.modes.get(this.activeId); }
   get activeModeId(): ModeId { return this.activeId; }
+  /** live mode instance (debug/QA only; visuals stay owned by the mode) */
+  modeInstance(id: ModeId = this.activeId): VisualMode | undefined { return this.modes.get(id); }
   modeTelemetry(id: ModeId = this.activeId): Record<string, unknown> {
     return this.modes.get(id)?.telemetry() ?? {};
   }
