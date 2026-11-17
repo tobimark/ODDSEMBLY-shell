@@ -1,6 +1,6 @@
 import { Container } from 'pixi.js';
 import { MODE_META, type ModeContext, type ModeRuntime, type VisualMode } from '../../core/mode';
-import type { EngineState, ModeHud, ToolEvent, ToolName } from '../../core/types';
+import type { EngineState, ModeHud, ToolEvent, ToolName, TriggerOptions } from '../../core/types';
 import { LoomAudio } from './audio';
 import { LoomScene } from './scene';
 
@@ -67,7 +67,7 @@ export class LoomMode implements VisualMode {
     if (this.hudT > 0.1) { this.hudT = 0; this.refreshHud(); }
   }
 
-  trigger(e: ToolEvent): void { this.scene?.trigger(e); this.refreshHud(); }
+  trigger(e: ToolEvent, opts?: TriggerOptions): void { this.scene?.trigger(e, opts); this.refreshHud(); }
 
   hud(): ModeHud { return this.hudCache; }
 
@@ -91,7 +91,7 @@ export class LoomMode implements VisualMode {
   private caption = '等待事件 · 每一次调用，织入一道纬线';
 
   telemetry(): Record<string, unknown> {
-    return { mode: 'loom', ...(this.scene?.telemetry ?? {}), dial: this.scene?.dialState ?? null };
+    return { mode: 'loom', ...(this.scene?.telemetry ?? {}), dial: this.scene?.dialState ?? null, cloth: this.scene?.clothState ?? null };
   }
 
   reset(): void {

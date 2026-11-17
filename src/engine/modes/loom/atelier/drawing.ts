@@ -1,7 +1,7 @@
 import { Sprite, Texture } from 'pixi.js';
 import { FINISH as F } from './finish';
 
-export const C = { paper: '#FBF9F6', navy: '#171C60', teal: '#33CBCC', ink: '#323953', steel: '#919B9F', pale: '#E4E5E0', warm: '#C6B79D', dark: '#31364A' };
+export const C = { paper: '#FBF9F6', navy: '#E1DACA', teal: '#33CBCC', ink: '#7A6F62', steel: '#CFC8B6', pale: '#E6E1D3', warm: '#C6B79D', dark: '#8E867B' };
 export type Pen = CanvasRenderingContext2D;
 export function surface(w: number, h: number, draw: (g: Pen) => void, res = 2): Sprite {
   const c = document.createElement('canvas'); c.width = Math.ceil(w * res); c.height = Math.ceil(h * res);

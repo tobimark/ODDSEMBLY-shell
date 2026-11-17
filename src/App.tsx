@@ -4,8 +4,18 @@ import type { EngineOptions, EngineStatus, ModeId, ToolName } from './engine';
 
 const TOOLS: readonly ToolName[] = TOOL_NAMES;
 
-function readOptions(): EngineOptions {
-  const params = new URLSearchParams(location.search);
+/** Call status markers. A call is only "succeeded" once OpenCode says so. */
+function statusMark(status: 'running' | 'success' | 'failed' | 'aborted'): string {
+  if (status === 'success') return '✓';
+  if (status === 'failed') return '✕';
+  if (status === 'aborted') return '⊘';
+  return '…';
+}
+
+/** A scripted feed is labelled MOCK so a demo is never mistaken for a real agent. */
+const DEMO_SOURCE = new URLSearchParams(location.search).has('mock') ? 'MOCK' : 'LIVE';
+
+function readOptions(): EngineOptions {  const params = new URLSearchParams(location.search);
   const rawMode = params.get('mode');
   const valid: ModeId[] = ['loom'];
   const mode = valid.includes(rawMode as ModeId) ? (rawMode as ModeId) : 'loom';
@@ -17,7 +27,8 @@ function readOptions(): EngineOptions {
     replayUrl: params.get('session') ?? undefined,
     autoplay: !params.has('static') && !params.has('noauto') && !params.has('replay'),
     reducedMotion: params.get('motion') === 'off',
-    feed: params.get('feed') ?? undefined,
+    // `?live=` is the real-agent entry point; `?feed=` is kept for older links.
+    feed: params.get('live') ?? params.get('feed') ?? undefined,
   };
 }
 
@@ -39,6 +50,10 @@ export default function App() {
     let disposed = false;
 
     engine.init(el, opts).catch((err) => {
+      // StrictMode/HMR unmounts the first mount while its async init is still
+      // running; that rejected init is not a page failure and must not paint the
+      // fatal banner over the remounted engine.
+      if (disposed) return;
       console.error(err);
       setFatal(String(err));
     });
@@ -75,6 +90,7 @@ export default function App() {
       getStatus: () => engine.status,
       getTelemetry: () => engine.telemetrySnapshot(),
       getModeTelemetry: (m?: ModeId) => engine.modeTelemetry(m),
+      getLive: () => engine.liveSnapshot(),
       startReplay: (o?: { url?: string; deterministic?: boolean }) => engine.startReplay(o),
       audio: engine.audio,
       readyWithReplay: async () => { await engine.ready; await engine.replayReady; return true; },
@@ -97,6 +113,8 @@ export default function App() {
       inject: (e: { id: number; type: ToolName; detail: string; at?: number }) =>
         engine.inject({ ...e, at: e.at ?? performance.now() }),
       setMuted: (m: boolean) => engine.setMuted(m),
+      /** real-agent link snapshot (also mirrored on window.__engine.getLive) */
+      live: () => engine.liveSnapshot(),
     };
 
 
@@ -117,6 +135,18 @@ export default function App() {
   const meta = modeMetas().find((m) => m.id === s?.modeId) ?? modeMetas()[0];
   const hud = s?.hud ?? { transport: 'STANDBY', stage: 'IDLE', fields: [], caption: '', hint: '' };
   const replay = s?.replay;
+  const live = s?.live ?? null;
+  const liveOn = !!live?.realtime;
+  const liveHint = live
+    ? `${DEMO_SOURCE} · ${live.state.toUpperCase()} · 调用 ${live.calls}`
+      + (live.folded ? ` · 合并 ${live.folded}` : '')
+      + (live.recovered ? ` · 恢复 ${live.recovered}` : '')
+      + (live.unmapped ? ` · 未识别 ${live.unmapped}` : '')
+      + (live.gaps ? ` · 断线 ${live.gaps}` : '')
+    : '';
+  const liveLine = live?.lastCall
+    ? `${(live.lastCall.cls ?? live.lastCall.tool).toUpperCase()} / ${live.lastCall.detail || live.lastCall.tool} · ${statusMark(live.lastCall.status)}`
+    : null;
 
   const setMode = (m: ModeId) => {
     engineRef.current?.setMode(m);
@@ -228,7 +258,8 @@ export default function App() {
                 key={t}
                 className={`tool tool-${t.toLowerCase()} ${s?.lastEvent?.type === t ? 'pulse' : ''}`}
                 onClick={() => engineRef.current?.trigger(t)}
-                title={`Trigger ${t}  [${i + 1}]`}
+                disabled={liveOn}
+                title={liveOn ? 'real agent mode — synthetic triggers are disabled' : `Trigger ${t}  [${i + 1}]`}
               >
                 <span>{t}</span><b>{s?.counts?.[t] ?? 0}</b>
               </button>
@@ -236,11 +267,13 @@ export default function App() {
           </div>
           <div className="hint">
             <span>
-              {s?.lastEvent
-                ? `${s.lastEvent.type.toUpperCase()} / ${s.lastEvent.detail}`
-                : hud.caption}
+              {liveLine
+                ? liveLine
+                : s?.lastEvent
+                  ? `${s.lastEvent.type.toUpperCase()} / ${s.lastEvent.detail}`
+                  : hud.caption}
             </span>
-            <span>{hud.hint || 'SPACE 暂停 · 1–5 触发 · M 静音 · [ ] 切换世界'}</span>
+            <span>{liveOn ? liveHint : (hud.hint || 'SPACE 暂停 · 1–5 触发 · M 静音 · [ ] 切换世界')}</span>
           </div>
         </footer>
       )}

@@ -169,4 +169,33 @@ for (let ordinal = 1; ordinal <= 24; ordinal++) {
 }
 console.log('ok 11 index lands the active card centre at 40° ± 0° (slot-local inverted)');
 
-console.log('PASS: dial model — idle/arm/move/hold/expire, same-tool ×N, Sxx/12, determinism, reduced motion.');
+/* 12 — a same-tool call after the card expired re-shows ×N on the same slot */
+let g = m.createDialState();
+g = m.dialPush(g, ev('Read', 1));
+g = m.dialTick(g, 500);                       // armed + stepped + holding
+g = m.dialTick(g, cfg.timing.holdMs + 1);     // card expires, group stays open
+assert.equal(g.card, null);
+assert.equal(g.phase, 'idle');
+const angleAtRest = g.angleDeg;
+g = m.dialPush(g, ev('Read', 2));             // 2.5 s later: real agent step latency
+assert.equal(g.ordinal, 1, 'the group must not fork into a second slot');
+assert.equal(RO(g).type, 'Read');
+assert.equal(RO(g).count, 2, 'the readout re-opens at ×2');
+assert.equal(RO(g).step.index, 1);
+assert.equal(g.angleDeg, angleAtRest, 'the ring must not move for a same-tool call');
+assert.equal(g.targetDeg, angleAtRest);
+g = m.dialTick(g, 300);
+assert.equal(g.phase, 'holding');
+assert.equal(g.angleDeg, angleAtRest);
+console.log('ok 12 same tool after the card expired: ×2 on the same slot, rotor still');
+
+/* 13 — the group does close: another tool, or the group timeout */
+g = m.dialPush(g, ev('Bash', 3));
+assert.equal(g.ordinal, 2, 'a different tool opens the next group');
+g = m.dialTick(g, cfg.timing.groupTimeoutMs + 1);
+g = m.dialPush(g, ev('Bash', 4));
+assert.equal(g.ordinal, 3, 'after the group timeout the same tool starts a fresh group');
+assert.equal(RO(g).count, 1);
+console.log('ok 13 a different tool or the group timeout closes the aggregation group');
+
+console.log('PASS: dial model — idle/arm/move/hold/expire, same-tool ×N (also beyond the card lifetime), Sxx/12, determinism, reduced motion.');

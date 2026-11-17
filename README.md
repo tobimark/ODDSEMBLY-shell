@@ -1,6 +1,20 @@
 # KunlunMeta Agent Visual Engine — Loom
 
 程序化绘制的 AI Agent 视觉世界：每一次真实的工具调用，都在织机上织入一道纬线。
+
+## 仓库结构
+
+| 路径 | 内容 |
+|---|---|
+| `src/` `index.html` `public/` | Loom 引擎与独立页面（Pixi v8 + Canvas 2D 程序化材质） |
+| `shell/` | CrommaCode 外壳复刻；中央 Game View 挂载同一份 Loom 引擎（`@loom` 别名指向 `../src`） |
+| `scripts/` | 桥接（`opencode-loom-bridge`）、构建、单测（`test-*.mjs`）、验收与采集脚本 |
+| `docs/` | 视觉规范、事件转盘、联调与回滚文档 |
+| `review/` | 评审文档（**只保留 `.md`**；截图/录像等产物不入库，由脚本再生） |
+
+构建产物（`node_modules/` `dist/` `shots/` `review/` 下的二进制、`.tmp*`、日志）全部忽略，
+仓库只保留源码、脚本与文档。
+
 技术栈：TypeScript + React + PixiJS v8。全部画面由代码程序化绘制（Canvas 2D 材质 + Pixi 合成），不使用截图或外部素材。
 
 **唯一交付场景：Loom / 织机**。112 根经线、16 组纱色、右侧三组曲柄滑块伺服（曲柄 25、连杆 75 固定杆长，圆交点求解），
@@ -78,6 +92,20 @@ URL 参数：
    ```
 
    打开 `http://127.0.0.1:5173/?feed=ws://127.0.0.1:8765`。桥只监听 loopback，无鉴权，仅用于本地开发。
+
+4. **真实 OpenCode（LIVE WEAVE）**：直接订阅 OpenCode 自己的事件流，外部 CLI/TUI 的
+   工具调用实时驱动织机。与上面的通用桥不同，它按 tool-call id 去重、关联
+   success/failed/aborted、并带断线恢复与视觉预算。
+
+   ```powershell
+   npm run bridge:opencode     # 自动读取 ~/.config/opencode/service.json
+   # 打开 http://127.0.0.1:5173/?mode=loom&live=ws://127.0.0.1:8787
+   # 然后让外部 CLI/TUI 连到同一个 server：
+   opencode --server http://127.0.0.1:19474
+   ```
+
+   完整说明、验收与已知限制见 [`docs/OPENCODE_LIVE.md`](docs/OPENCODE_LIVE.md)；
+   一键真实验收：`npm run accept:live`。
 
 浏览器控制台 / 外部脚本也可直接驱动：
 

@@ -1,11 +1,14 @@
 import { Application, Container } from 'pixi.js';
-import { T, HEX } from '../theme';
+import { T } from '../theme';
 import { AudioEngine } from './audio';
 import { EventBus } from './bus';
 import { DESIGN } from './design';
 import { MODE_META, createMode, type ModeRuntime, type VisualMode } from './mode';
 import { fetchReplay, ReplayPlayer, replayToolEvent } from './replay';
 import { AgentSimulator } from './simulator';
+import { LiveFeed } from '../../live/feedClient';
+import { decidePlay } from '../../live/pacing';
+import { emptyLiveStatus, type LiveCallMessage, type LiveLinkMessage, type LiveStatus } from '../../live/protocol';
 import {
   TOOL_NAMES,
   type EngineState,
@@ -13,6 +16,7 @@ import {
   type ModeId,
   type ToolEvent,
   type ToolName,
+  type TriggerOptions,
 } from './types';
 
 export interface EngineOptions {
@@ -41,6 +45,8 @@ export class VisualEngine {
   readonly bus: EventBus;
   readonly audio = new AudioEngine();
   private app: Application | null = null;
+  /** becomes true once `app.init()` has resolved; until then `destroy()` must defer app teardown */
+  private appReady = false;
   private world = new Container();
   private host = new Container();
   private modes = new Map<ModeId, VisualMode>();
@@ -68,7 +74,12 @@ export class VisualEngine {
   private replaySeq = 0;
   private replay: ReplayPlayer | null = null;
   private replayLoading: Promise<void> | null = null;
-  private feed: WebSocket | null = null;
+  /** real-agent link; configured with `?live=ws://…` (or the legacy `?feed=`) */
+  private live: LiveFeed | null = null;
+  private liveState: LiveStatus = emptyLiveStatus();
+  private liveSeq = 0;
+  /** true once a live endpoint is configured: synthetic input must not pollute it */
+  private realtime = false;
   private readyResolve: (() => void) | null = null;
   private lastPublish = 0;
   readonly ready: Promise<void>;
@@ -86,27 +97,39 @@ export class VisualEngine {
   }
 
   async init(container: HTMLElement, opts: EngineOptions = {}): Promise<void> {
+    if (this.disposed) { this.readyResolve?.(); return; }
     this.deterministic = !!opts.deterministic;
     this.staticMode = !!opts.static;
     this.reducedMotion = !!opts.reducedMotion;
     this.activeId = opts.mode ?? this.activeId;
     this.bus.patch({ modeId: this.activeId, modeLabel: MODE_META[this.activeId].title });
 
-    this.app = new Application();
-    await this.app.init({
-      background: T.paper,
-      antialias: true,
-      autoDensity: true,
-      resolution: Math.min(2, window.devicePixelRatio || 1),
-      resizeTo: container,
-      preference: 'webgl',
-      powerPreference: 'high-performance',
-    });
-    if (this.disposed) { this.app.destroy(true, { children: true }); this.app = null; return; }
-    container.appendChild(this.app.canvas);
+    const app = new Application();
+    this.app = app;
+    try {
+      await app.init({
+        background: T.paper,
+        antialias: true,
+        autoDensity: true,
+        resolution: Math.min(2, window.devicePixelRatio || 1),
+        resizeTo: container,
+        preference: 'webgl',
+        powerPreference: 'high-performance',
+      });
+    } catch (err) {
+      // A failed renderer must not leak the half-built Application (or the slot).
+      this.disposeApp();
+      throw err;
+    }
+    this.appReady = true;
+    // `destroy()` may run while `app.init()` is awaiting (React StrictMode, HMR,
+    // fast unmount). Tear the fully-built app down here instead of touching a
+    // nulled `this.app`.
+    if (this.disposed) { this.disposeApp(); this.readyResolve?.(); return; }
+    container.appendChild(app.canvas);
 
     this.world.addChild(this.host);
-    this.app.stage.addChild(this.world);
+    app.stage.addChild(this.world);
 
     window.addEventListener('resize', this.resizeHandler);
     this.resizeObserver = new ResizeObserver(this.resizeHandler);
@@ -119,17 +142,19 @@ export class VisualEngine {
     active.root.visible = true;
     this.publish(true);
 
-    this.app.ticker.add((ticker) => this.frame(Math.min(MAX_DT, ticker.deltaMS / 1000)));
+    app.ticker.add((ticker) => this.frame(Math.min(MAX_DT, ticker.deltaMS / 1000)));
     if (this.deterministic || this.staticMode) {
-      this.app.ticker.stop();
-      this.app.render();
+      app.ticker.stop();
+      app.render();
     }
 
-    if (opts.feed) this.connectFeed(opts.feed);
+    if (opts.feed) this.attachLiveFeed(opts.feed);
     if (opts.replay) void this.startReplay({ url: opts.replayUrl, deterministic: this.deterministic });
     else this.replayReadyResolve?.();
 
-    if (opts.autoplay && !this.staticMode && !this.deterministic && !opts.replay) {
+    // Autoplay would inject synthetic tool calls; never do that when a real
+    // agent stream is configured, even before its socket opens.
+    if (opts.autoplay && !this.staticMode && !this.deterministic && !opts.replay && !opts.feed) {
       this.autoplayTimer = window.setTimeout(() => { if (this.mode === 'idle') this.play(); }, 1600);
     }
     requestAnimationFrame(() => this.readyResolve?.());
@@ -234,9 +259,9 @@ export class VisualEngine {
 
   /* ------------------------------------------------------------------ events */
 
-  private receive(e: ToolEvent): void {
+  private receive(e: ToolEvent, opts: TriggerOptions = {}): void {
     const active = this.modes.get(this.activeId);
-    active?.trigger(e);
+    active?.trigger(e, opts);
     this.bus.emitEvent(e);
     this.eventTimes.push(this.time);
     if (this.mode === 'idle' || this.mode === 'stopped') {
@@ -247,12 +272,18 @@ export class VisualEngine {
   }
 
   /** External host bridge (console, tests, WebSocket feed, future Electron IPC). */
-  inject(e: ToolEvent): void {
+  inject(e: ToolEvent, opts: TriggerOptions = {}): void {
     if (this.mode === 'idle' || this.mode === 'stopped') this.source = 'external';
-    this.receive({ ...e, at: e.at || performance.now() });
+    this.receive({ ...e, at: e.at || performance.now() }, opts);
   }
 
+  /**
+   * Synthetic demo trigger (keyboard 1–5, footer buttons, capture scripts).
+   * Refused while a real agent stream is attached: a fake call must never enter
+   * the same counters as a real one.
+   */
   trigger(type: ToolName): void {
+    if (this.realtime) return;
     this.audio.ensure();
     if (this.mode === 'idle' || this.mode === 'stopped') {
       this.source = 'external';
@@ -314,9 +345,11 @@ export class VisualEngine {
 
   play(simulate = true): void {
     this.audio.ensure();
+    // In real mode the only source of events is the agent stream.
+    const sim = simulate && !this.realtime;
     this.mode = 'running';
-    this.source = simulate ? 'simulation' : 'external';
-    if (simulate) this.simulator.start(); else this.simulator.stop();
+    this.source = sim ? 'simulation' : 'external';
+    if (sim) this.simulator.start(); else this.simulator.stop();
     this.modes.get(this.activeId)?.setState?.('running');
     this.bus.patch({ state: 'running' });
     this.publish(true);
@@ -400,6 +433,7 @@ export class VisualEngine {
       fps: this.fps,
       rate15s: this.eventTimes.length,
       hud: active?.hud() ?? this.bus.status.hud,
+      live: this.live ? this.liveSnapshot() : null,
     };
     if (this.replay) {
       status.replay = { loaded: true, cursor: this.replay.cursor, total: this.replay.total, done: this.replay.done };
@@ -434,26 +468,110 @@ export class VisualEngine {
 
   /* --------------------------------------------------------------- plumbing */
 
-  private connectFeed(url: string): void {
-    try {
-      const ws = new WebSocket(url);
-      this.feed = ws;
-      ws.onopen = () => { this.play(false); this.audio.ensure(); };
-      ws.onmessage = (msg) => {
-        try {
-          const data = JSON.parse(String(msg.data)) as { type?: string; tool?: string; detail?: string; id?: number };
-          const raw = (data.type ?? data.tool ?? '').toLowerCase();
-          const map: Record<string, ToolName> = {
-            read: 'Read', edit: 'Edit', write: 'Write', bash: 'Bash', search: 'Search', grep: 'Search', glob: 'Search',
-          };
-          const type = map[raw];
-          if (!type) return;
-          this.inject({ id: data.id ?? ++this.manualSeq, type, detail: data.detail ?? raw, at: performance.now() });
-        } catch { /* ignore malformed frames */ }
-      };
-      ws.onerror = () => console.warn('event feed failed', url);
-    } catch (e) { console.warn('event feed unavailable', e); }
+  /**
+   * Attach a real agent stream. The page URL is `?mode=loom&live=ws://host:port`.
+   * Classification and dedupe live in `src/live/*`; pacing in `pacing.ts`; this
+   * method only turns accepted calls into engine events.
+   */
+  attachLiveFeed(url: string): void {
+    this.live?.stop();
+    this.realtime = true;
+    this.simulator.stop();
+    this.liveState = { ...emptyLiveStatus(), state: 'connecting', url, realtime: true };
+    const feed = new LiveFeed(url, {
+      onCall: (m) => this.onLiveCall(m),
+      onLink: (m) => this.onLiveLink(m),
+    });
+    this.live = feed;
+    feed.start();
+    this.bus.patch({ live: this.liveSnapshot() });
   }
+
+  private onLiveCall(msg: LiveCallMessage): void {
+    const s = this.liveState;
+
+    if (msg.phase === 'detail') {
+      if (s.lastCall?.callId === msg.callId && msg.detail) s.lastCall = { ...s.lastCall, detail: msg.detail };
+      return;
+    }
+
+    if (msg.phase === 'recovered') {
+      // Rebuilt from the session log after a gap: counted, never replayed as if
+      // it had been observed live.
+      s.calls += 1;
+      s.recovered += 1;
+      this.countStatus(s, msg.status);
+      s.lastCall = { callId: msg.callId, tool: msg.tool, cls: msg.cls, status: msg.status, error: null, at: msg.at, detail: msg.detail };
+      this.publish(true);
+      return;
+    }
+
+    if (msg.phase === 'status') {
+      s.statuses.running = Math.max(0, s.statuses.running - 1);
+      if (msg.status === 'success') s.statuses.success += 1;
+      else if (msg.status === 'failed') s.statuses.failed += 1;
+      else if (msg.status === 'aborted') s.statuses.aborted += 1;
+      if (s.lastCall?.callId === msg.callId) {
+        s.lastCall = { ...s.lastCall, status: msg.status, error: msg.error ?? null };
+      }
+      this.publish(true);
+      return;
+    }
+
+    // phase === 'start'
+    s.calls += 1;
+    s.lastCall = { callId: msg.callId, tool: msg.tool, cls: msg.cls, status: msg.status, error: null, at: msg.at, detail: msg.detail };
+
+    if (!msg.cls) {
+      // No faithful Loom class: record it, name it, never dress it up.
+      s.unmapped += 1;
+      s.unmappedTools[msg.tool] = (s.unmappedTools[msg.tool] ?? 0) + 1;
+      this.countStatus(s, msg.status);
+      this.publish(true);
+      return;
+    }
+
+    s.mapped += 1;
+    const play = decidePlay(this.pendingPicks());
+    if (play === 'fold') s.folded += 1; else s.played += 1;
+    this.countStatus(s, msg.status);
+    this.inject({ id: ++this.liveSeq, type: msg.cls, detail: msg.detail || msg.tool, at: performance.now() }, { play });
+  }
+
+  private countStatus(s: LiveStatus, status: LiveCallMessage['status']): void {
+    if (status === 'running') s.statuses.running += 1;
+    else if (status === 'success') s.statuses.success += 1;
+    else if (status === 'failed') s.statuses.failed += 1;
+    else s.statuses.aborted += 1;
+  }
+
+  private onLiveLink(msg: LiveLinkMessage): void {
+    const s = this.liveState;
+    if (msg.server) s.server = msg.server;
+    if (msg.state === 'connected' || msg.state === 'reconnected') s.state = 'connected';
+    else if (msg.state === 'reconnecting') s.state = 'reconnecting';
+    else if (msg.state === 'closed') s.state = 'closed';
+    else if (msg.state === 'gap') {
+      s.state = 'connected';
+      s.gaps += 1;
+      s.recovered += msg.recovered ?? 0;
+      s.lastGap = { at: msg.at, recovered: msg.recovered ?? 0, missed: msg.missed ?? 'unknown' };
+    }
+    this.publish(true);
+  }
+
+  /** Waiting mechanical picks (the Loom's own queue depth). */
+  private pendingPicks(): number {
+    const t = this.modeTelemetry(this.activeId) as { queued?: unknown };
+    return typeof t.queued === 'number' ? t.queued : 0;
+  }
+
+  liveSnapshot(): LiveStatus {
+    return { ...this.liveState, statuses: { ...this.liveState.statuses }, unmappedTools: { ...this.liveState.unmappedTools } };
+  }
+
+  get liveStatus(): LiveStatus { return this.liveSnapshot(); }
+  get isRealtime(): boolean { return this.realtime; }
 
   private layout(): void {
     if (!this.app) return;
@@ -462,7 +580,8 @@ export class VisualEngine {
     const scale = Math.min(w / DESIGN.w, h / DESIGN.h) * this.zoom;
     this.world.scale.set(scale);
     this.world.position.set((w - DESIGN.w * scale) / 2, (h - DESIGN.h * scale) / 2);
-    document.body.style.background = HEX.paper;
+    // No page-level side effects: the engine is also mounted inside a host shell
+    // whose own paper colour must win.
   }
 
   bindKeyboard(): void {
@@ -495,12 +614,23 @@ export class VisualEngine {
     window.removeEventListener('resize', this.resizeHandler);
     this.resizeObserver?.disconnect();
     this.simulator.stop();
-    this.feed?.close();
+    this.live?.stop();
+    this.live = null;
     this.audio.destroy();
     for (const mode of this.modes.values()) { try { mode.destroy(); } catch { /* noop */ } }
     this.modes.clear();
-    if (!this.app) return;
-    try { this.app.destroy(true, { children: true }); } catch { /* noop */ }
+    // If init() is still awaiting app.init(), it owns teardown and calls
+    // disposeApp() once the renderer exists. Destroying a half-built Application
+    // here would leave it partially torn down and leak its canvas/WebGL context.
+    if (!this.appReady) return;
+    this.disposeApp();
+  }
+
+  private disposeApp(): void {
+    const app = this.app;
     this.app = null;
+    this.appReady = false;
+    if (!app) return;
+    try { app.destroy(true, { children: true }); } catch { /* noop */ }
   }
 }

@@ -31,6 +31,13 @@ export interface DialTiming {
   holdMs: number;
   /** same-tool calls inside this window aggregate into one `×N` card */
   mergeWindowMs: number;
+  /**
+   * How long a *group* stays open for same-tool aggregation. The reference card
+   * lives ≈2 s, but a real agent runs consecutive calls in separate model steps
+   * (measured 2.4 s apart), so grouping has to outlive the card: the readout may
+   * blink out between calls, while the ring keeps one slot for the group.
+   */
+  groupTimeoutMs: number;
 }
 
 export interface DialSlots {
@@ -56,6 +63,7 @@ export const DIAL_TIMING: DialTiming = {
   moveMs: 180,
   holdMs: 2000,
   mergeWindowMs: 2000,
+  groupTimeoutMs: 12000,
 };
 
 export const DIAL_SLOTS: DialSlots = { count: 12, pitchDeg: 30 };
@@ -95,6 +103,11 @@ export interface DialState {
   /** total accepted events (aggregation included) */
   readonly events: number;
   readonly lastEventAtMs: number;
+  /** the open aggregation group; survives the card's own 2 s lifetime */
+  readonly groupType: ToolName | null;
+  readonly groupOrdinal: number;
+  readonly groupCount: number;
+  readonly groupLastAtMs: number;
 }
 
 export interface ReadoutModel {
@@ -149,24 +162,58 @@ export function createDialState(): DialState {
     ordinal: 0,
     events: 0,
     lastEventAtMs: -Infinity,
+    groupType: null,
+    groupOrdinal: 0,
+    groupCount: 0,
+    groupLastAtMs: -Infinity,
   };
 }
 
 /**
  * Accept one tool event.
- * - same tool inside `mergeWindowMs` while the card is alive → `×N++` in place
- *   (the reference does this: card bounding box never moves, multiplier grows);
- * - different tool (or expired window) → a new group starts and the ring gets a
- *   new target slot; the display is armed for `armDelayMs` first.
+ * - same tool, group still open → `×N++`; the ring does not move. If the 2 s
+ *   card had already expired, it is re-shown at the same slot (a real agent
+ *   spends seconds between calls, and the group must not fork because of that);
+ * - different tool, or the group timed out → a new group starts and the ring
+ *   gets a new target slot; the display is armed for `armDelayMs` first.
  */
 export function dialPush(state: DialState, event: ToolEvent, cfg: DialConfig = DIAL_CONFIG): DialState {
   const now = state.clockMs;
   const card = state.card;
-  const sameTool = !!card && card.type === event.type && now - card.lastAtMs <= cfg.timing.mergeWindowMs;
+  const groupOpen = state.groupType === event.type
+    && now - state.groupLastAtMs <= cfg.timing.groupTimeoutMs;
 
-  if (card && sameTool) {
-    const merged: DialCard = { ...card, count: card.count + 1, lastAtMs: now };
-    return { ...state, card: merged, events: state.events + 1, lastEventAtMs: now };
+  if (groupOpen) {
+    const count = state.groupCount + 1;
+    const ordinal = state.groupOrdinal;
+    const target = targetAngleFor(ordinal, cfg.slots);
+    const alive = !!card && card.type === event.type;
+    const nextCard: DialCard = alive
+      ? { ...card!, count, lastAtMs: now }
+      : {
+        type: event.type,
+        count,
+        ordinal,
+        slot: slotForOrdinal(ordinal, cfg.slots.count),
+        bornAtMs: now,
+        lastAtMs: now,
+        color: toolColor(event.type),
+        detail: event.detail ?? '',
+      };
+    return {
+      ...state,
+      // A live card merges in place. A re-shown card is already parked on its
+      // slot, so the rotor stays absolutely still.
+      phase: alive ? state.phase : 'holding',
+      angleDeg: alive ? state.angleDeg : target,
+      fromDeg: alive ? state.fromDeg : target,
+      targetDeg: target,
+      card: nextCard,
+      groupCount: count,
+      groupLastAtMs: now,
+      events: state.events + 1,
+      lastEventAtMs: now,
+    };
   }
 
   const ordinal = state.ordinal + 1;
@@ -191,6 +238,10 @@ export function dialPush(state: DialState, event: ToolEvent, cfg: DialConfig = D
     moveDurationMs: Math.max(0, cfg.timing.moveMs),
     card: nextCard,
     ordinal,
+    groupType: event.type,
+    groupOrdinal: ordinal,
+    groupCount: 1,
+    groupLastAtMs: now,
     events: state.events + 1,
     lastEventAtMs: now,
   };
@@ -287,5 +338,11 @@ export function dialTelemetry(state: DialState, cfg: DialConfig = DIAL_CONFIG): 
     events: state.events,
     ageMs: card ? Math.max(0, state.clockMs - card.bornAtMs) : null,
     stepTotal: cfg.readout.stepTotal,
+    group: {
+      type: state.groupType,
+      count: state.groupCount,
+      ordinal: state.groupOrdinal,
+      lastAtMs: Number.isFinite(state.groupLastAtMs) ? state.groupLastAtMs : null,
+    },
   };
 }

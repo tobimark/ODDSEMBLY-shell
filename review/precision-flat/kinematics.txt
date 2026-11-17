@@ -1,6 +1,0 @@
-
-> kunlunmeta-agent-visual-engine@0.1.0 test
-> node scripts/test-mechanism.mjs
-
-PASS: shed precedes shuttle; no early cloth; one commit per event; FIFO; frame-step independence; stop cancels queue.
-PASS: 12,003 linkage poses, fixed 75px rod / 25px crank; maximum length error: 2.2737367544323206e-13

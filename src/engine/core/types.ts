@@ -16,6 +16,15 @@ export interface ToolEvent {
   at: number;
 }
 
+/**
+ * How a world should present one event. `fold` means "this call is real and
+ * already counted, but there is no room for its own mechanical cycle" — the
+ * mode folds its beat into the cycle in flight. It never means "drop".
+ */
+export interface TriggerOptions {
+  play?: 'pick' | 'fold';
+}
+
 export interface ModeMeta {
   id: ModeId;
   /** two-digit catalogue index, e.g. "01" */
@@ -66,6 +75,8 @@ export interface EngineStatus {
   hud: ModeHud;
   /** replay transport (if a replay session is loaded) */
   replay: { loaded: boolean; cursor: number; total: number; done: boolean } | null;
+  /** real-agent link state (null when no live feed is configured) */
+  live?: import('../../live/protocol').LiveStatus | null;
 }
 
 export function emptyCounts(): Record<ToolName, number> {

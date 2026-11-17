@@ -124,9 +124,9 @@ export function loomPlate() {
     metal(g, 332, 826, 877, 27);
     for (const x of [315, 1227]) bearing(g, x, 840, 21);
     rect(g, 680, 856, 167, 16, C.navy, 2);
-    label(g, 'O D D S E M B L Y', 764, 867, 8, '#EEEFE9', 'center');
-    for (const [y, name] of [[489, 'SERVO A'], [601, 'SERVO B'], [719, 'SERVO R']] as const) label(g, name, 1188, y + 4, 6.5, '#8B969A');
-    label(g, 'PICKS', 1238, 842, 7, '#8A959A');
+    label(g, 'O D D S E M B L Y', 764, 867, 8, '#7A6F62', 'center');
+    for (const [y, name] of [[489, 'SERVO A'], [601, 'SERVO B'], [719, 'SERVO R']] as const) label(g, name, 1188, y + 4, 6.5, '#8A8174');
+    label(g, 'PICKS', 1238, 842, 7, '#8A8174');
   });
 }
 
@@ -152,13 +152,13 @@ export function reed() {
     for (let x = 47; x < 879; x += 832 / WEAVE.ends) { line(g, [x, 7, x, 42], '#5A6D7A', .8); line(g, [x + .9, 7, x + .9, 42], '#FFFFFFA0', .5); }
     metal(g, 7, 3, 912, 9); metal(g, 7, 38, 912, 13);
     for (const x of [19, 905]) { plate(g, x - 12, 0, 26, 55, false, false); bolt(g, x, 12, 4); bolt(g, x, 43, 4); }
-    rect(g, 420, 39, 88, 10, C.navy, 1); label(g, 'R E E D  /  112', 464, 46, 5.5, '#F8F7ED', 'center');
+    rect(g, 420, 39, 88, 10, C.navy, 1); label(g, 'R E E D  /  112', 464, 46, 5.5, '#7A6F62', 'center');
   });
 }
 
 export function shuttle() {
   const s = surface(112, 37, g => {
-    poly(g, [3, 20, 24, 5, 87, 5, 109, 20, 87, 33, 24, 33], '#171C6027');
+    poly(g, [3, 20, 24, 5, 87, 5, 109, 20, 87, 33, 24, 33], '#7A6F6227');
     poly(g, [2, 16, 22, 2, 87, 2, 108, 16, 87, 28, 22, 28], F.steel, F.muted);
     poly(g, [6, 14, 25, 3, 85, 3, 103, 14, 85, 23, 25, 23], F.enamel, F.edge);
     rect(g, 27, 6, 53, 15, F.recess, 7); metal(g, 29, 11, 49, 4);

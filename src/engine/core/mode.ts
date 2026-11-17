@@ -1,7 +1,7 @@
 import type { Container } from 'pixi.js';
 import type { AudioEngine } from './audio';
 import type { EventBus } from './bus';
-import type { EngineState, ModeHud, ModeId, ModeMeta, ToolEvent, ToolName } from './types';
+import type { EngineState, ModeHud, ModeId, ModeMeta, ToolEvent, ToolName, TriggerOptions } from './types';
 
 export interface ModeContext {
   readonly audio: AudioEngine;
@@ -33,7 +33,7 @@ export interface VisualMode {
   /** Mode was hidden by a switch. It stays alive and keeps its accumulation. */
   exit(): void;
   update(dt: number, rt: ModeRuntime): void;
-  trigger(e: ToolEvent): void;
+  trigger(e: ToolEvent, opts?: TriggerOptions): void;
   /** engine transport state changes (running / paused / stopped) */
   setState?(state: EngineState): void;
   /** React HUD snapshot; must be cheap and side-effect free. */

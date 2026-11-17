@@ -134,7 +134,7 @@ function statorBody(): Sprite {
     // ---- blue reference arc (the coloured current-tool segment is live)
     g.save();
     g.beginPath(); g.arc(cx, cy, DIAL.blue, 0, Math.PI * 2);
-    g.strokeStyle = '#171C60'; g.lineWidth = 4.4; g.stroke();
+    g.strokeStyle = '#C9C2B0'; g.lineWidth = 4.4; g.stroke();
     g.beginPath(); g.arc(cx, cy, DIAL.blue - 2.6, 0, Math.PI * 2);
     g.strokeStyle = '#7888A060'; g.lineWidth = 1.1; g.stroke();
     g.restore();
@@ -280,10 +280,10 @@ function readoutPanel(w: number, h: number): Sprite {
     g.bezierCurveTo(-12,h-3,-12,3,48,3);g.closePath();
     g.fillStyle='#E2E5DF';g.fill();g.strokeStyle='#687784';g.lineWidth=1.5;g.stroke();
     rect(g,27,22,w-48,87,'#FBF9F6',13,'#8A969B');
-    line(g,[44,25,w-35,25],'#171C60',2);
+    line(g,[44,25,w-35,25],'#C9C2B0',2);
     line(g,[42,79,w-31,79],'#C1C8C5',.8);
     for(const y of [13,h-13]) { bolt(g,w-18,y,3.4); }
-    line(g,[12,54,12,82],'#171C60',2);
+    line(g,[12,54,12,82],'#C9C2B0',2);
   });
 }
 
@@ -510,7 +510,7 @@ export class EventDial {
 
     // short locating mark in the clearance gap (fixed, never rotates)
     const [n0x, n0y] = P(1136, -8); const [n1x, n1y] = P(1136, 8);
-    g.moveTo(n0x, n0y).lineTo(n1x, n1y).stroke({ color: 0x171c60, width: 1.3, alpha: 0.75 });
+    g.moveTo(n0x, n0y).lineTo(n1x, n1y).stroke({ color: 0xC9C2B0, width: 1.3, alpha: 0.75 });
   }
 
   destroy(): void {

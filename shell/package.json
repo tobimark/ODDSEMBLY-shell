@@ -1,0 +1,29 @@
+{
+  "name": "kunlun-shell",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Pixel-level replica of the CrommaCode app chrome (everything except the centre GameView canvas).",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5180 --strictPort",
+    "bridge": "node server/index.mjs",
+    "demo": "node tools/demo/demo.mjs",
+    "build": "tsc -b && node tools/build.mjs",
+    "preview": "vite preview --host 127.0.0.1 --port 4180 --strictPort",
+    "serve:dist": "node tools/serve.mjs",
+    "shoot": "node tools/shoot.mjs",
+    "diff": "python tools/diff.py"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3"
+  }
+}
+
