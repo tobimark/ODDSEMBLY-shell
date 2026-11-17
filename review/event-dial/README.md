@@ -67,6 +67,15 @@
 
 文件：[layout-v4/](layout-v4/)；比例规则见 [docs/LAYOUT.md](../../docs/LAYOUT.md)。
 
+
+## layout v5（机械连接）
+
+- 读头 → 齿轮箱信号导管 `(209,248)→(245,521)`，3 夹，绕开卡窗。
+- 上方 rail 改为输出传动轴（轴承/联轴器/护罩），只保留下方结构轨。
+- 张力表 → Loom 左机架短测量管。
+- Loom `1.06×`，左框 484、右缘 1423；730×548 下右余约 24px、底余约 31px。
+- 验收：`layout-v5/`（full/gameview-730/connection/shaft/gauge/conduit + Read→Bash→Edit 录屏）。
+
 ## 动态录屏（读数器固定）
 
 | 文件 | 内容 |

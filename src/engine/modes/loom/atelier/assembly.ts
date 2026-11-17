@@ -103,8 +103,24 @@ export function loomPlate() {
     for (let x = 107; x < 217; x += 7) metal(g, x, 810, 3, 35, true);
     circle(g, 230, 828, 13, '#D6DBD5', '#738594'); bolt(g, 230, 828, 5);
     metal(g, 159, 774, 12, 28, true); label(g, 'SERVO / KM–01', 103, 875, 8, '#7B8991');
-    // outboard mounting rails bridge the deliberate 57 px gap
-    metal(g, 254, 530, 62, 9, true); bolt(g, 260, 534, 2.4); bolt(g, 309, 534, 2.4);
+    // Tension gauge measurement tube: gauge right edge -> loom left frame.
+    // A short rigid capillary, clamped once; it must not float in the gap.
+    line(g, [236, 398, 333, 398], '#5B6C7A', 5); line(g, [236, 398, 333, 398], '#D9D6C7', 2.2);
+    plate(g, 296, 390, 16, 16, false); bolt(g, 300, 394, 2); bolt(g, 308, 394, 2);
+    // upper link is now a driven output shaft, not a rail: gearbox bearing ->
+    // flexible coupling -> output bearing -> loom frame. The lower rail stays.
+    plate(g, 254, 525, 26, 32, false); bolt(g, 260, 531, 2.2); bolt(g, 274, 531, 2.2);
+    bearing(g, 268, 541, 12);
+    metal(g, 276, 537, 32, 8, true);
+    plate(g, 292, 527, 26, 28, false);
+    for (const y of [532, 548]) { circle(g, 293, y, 4, F.steel, F.edge); bolt(g, 293, y, 1.6); }
+    for (const y of [532, 548]) { circle(g, 317, y, 4, F.steel, F.edge); }
+    plate(g, 318, 525, 18, 32, false); bolt(g, 322, 531, 2); bolt(g, 332, 531, 2); bolt(g, 322, 551, 2);
+    metal(g, 333, 537, 8, 8, true);
+    // U-guard over the gear-to-shaft take-off (necessary, not decorative)
+    line(g, [246, 559, 246, 577, 292, 577], '#5B6C7A', 2.2);
+    plate(g, 242, 555, 10, 26, false);
+    // lower structural rail remains the only second connection
     metal(g, 254, 742, 62, 9, true); bolt(g, 260, 746, 2.4); bolt(g, 309, 746, 2.4);
     // Lower take-up roller bearing boxes and feet.
     plate(g, 305, 851, 928, 23, false);
@@ -112,7 +128,7 @@ export function loomPlate() {
     for (const x of [315, 1227]) bearing(g, x, 840, 21);
     rect(g, 680, 856, 167, 16, C.navy, 2);
     label(g, 'K U N L U N M E T A', 764, 867, 8, '#EEEFE9', 'center');
-    for (const [y, name] of [[489, 'SERVO A'], [601, 'SERVO B'], [719, 'SERVO R']] as const) label(g, name, 1300, y + 4, 6.5, '#8B969A');
+    for (const [y, name] of [[489, 'SERVO A'], [601, 'SERVO B'], [719, 'SERVO R']] as const) label(g, name, 1238, y + 4, 6.5, '#8B969A');
     label(g, 'PICKS', 1271, 842, 7, '#8A959A');
   });
 }

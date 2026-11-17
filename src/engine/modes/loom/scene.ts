@@ -34,6 +34,8 @@ export class LoomScene extends Container {
    *  outer edge stops before the loom frame (three-part composition). */
   private readonly dialBody = new Container();
   private readonly dialFront = new Container();
+  /** Fixed signal conduit from read-head housing to the drive box. */
+  private readonly signalConduit = new Graphics();
 
   constructor(private readonly onBeat: (e: ToolEvent) => void = () => {}) {
     super();
@@ -51,6 +53,7 @@ export class LoomScene extends Container {
     }
     this.dialBody.addChild(this.dial.body);
     this.dialFront.addChild(this.dial.front);
+    this.drawSignalConduit();
     // drive cluster pulled 60 px left of the loom frame, so it reads as a separate block
     this.wheel.position.set(161, 660); this.gearA.position.set(161, 509); this.gearB.position.set(221, 509);
     this.shaftA.position.set(307, 401); this.shaftB.position.set(307, 513);
@@ -71,7 +74,7 @@ export class LoomScene extends Container {
     race.position.set(302, 651);
     this.stageLabel.position.set(1020, 930); this.pickLabel.position.set(1270, 852);
     this.world.addChild(base, this.textile.cloth, this.textile.warp, this.shaftB, this.shaftA, belt, this.wheel, this.gearA, this.gearB, this.linkage, this.reed, this.weft, this.shuttle, this.textile.front, race, this.needle, this.stageLabel, this.pickLabel);
-    this.addChild(sheet, this.dialBody, chassis, this.world, this.dialFront);
+    this.addChild(sheet, this.dialBody, chassis, this.world, this.signalConduit, this.dialFront);
     this.textures = [sheet, chassis, base, belt, race, this.wheel, this.gearA, this.gearB, this.shaftA, this.shaftB, this.reed, this.shuttle];
     this.mechanism.onPick = e => { this.textile.commit(e.type); this.onBeat(e); this.pickLabel.text = String(this.mechanism.picks).padStart(4, '0'); };
     this.pose();
@@ -90,6 +93,39 @@ export class LoomScene extends Container {
   /** Fixed-readout instrument state (also exposed through LoomMode.telemetry). */
   get dialState() { return this.dial.telemetry(); }
   update(dt: number, _running: boolean) { this.mechanism.update(dt); this.dial.update(dt); this.pose(); }
+
+
+  /** Signal conduit: read-head housing → fixed outer housing → drive-box top.
+   *  All points stay outside the rotor card band (x < 132 in this projection);
+   *  the pipe is drawn above the sheet but below the dial readout. */
+  private drawSignalConduit(): void {
+    const g = this.signalConduit;
+    const pts: [number, number][] = [
+      [209, 248], [196, 282], [184, 330], [180, 390], [188, 446], [212, 486], [236, 508], [245, 521],
+    ];
+    // shadow / pipe body / highlight
+    for (const [w, color, alpha] of [[6.4, '#2A2416', .18], [5.2, '#5B6C7A', 1], [2.2, '#D9D6C7', 1]] as const) {
+      g.moveTo(pts[0][0] + 1.2, pts[0][1] + 1.6);
+      for (const [x, y] of pts.slice(1)) g.lineTo(x + 1.2, y + 1.6);
+      g.stroke({ color, width: w, alpha, cap: 'round', join: 'round' });
+    }
+    // elbows / compression fittings at each bend
+    for (const [x, y] of pts.slice(1, -1)) {
+      g.circle(x, y, 4.6).fill(0xd9d3c2).stroke({ color: 0x6f7a78, width: 1 });
+      g.circle(x, y, 1.6).fill(0x6f7a78);
+    }
+    // three fixed clamps on the stationary housing
+    for (const [x, y] of [[184, 318], [180, 402], [206, 478]] as const) {
+      g.roundRect(x - 8, y - 9, 16, 18, 2).fill(0xd9d3c2).stroke({ color: 0x8f8878, width: 0.8 });
+      g.circle(x, y - 4, 1.5).fill(0xefe9db); g.circle(x, y + 4, 1.5).fill(0xefe9db);
+    }
+    // terminal flange on the drive-box top plate
+    g.roundRect(231, 514, 26, 14, 2).fill(0xd9d3c2).stroke({ color: 0x6f7a78, width: 1 });
+    g.circle(237, 521, 2).fill(0x6f7a78); g.circle(251, 521, 2).fill(0x6f7a78);
+    // source collar on the read-head housing
+    g.circle(209, 248, 6.2).fill(0xe8e8e0).stroke({ color: 0x6f7a78, width: 1.2 });
+    g.circle(209, 248, 2.2).fill(0x23283a);
+  }
 
   private pose() {
     const m = this.mechanism;
