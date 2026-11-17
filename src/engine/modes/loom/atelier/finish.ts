@@ -5,5 +5,5 @@ export const FINISH = {
   accent: '#33CBCC', shadow: '#171C600D', highlight: '#FFFDF8',
   outline: .75, hairline: .45, datum: 1.1, relief: 1.2,
 } as const;
-export const MOUNT = { x: 125, y: 36, scale: 1.03 } as const;
+export const MOUNT = { x: 90, y: 35, scale: 1.06 } as const;
 export const machinePoint = (x: number, y: number) => ({ x: MOUNT.x + x*MOUNT.scale, y: MOUNT.y + y*MOUNT.scale });

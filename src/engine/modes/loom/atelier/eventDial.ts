@@ -274,9 +274,16 @@ function dialRotor(): Container {
  *  no double bezel, no mounting rail. */
 function readoutPanel(w: number, h: number): Sprite {
   return surface(w, h, g => {
-    g.beginPath(); g.roundRect(1.5, 1.5, w - 3, h - 3, 5); g.fillStyle = F.enamel; g.fill();
-    g.strokeStyle = F.edge; g.lineWidth = 1.4; g.stroke();
-    g.beginPath(); g.roundRect(5, 5, w - 10, h - 10, 3); g.fillStyle = F.paper; g.fill();
+    // A cast stator bridge with a rounded reading nose and a square mounting heel.
+    g.beginPath();g.moveTo(48,3);g.lineTo(w-15,3);g.lineTo(w-3,16);
+    g.lineTo(w-3,h-16);g.lineTo(w-15,h-3);g.lineTo(48,h-3);
+    g.bezierCurveTo(-12,h-3,-12,3,48,3);g.closePath();
+    g.fillStyle='#E2E5DF';g.fill();g.strokeStyle='#687784';g.lineWidth=1.5;g.stroke();
+    rect(g,27,22,w-48,87,'#FBF9F6',13,'#8A969B');
+    line(g,[44,25,w-35,25],'#171C60',2);
+    line(g,[42,79,w-31,79],'#C1C8C5',.8);
+    for(const y of [13,h-13]) { bolt(g,w-18,y,3.4); }
+    line(g,[12,54,12,82],'#171C60',2);
   });
 }
 
@@ -333,20 +340,20 @@ export class EventDial {
 
     this.typeText = new Text({
       text: 'IDLE',
-      style: { fontFamily: SANS, fontSize: 49, fontWeight: '700', fill: '#8B9398', letterSpacing: 0.6 },
+      style: { fontFamily: SANS, fontSize: 36, fontWeight: '700', fill: '#8B9398', letterSpacing: 0.6 },
     });
-    this.typeText.position.set(13, 4);
+    this.typeText.position.set(39, 31);
     this.multText = new Text({
       text: '',
-      style: { fontFamily: SANS, fontSize: 30, fontWeight: '700', fill: '#1E2330', letterSpacing: 0.4 },
+      style: { fontFamily: SANS, fontSize: 28, fontWeight: '700', fill: '#1E2330', letterSpacing: 0.4 },
     });
     this.multText.anchor.set(1, 0);
-    this.multText.position.set(panel.w - 13, 57);
+    this.multText.position.set(panel.w - 34, 82);
     this.stepText = new Text({
       text: '',
-      style: { fontFamily: MONO, fontSize: 26, fill: '#67624F', letterSpacing: 0.6 },
+      style: { fontFamily: MONO, fontSize: 22, fill: '#67624F', letterSpacing: 0.6 },
     });
-    this.stepText.position.set(13, 60);
+    this.stepText.position.set(39, 85);
 
     this.readout.addChild(this.typeText, this.multText, this.stepText);
     this.readout.position.set(panel.x, panel.y);
@@ -411,7 +418,7 @@ export class EventDial {
   }
 
   private syncReadout(ro: ReadoutModel): void {
-    this.readout.alpha = ro.empty ? 0.8 : 1;
+    this.readout.alpha = 1;
     if (ro.empty) {
       this.typeText.text = 'IDLE';
       this.typeText.style.fill = '#8B9398';
@@ -425,7 +432,7 @@ export class EventDial {
     this.typeText.text = ro.type ? ro.type.toUpperCase() : '—';
     this.typeText.style.fill = '#1E2330';
     this.multText.text = `×${ro.count}`;
-    this.stepText.text = ro.step ? `S${pad2(ro.step.index)} / ${ro.step.total}` : 'S— / —';
+    this.stepText.text = ro.step ? `${pad2(ro.step.index)} / ${ro.step.total}` : '— / —';
     this.paintTint(ro.color, slot, 1);
     this.paintAccent(ro.color);
   }
@@ -469,6 +476,11 @@ export class EventDial {
     const P = (r: number, t = 0): [number, number] =>
       [DIAL.cx + nx * r + tx * t, DIAL.cy + ny * r + ty * t];
 
+    // One cast heel ties the readout to the stationary loom-side flange.
+    // It sits above the moving card band, with clearance beneath the nose.
+    g.poly([375,367,423,367,423,426,410,426,410,400,375,400],true)
+      .fill(0xE2E5DF).stroke({color:0x687784,width:1.3});
+    g.moveTo(388,373).lineTo(416,373).lineTo(416,417).stroke({color:0xFBF9F6,width:2});
     // arm shadow shows it passes above the rotor
     const [sx0, sy0] = P(1196); const [sx1, sy1] = P(1074);
     g.moveTo(sx0 + 3, sy0 + 4).lineTo(sx1 + 3, sy1 + 4).stroke({ color: 0x2a2416, width: 6, alpha: 0.16 });

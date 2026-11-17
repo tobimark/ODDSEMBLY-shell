@@ -87,7 +87,7 @@ export function flywheelSprite():Sprite {
     g.translate(117,117);
     circle(g,0,0,108,F.enamel,F.muted,.9);
     circle(g,0,0,104,F.paper,F.fine,.6);
-    circle(g,0,0,98,F.steel,F.ink,1);
+    circle(g,0,0,98,F.steel,F.ink,4);
     g.globalCompositeOperation='destination-out';circle(g,0,0,86,'#000');g.globalCompositeOperation='source-over';
     for(let i=0;i<6;i++){
       g.save();g.rotate(i*Math.PI/3);

@@ -27,8 +27,8 @@ export const DIAL = {
   /** visible arc of the ring inside the 1472×1008 sheet */
   arc: { minDeg: 12, maxDeg: 70 },
   /** Fixed readout, suspended next to the read head (not inside the rotor).
-   *  Axis-aligned, no rotation field, horizon-stable text. 180×92 design px. */
-  panel: { x: 80, y: 170, w: 245, h: 100 },
+   *  Axis-aligned, no rotation field, horizon-stable text. 242×136 design px. */
+  panel: { x: 145, y: 330, w: 242, h: 136 },
   /** 12 card windows on the rotating index drum */
   card: { rIn: 1012, rOut: 1128, halfSpanDeg: 12 },
 } as const;

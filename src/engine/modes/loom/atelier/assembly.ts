@@ -4,9 +4,9 @@ import { WEAVE, YARNS } from './textile';
 
 function bobbin(g: Pen, x: number, y: number, color: string, n: number) {
   metal(g, x - 3, y - 14, 6, 84, true);
-  rect(g,x-15,y,30,52,F.enamel,3,F.edge);
-  for(let j=2;j<51;j+=2.3) {
-    line(g,[x-13,y+j+.4,x+13,y+j-.4],color,.7);
+  rect(g,x-15,y,30,52,color,3,F.edge);
+  for(let j=2;j<51;j+=1.7) {
+    line(g,[x-13,y+j+.4,x+13,y+j-.4],F.paper,.32);
     line(g,[x-11,y+j+.9,x+11,y+j+.1],F.paper,.45);
   }
   line(g,[x-12,y+2,x-12,y+49],F.fine,.5);
@@ -25,7 +25,7 @@ export function sheetBase() {
     // read as noise; they are removed rather than redrawn.
     line(g, [40, 104, 1432, 104], '#AAB1B251', .7);
     line(g, [40, 990, 1432, 990], '#AAB1B251', .7);
-    label(g, 'ODDSEMBLY  /  EVENT LOOM 01', 1432, 970, 16, '#68727A', 'right');
+
   });
 }
 
@@ -42,6 +42,8 @@ export function loomPlate() {
     poly(g, [340, 333, 351, 329, 1204, 813, 1198, 823], '#B2B9B222');
     for (const x of [311, 1222]) {
       plate(g, x - 26, 254, 52, 612, true);
+      rect(g,x-24,279,11,562,C.navy,2);
+      line(g,[x-12,279,x-12,841],'#65738A',1);
       // Recessed guide bed separates the load-bearing shell from the precision rail.
       rect(g,x-9,285,18,548,F.steel,2,F.fine);
       line(g,[x-22,278,x-22,844],F.muted,.75);

@@ -5,7 +5,6 @@ import { C, bearing, flywheelSprite, gearSprite, label, line, metal, surface } f
 import { Mechanism } from './atelier/mechanism';
 import { solveLinkage } from './atelier/linkage';
 import { Textile, WEAVE } from './atelier/textile';
-import { sharedChassis } from './atelier/integration';
 import { FINISH as F, MOUNT } from './atelier/finish';
 import { DIAL, EventDial } from './atelier/eventDial';
 
@@ -32,22 +31,18 @@ export class LoomScene extends Container {
   private textures: Sprite[] = [];
   private readonly world = new Container();
   private readonly dial = new EventDial();
-  /** The dial is a separate top-left instrument: 83% size, shifted so its
-   *  outer edge stops before the loom frame (three-part composition). */
+  /** Cropped stator nests behind the drive cassette and loom side frame. */
   private readonly dialBody = new Container();
   private readonly dialFront = new Container();
-  /** Fixed signal conduit from read-head housing to the drive box. */
-  private readonly signalConduit = new Graphics();
 
   constructor(private readonly onBeat: (e: ToolEvent) => void = () => {}) {
     super();
     const sheet = sheetBase();
     const base = loomPlate();
-    const chassis = sharedChassis();
     this.world.scale.set(MOUNT.scale);
-    this.textile.warp.alpha = 0.58;
+    this.textile.warp.alpha = 1;
     this.world.position.set(MOUNT.x, MOUNT.y);
-    const dialView = { scale: 0.83, cx: -553, cy: -390 };
+    const dialView = { scale: 0.90, cx: 20 + .90 * DIAL.cx, cy: -30 + .90 * DIAL.cy };
     const dtx = dialView.cx - dialView.scale * DIAL.cx;
     const dty = dialView.cy - dialView.scale * DIAL.cy;
     for (const wrap of [this.dialBody, this.dialFront]) {
@@ -56,7 +51,7 @@ export class LoomScene extends Container {
     }
     this.dialBody.addChild(this.dial.body);
     this.dialFront.addChild(this.dial.front);
-    this.drawSignalConduit();
+
     // drive cluster pulled 60 px left of the loom frame, so it reads as a separate block
     this.wheel.position.set(161, 660); this.gearA.position.set(161, 509); this.gearB.position.set(221, 509);
     this.shaftMark.position.set(293, 530);
@@ -79,10 +74,10 @@ export class LoomScene extends Container {
       for (const x of [344, 1188]) metal(g, x, 662, 7, 31, true);
     });
     race.position.set(302, 651);
-    this.stageLabel.position.set(1020, 930); this.pickLabel.position.set(1178, 852);
+    this.stageLabel.position.set(1020, 900); this.pickLabel.position.set(1178, 852);
     this.world.addChild(base, this.textile.cloth, this.textile.warp, this.shaftB, this.shaftA, belt, this.wheel, this.gearA, this.gearB, this.linkage, this.shaftMark, this.reed, this.weft, this.shuttle, this.textile.front, race, this.needle, this.stageLabel, this.pickLabel);
-    this.addChild(sheet, this.dialBody, chassis, this.world, this.signalConduit, this.dialFront);
-    this.textures = [sheet, chassis, base, belt, race, this.wheel, this.gearA, this.gearB, this.shaftA, this.shaftB, this.reed, this.shuttle];
+    this.addChild(sheet, this.dialBody, this.world, this.dialFront);
+    this.textures = [sheet, base, belt, race, this.wheel, this.gearA, this.gearB, this.shaftA, this.shaftB, this.reed, this.shuttle];
     this.mechanism.onPick = e => { this.textile.commit(e.type); this.onBeat(e); this.pickLabel.text = String(this.mechanism.picks).padStart(4, '0'); };
     this.pose();
   }
@@ -101,26 +96,6 @@ export class LoomScene extends Container {
   get dialState() { return this.dial.telemetry(); }
   update(dt: number, _running: boolean) { this.mechanism.update(dt); this.dial.update(dt); this.pose(); }
 
-
-  /** Signal conduit: read-head housing → fixed outer housing → drive-box top.
-   *  Five points, two clamps: one continuous rigid run, not a bead chain. */
-  private drawSignalConduit(): void {
-    const g = this.signalConduit;
-    const pts: [number, number][] = [[209, 248], [190, 300], [181, 400], [202, 490], [235, 533]];
-    for (const [w, color, alpha] of [[6.2, '#2A2416', .16], [5.0, '#5B6C7A', 1], [2.0, '#D9D6C7', 1]] as const) {
-      g.moveTo(pts[0][0] + 1.2, pts[0][1] + 1.6);
-      for (const [x, y] of pts.slice(1)) g.lineTo(x + 1.2, y + 1.6);
-      g.stroke({ color, width: w, alpha, cap: 'round', join: 'round' });
-    }
-    for (const [x, y] of [[183, 350], [206, 486]] as const) {
-      g.roundRect(x - 8, y - 9, 16, 18, 2).fill(0xd9d3c2).stroke({ color: 0x8f8878, width: 0.8 });
-      g.circle(x, y - 4, 1.5).fill(0xefe9db); g.circle(x, y + 4, 1.5).fill(0xefe9db);
-    }
-    g.roundRect(221, 526, 26, 14, 2).fill(0xd9d3c2).stroke({ color: 0x6f7a78, width: 1 });
-    g.circle(227, 533, 2).fill(0x6f7a78); g.circle(241, 533, 2).fill(0x6f7a78);
-    g.circle(209, 248, 6.2).fill(0xe8e8e0).stroke({ color: 0x6f7a78, width: 1.2 });
-    g.circle(209, 248, 2.2).fill(0x23283a);
-  }
 
   private pose() {
     const m = this.mechanism;
