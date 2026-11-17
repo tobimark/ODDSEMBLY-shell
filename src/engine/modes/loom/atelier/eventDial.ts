@@ -270,17 +270,13 @@ function dialRotor(): Container {
   return rotor;
 }
 
-/** Fixed compact readout shell (180×92): header, neutral rule, mounting rail. */
+/** Fixed readout window on the stator: one housing silhouette, one recess,
+ *  no double bezel, no mounting rail. */
 function readoutPanel(w: number, h: number): Sprite {
   return surface(w, h, g => {
-    g.save(); g.shadowColor = '#2A241626'; g.shadowBlur = 2.2; g.shadowOffsetX = .7; g.shadowOffsetY = 1.4;
-    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 6); g.fillStyle = F.enamel; g.fill(); g.restore();
-    g.beginPath(); g.roundRect(2, 2, w - 4, h - 4, 6); g.strokeStyle = F.edge; g.lineWidth = 1.1; g.stroke();
-    rect(g, 6, 6, w - 12, h - 12, F.paper, 3, F.fine);
-    line(g, [9, 56, w - 9, 56], F.fine, 0.7);
-    // mounting rail at the bottom edge, bolted to the suspension bracket
-    rect(g, w / 2 - 27, h - 9, 54, 5, F.steel, 2, F.edge);
-    bolt(g, w / 2 - 16, h - 6.5, 1.6); bolt(g, w / 2 + 16, h - 6.5, 1.6);
+    g.beginPath(); g.roundRect(1.5, 1.5, w - 3, h - 3, 5); g.fillStyle = F.enamel; g.fill();
+    g.strokeStyle = F.edge; g.lineWidth = 1.4; g.stroke();
+    g.beginPath(); g.roundRect(5, 5, w - 10, h - 10, 3); g.fillStyle = F.paper; g.fill();
   });
 }
 
@@ -311,7 +307,6 @@ export class EventDial {
   private readonly slotTint = new Graphics();
   private readonly accent = new Graphics();
   private readonly pointer = new Graphics();
-  private readonly mount = new Graphics();
   private readonly readout = new Container();
   private readonly readoutPanelSprite: Sprite;
   private readonly typeText: Text;
@@ -329,7 +324,7 @@ export class EventDial {
     const stator = statorBody();
     this.rotor = dialRotor();
     this.rotor.addChild(this.slotTint);
-    this.body.addChild(stator, this.rotor, this.accent, this.pointer, this.mount);
+    this.body.addChild(stator, this.rotor, this.accent, this.pointer);
     this.textures.push(stator);
 
     this.readoutPanelSprite = readoutPanel(panel.w, panel.h);
@@ -338,27 +333,26 @@ export class EventDial {
 
     this.typeText = new Text({
       text: 'IDLE',
-      style: { fontFamily: SANS, fontSize: 44, fontWeight: '700', fill: '#8B9398', letterSpacing: 1 },
+      style: { fontFamily: SANS, fontSize: 49, fontWeight: '700', fill: '#8B9398', letterSpacing: 0.6 },
     });
-    this.typeText.position.set(11, 9);
+    this.typeText.position.set(13, 4);
     this.multText = new Text({
       text: '',
-      style: { fontFamily: SANS, fontSize: 22, fontWeight: '700', fill: '#1E2330', letterSpacing: 0.4 },
+      style: { fontFamily: SANS, fontSize: 30, fontWeight: '700', fill: '#1E2330', letterSpacing: 0.4 },
     });
     this.multText.anchor.set(1, 0);
-    this.multText.position.set(panel.w - 11, 58);
+    this.multText.position.set(panel.w - 13, 57);
     this.stepText = new Text({
       text: '',
-      style: { fontFamily: MONO, fontSize: 22, fill: '#67624F', letterSpacing: 0.8 },
+      style: { fontFamily: MONO, fontSize: 26, fill: '#67624F', letterSpacing: 0.6 },
     });
-    this.stepText.position.set(11, 58);
+    this.stepText.position.set(13, 60);
 
     this.readout.addChild(this.typeText, this.multText, this.stepText);
     this.readout.position.set(panel.x, panel.y);
     this.front.addChild(this.readout);
 
     this.drawPointer();
-    this.drawMount();
     this.update(0);
   }
 
@@ -505,54 +499,6 @@ export class EventDial {
     // short locating mark in the clearance gap (fixed, never rotates)
     const [n0x, n0y] = P(1136, -8); const [n1x, n1y] = P(1136, 8);
     g.moveTo(n0x, n0y).lineTo(n1x, n1y).stroke({ color: 0x171c60, width: 1.3, alpha: 0.75 });
-  }
-
-  /** Suspended readout: two clamps on the fixed blue arc carry the panel, and
-   *  a short link ties it to the read-head arm. The arc is the visible datum. */
-  private drawMount(): void {
-    const g = this.mount;
-    const p = DIAL.panel;
-    const bx = p.x - 6; const by = p.y - 6; const bw = p.w + 12; const bh = p.h + 12;
-    g.roundRect(bx + 2, by + 3, bw, bh, 6).fill({ color: '#2A2416', alpha: 0.15 });
-    g.roundRect(bx, by, bw, bh, 6).fill(0xe8e8e0).stroke({ color: 0x9a9e9e, width: 1.1 });
-    g.roundRect(bx + 2, by + 2, bw - 4, bh - 4, 4).stroke({ color: 0xffffff, width: 0.7, alpha: 0.5 });
-
-    // clamp plate on the fixed blue arc, oriented tangentially
-    const clamp = (deg: number, len: number, depth: number) => {
-      const [x, y] = polar(DIAL.blue, deg);
-      const a = (deg * Math.PI) / 180;
-      const nx = Math.cos(a); const ny = Math.sin(a);
-      const tx = -Math.sin(a); const ty = Math.cos(a);
-      const c: number[] = [];
-      for (const [u, v] of [[-len, -depth], [len, -depth], [len, depth], [-len, depth]] as const) {
-        c.push(x + tx * u + nx * v, y + ty * u + ny * v);
-      }
-      g.poly(c, true).fill(0xd9d3c2).stroke({ color: 0x8f8878, width: 0.9 });
-      for (const u of [-len + 5, len - 5]) {
-        g.circle(x + tx * u, y + ty * u, 1.8).fill(0xefe9db).stroke({ color: 0xa79e88, width: 0.6 });
-      }
-    };
-
-    // top clamp at arc 30° → panel top-right; bottom clamp at arc 44° → panel bottom-left
-    const [t1x, t1y] = polar(DIAL.blue, 30);
-    const [b1x, b1y] = polar(DIAL.blue, 44);
-    clamp(30, 11, 6); clamp(44, 11, 6);
-    const link = (x0: number, y0: number, x1: number, y1: number) => {
-      g.moveTo(x0 + 2, y0 + 3).lineTo(x1 + 2, y1 + 3).stroke({ color: 0x2a2416, width: 5, alpha: 0.12 });
-      g.moveTo(x0, y0).lineTo(x1, y1).stroke({ color: 0x9a9e9e, width: 4.8, cap: 'round' });
-      g.moveTo(x0, y0).lineTo(x1, y1).stroke({ color: 0xe8e8e0, width: 2.8, cap: 'round' });
-      g.moveTo(x0, y0).lineTo(x1, y1).stroke({ color: 0xffffff, width: 0.7, cap: 'round' });
-    };
-    link(t1x, t1y, p.x + p.w - 22, p.y);
-    link(b1x, b1y, p.x + 16, p.y + p.h);
-
-    // short link to the read-head arm (r≈1152)
-    const [hx, hy] = polar(1152, DIAL.headDeg);
-    const sx = p.x + p.w - 16; const sy = p.y + p.h - 2;
-    link(sx, sy, hx, hy);
-    for (const [x, y] of [[t1x, t1y], [b1x, b1y], [sx, sy], [hx, hy]] as const) {
-      g.circle(x, y, 2.4).fill(0xd9d3c2).stroke({ color: 0x8f8878, width: 0.7 });
-    }
   }
 
   destroy(): void {

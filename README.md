@@ -18,7 +18,7 @@ Loom 左侧的大型事件刻度机构是「**12 槽索引鼓 + 固定读数器*
 
 - 新工具事件 → **105 ms** 显示延迟 → **180 ms** 索引步进（30°/格）→ 读数停留 ≈2 s 后回到 IDLE；
 - 同工具调用就地合并为 `×N`（不转轮）；`Sxx/12` 为当前槽位/12 槽；
-- 读数器是一块 **210×94 的固定矩形面板**，用蓝弧上的两个夹具 + 短连杆悬在 40° 读头旁，只显示工具 / ×N / 槽位；结构上没有 rotation；
+- 读数窗是 **245×100 的固定矩形窗**，直接坐在盘面静止结构上，只显示工具 / ×N / Sxx/12；没有 rotation、没有悬挂夹具；
 - 工具色：Read `#789ED0`、Bash `#77BA89`、Edit `#C686C0`、Write `#D5A868`、Search `#5AB2B6`；
 - 遥测：`window.__engine.getModeTelemetry().dial`；细节与证据见 [docs/EVENT_DIAL.md](docs/EVENT_DIAL.md)；
 - 回滚：`?motion=off` 关闭步进动效；完整回滚见 [docs/ROLLBACK.md](docs/ROLLBACK.md)（基线 tag `pre-dynamic-dial`）。

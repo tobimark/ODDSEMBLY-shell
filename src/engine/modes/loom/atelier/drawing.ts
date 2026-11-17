@@ -25,7 +25,11 @@ export function circle(g: Pen, x: number, y: number, r: number, fill: string, st
   if (stroke) { g.strokeStyle = stroke; g.lineWidth = width; g.stroke(); }
 }
 export function label(g: Pen, text: string, x: number, y: number, size = 9, color = C.ink, align: CanvasTextAlign = 'left') {
+  // Micro-labels below 8 design px collapse at 730px; keep them as quiet texture.
+  const quiet = size < 8;
+  if (quiet) g.globalAlpha = .58;
   g.font = `${size}px Consolas, monospace`; g.textAlign = align; g.fillStyle = color; g.fillText(text, x, y); g.textAlign = 'left';
+  if (quiet) g.globalAlpha = 1;
 }
 /** Machined rail: flat web, narrow recessed return and one edge reflection. */
 export function metal(g: Pen, x: number, y: number, w: number, h: number, vertical = false) {
@@ -39,15 +43,15 @@ export function metal(g: Pen, x: number, y: number, w: number, h: number, vertic
   }
 }
 export function bolt(g: Pen, x: number, y: number, r = 3.3) {
-  circle(g,x,y,r+.7,F.enamel,F.edge,.55);
-  const pts:number[]=[];for(let i=0;i<6;i++){const a=i*Math.PI/3;pts.push(x+Math.cos(a)*r*.75,y+Math.sin(a)*r*.75);}
-  poly(g,pts,F.steel,F.muted,.45);
-  line(g,[x-r*.4,y+r*.25,x+r*.4,y-r*.25],F.muted,.55);
+  // At 0.5x the hex kerf disappears; keep a quiet, readable fastener dot.
+  circle(g,x,y,r*.72,F.steel,F.edge,.45);
+  circle(g,x,y,r*.28,F.recess);
 }
 /** Folded enamel shell, 1.2px seam; no extruded perspective faces. */
 export function plate(g: Pen, x: number, y: number, w: number, h: number, structural = false, screws = true) {
   rect(g,x+1.2,y+1.8,w,h,F.shadow,3);
   rect(g,x,y,w,h,F.enamel,3,structural ? F.muted : F.edge);
+  if (structural) { g.beginPath(); g.roundRect(x,y,w,h,3); g.strokeStyle = F.muted; g.lineWidth = 1.5; g.stroke(); }
   rect(g,x+3,y+3,w-6,h-6,F.paper,1.5,F.fine);
   if(structural) {
     if(h>w) { line(g,[x+5,y+17,x+5,y+h-17],F.ink,1.1); line(g,[x+w-5,y+17,x+w-5,y+h-17],F.fine,.6); }

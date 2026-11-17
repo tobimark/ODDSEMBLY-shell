@@ -22,6 +22,8 @@ export class LoomScene extends Container {
   private reed = reed();
   private shuttle = shuttle();
   private linkage = new Graphics();
+  /** Rotating key on the output coupling, tied to the gear phase. */
+  private shaftMark = new Graphics();
   private weft = new Graphics();
   private needle = new Graphics();
   private stageLabel = new Text({ text: 'READY', style: { fontFamily: 'Consolas, monospace', fontSize: 9, fill: '#657582', letterSpacing: 1.6 } });
@@ -43,6 +45,7 @@ export class LoomScene extends Container {
     const base = loomPlate();
     const chassis = sharedChassis();
     this.world.scale.set(MOUNT.scale);
+    this.textile.warp.alpha = 0.58;
     this.world.position.set(MOUNT.x, MOUNT.y);
     const dialView = { scale: 0.83, cx: -553, cy: -390 };
     const dtx = dialView.cx - dialView.scale * DIAL.cx;
@@ -56,6 +59,10 @@ export class LoomScene extends Container {
     this.drawSignalConduit();
     // drive cluster pulled 60 px left of the loom frame, so it reads as a separate block
     this.wheel.position.set(161, 660); this.gearA.position.set(161, 509); this.gearB.position.set(221, 509);
+    this.shaftMark.position.set(293, 530);
+    this.shaftMark.circle(0, 0, 4).fill(0x2c3340);
+    this.shaftMark.moveTo(0, 0).lineTo(9, 0).stroke({ color: 0x2c3340, width: 2 });
+    this.shaftMark.circle(0, 0, 1.4).fill(0xd9d3c2);
     this.shaftA.position.set(307, 401); this.shaftB.position.set(307, 513);
     this.reed.position.set(308, 606); this.shuttle.position.set(366, 675);
     const belt = surface(200, 140, g => {
@@ -72,8 +79,8 @@ export class LoomScene extends Container {
       for (const x of [344, 1188]) metal(g, x, 662, 7, 31, true);
     });
     race.position.set(302, 651);
-    this.stageLabel.position.set(1020, 930); this.pickLabel.position.set(1270, 852);
-    this.world.addChild(base, this.textile.cloth, this.textile.warp, this.shaftB, this.shaftA, belt, this.wheel, this.gearA, this.gearB, this.linkage, this.reed, this.weft, this.shuttle, this.textile.front, race, this.needle, this.stageLabel, this.pickLabel);
+    this.stageLabel.position.set(1020, 930); this.pickLabel.position.set(1178, 852);
+    this.world.addChild(base, this.textile.cloth, this.textile.warp, this.shaftB, this.shaftA, belt, this.wheel, this.gearA, this.gearB, this.linkage, this.shaftMark, this.reed, this.weft, this.shuttle, this.textile.front, race, this.needle, this.stageLabel, this.pickLabel);
     this.addChild(sheet, this.dialBody, chassis, this.world, this.signalConduit, this.dialFront);
     this.textures = [sheet, chassis, base, belt, race, this.wheel, this.gearA, this.gearB, this.shaftA, this.shaftB, this.reed, this.shuttle];
     this.mechanism.onPick = e => { this.textile.commit(e.type); this.onBeat(e); this.pickLabel.text = String(this.mechanism.picks).padStart(4, '0'); };
@@ -96,33 +103,21 @@ export class LoomScene extends Container {
 
 
   /** Signal conduit: read-head housing → fixed outer housing → drive-box top.
-   *  All points stay outside the rotor card band (x < 132 in this projection);
-   *  the pipe is drawn above the sheet but below the dial readout. */
+   *  Five points, two clamps: one continuous rigid run, not a bead chain. */
   private drawSignalConduit(): void {
     const g = this.signalConduit;
-    const pts: [number, number][] = [
-      [209, 248], [196, 282], [184, 330], [180, 390], [188, 446], [212, 486], [236, 508], [245, 521],
-    ];
-    // shadow / pipe body / highlight
-    for (const [w, color, alpha] of [[6.4, '#2A2416', .18], [5.2, '#5B6C7A', 1], [2.2, '#D9D6C7', 1]] as const) {
+    const pts: [number, number][] = [[209, 248], [190, 300], [181, 400], [202, 490], [235, 533]];
+    for (const [w, color, alpha] of [[6.2, '#2A2416', .16], [5.0, '#5B6C7A', 1], [2.0, '#D9D6C7', 1]] as const) {
       g.moveTo(pts[0][0] + 1.2, pts[0][1] + 1.6);
       for (const [x, y] of pts.slice(1)) g.lineTo(x + 1.2, y + 1.6);
       g.stroke({ color, width: w, alpha, cap: 'round', join: 'round' });
     }
-    // elbows / compression fittings at each bend
-    for (const [x, y] of pts.slice(1, -1)) {
-      g.circle(x, y, 4.6).fill(0xd9d3c2).stroke({ color: 0x6f7a78, width: 1 });
-      g.circle(x, y, 1.6).fill(0x6f7a78);
-    }
-    // three fixed clamps on the stationary housing
-    for (const [x, y] of [[184, 318], [180, 402], [206, 478]] as const) {
+    for (const [x, y] of [[183, 350], [206, 486]] as const) {
       g.roundRect(x - 8, y - 9, 16, 18, 2).fill(0xd9d3c2).stroke({ color: 0x8f8878, width: 0.8 });
       g.circle(x, y - 4, 1.5).fill(0xefe9db); g.circle(x, y + 4, 1.5).fill(0xefe9db);
     }
-    // terminal flange on the drive-box top plate
-    g.roundRect(231, 514, 26, 14, 2).fill(0xd9d3c2).stroke({ color: 0x6f7a78, width: 1 });
-    g.circle(237, 521, 2).fill(0x6f7a78); g.circle(251, 521, 2).fill(0x6f7a78);
-    // source collar on the read-head housing
+    g.roundRect(221, 526, 26, 14, 2).fill(0xd9d3c2).stroke({ color: 0x6f7a78, width: 1 });
+    g.circle(227, 533, 2).fill(0x6f7a78); g.circle(241, 533, 2).fill(0x6f7a78);
     g.circle(209, 248, 6.2).fill(0xe8e8e0).stroke({ color: 0x6f7a78, width: 1.2 });
     g.circle(209, 248, 2.2).fill(0x23283a);
   }
@@ -136,6 +131,7 @@ export class LoomScene extends Container {
     this.shuttle.x = 366 + m.travel * 809;
     this.shuttle.y = 675 - Math.sin(m.travel * Math.PI) * 2;
     this.wheel.rotation = m.angle; this.gearA.rotation = m.angle * 3; this.gearB.rotation = -m.angle * 4.5 + Math.PI / 16;
+    this.shaftMark.rotation = m.angle * 3;
     this.textile.update(m.shed, m.direction);
     this.textile.cloth.y = WEAVE.fell + (m.active && m.committed ? -2 + m.takeup * 2 : 0);
     const g = this.linkage; g.clear();
@@ -148,9 +144,9 @@ export class LoomScene extends Container {
     // Three explicitly servo-driven slider cranks. The decorative transmission
     // on the left no longer pretends to drive these independently commanded axes.
     for (const [base, target] of [[419, this.shaftA.y + 18], [531, this.shaftB.y + 18], [649, this.reed.y + 43]]) {
-      const k = solveLinkage({ x: 1260, y: base + 70 }, { x: 1220, y: target });
-      g.roundRect(1241, base + 51, 38, 38, 5).fill(F.enamel).stroke({color:0x7D8996,width:1});
-      g.circle(1260, base + 70, 16).fill(F.steel).stroke({color:F.muted,width:.8});
+      const k = solveLinkage({ x: 1242, y: base + 70 }, { x: 1202, y: target });
+      g.roundRect(1223, base + 51, 38, 38, 5).fill(F.enamel).stroke({color:0x7D8996,width:1});
+      g.circle(1242, base + 70, 16).fill(F.steel).stroke({color:F.muted,width:.8});
       rod(k.center.x, k.center.y, k.pin.x, k.pin.y, 4);
       rod(k.pin.x, k.pin.y, k.slider.x, k.slider.y, 4);
     }

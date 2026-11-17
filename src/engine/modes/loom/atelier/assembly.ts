@@ -20,17 +20,12 @@ function bobbin(g: Pen, x: number, y: number, color: string, n: number) {
 export function sheetBase() {
   return surface(1472, 1008, g => {
     rect(g, 0, 0, 1472, 1008, C.paper);
-    // Restrained registration marks: the machine sits on an exhibition sheet.
-    for (let x = 42; x < 1450; x += 24) for (let y = 120; y < 910; y += 24) circle(g, x, y, .55, '#8F999023');
+    // Quiet exhibition sheet: only two registration rules and the brand line.
+    // The 24px dot grid and 9px catalogue captions were unreadable at 730px and
+    // read as noise; they are removed rather than redrawn.
     line(g, [40, 104, 1432, 104], '#AAB1B251', .7);
-    line(g, [40, 924, 1432, 924], '#AAB1B251', .7);
-    label(g, 'FIG. 01', 42, 142, 10, '#8B9398');
-    label(g, 'THE EVENT', 42, 163, 9, '#8B9398'); label(g, 'BECOMES THREAD.', 42, 177, 9, '#8B9398');
-    // Bottom catalogue captions stay fixed to the sheet as the machine pans.
-    // (The former "00 / EVENT SCALE" caption moved into the fixed readout panel.)
-    label(g, '112 ENDS', 354, 905, 9, '#73828B');
-    label(g, '2 / 2 BROKEN TWILL', 770, 905, 9, '#73828B', 'center');
-    label(g, 'EVENT-DRIVEN / SERIES 01', 1234, 905, 9, '#73828B', 'right');
+    line(g, [40, 990, 1432, 990], '#AAB1B251', .7);
+    label(g, 'ODDSEMBLY  /  EVENT LOOM 01', 1432, 970, 16, '#68727A', 'right');
   });
 }
 
@@ -40,6 +35,7 @@ export function loomPlate() {
   return surface(1472, 1008, g => {
     // Open machine bed: local joints provide depth; no full-panel shadow slab.
     rect(g,333,263,886,594,F.enamel,0,F.fine);
+    g.beginPath(); g.roundRect(332.5, 262.5, 887, 595, 2); g.strokeStyle = '#6D7A80'; g.lineWidth = 1.8; g.stroke();
     rect(g,345,276,850,580,F.paper);
     // Rear cross braces remain behind the translucent warp sheets.
     poly(g, [336, 813, 347, 813, 1207, 332, 1207, 344], '#B2B9B229');
@@ -105,21 +101,20 @@ export function loomPlate() {
     metal(g, 159, 774, 12, 28, true); label(g, 'SERVO / KM–01', 103, 875, 8, '#7B8991');
     // Tension gauge measurement tube: gauge right edge -> loom left frame.
     // A short rigid capillary, clamped once; it must not float in the gap.
-    line(g, [236, 398, 333, 398], '#5B6C7A', 5); line(g, [236, 398, 333, 398], '#D9D6C7', 2.2);
-    plate(g, 296, 390, 16, 16, false); bolt(g, 300, 394, 2); bolt(g, 308, 394, 2);
+    line(g, [236, 382, 333, 382], '#5B6C7A', 5); line(g, [236, 382, 333, 382], '#D9D6C7', 2.2);
+    plate(g, 296, 374, 16, 16, false); bolt(g, 300, 378, 2); bolt(g, 308, 378, 2);
     // upper link is now a driven output shaft, not a rail: gearbox bearing ->
     // flexible coupling -> output bearing -> loom frame. The lower rail stays.
-    plate(g, 254, 525, 26, 32, false); bolt(g, 260, 531, 2.2); bolt(g, 274, 531, 2.2);
-    bearing(g, 268, 541, 12);
-    metal(g, 276, 537, 32, 8, true);
-    plate(g, 292, 527, 26, 28, false);
-    for (const y of [532, 548]) { circle(g, 293, y, 4, F.steel, F.edge); bolt(g, 293, y, 1.6); }
-    for (const y of [532, 548]) { circle(g, 317, y, 4, F.steel, F.edge); }
-    plate(g, 318, 525, 18, 32, false); bolt(g, 322, 531, 2); bolt(g, 332, 531, 2); bolt(g, 322, 551, 2);
-    metal(g, 333, 537, 8, 8, true);
+    plate(g, 254, 514, 24, 34, false); bolt(g, 260, 520, 2.2); bolt(g, 272, 520, 2.2);
+    bearing(g, 267, 530, 12);
+    metal(g, 276, 526, 56, 8, true);
+    for (const y of [522, 538]) { circle(g, 293, y, 4, F.steel, F.edge); bolt(g, 293, y, 1.6); }
+    bearing(g, 326, 530, 11);
+    line(g, [270, 530, 336, 530], '#2C3340', 1.6);
+    metal(g, 333, 526, 8, 8, true);
     // U-guard over the gear-to-shaft take-off (necessary, not decorative)
-    line(g, [246, 559, 246, 577, 292, 577], '#5B6C7A', 2.2);
-    plate(g, 242, 555, 10, 26, false);
+    line(g, [246, 548, 246, 566, 292, 566], '#5B6C7A', 2.2);
+    plate(g, 242, 544, 10, 26, false);
     // lower structural rail remains the only second connection
     metal(g, 254, 742, 62, 9, true); bolt(g, 260, 746, 2.4); bolt(g, 309, 746, 2.4);
     // Lower take-up roller bearing boxes and feet.
@@ -127,9 +122,9 @@ export function loomPlate() {
     metal(g, 332, 826, 877, 27);
     for (const x of [315, 1227]) bearing(g, x, 840, 21);
     rect(g, 680, 856, 167, 16, C.navy, 2);
-    label(g, 'K U N L U N M E T A', 764, 867, 8, '#EEEFE9', 'center');
-    for (const [y, name] of [[489, 'SERVO A'], [601, 'SERVO B'], [719, 'SERVO R']] as const) label(g, name, 1238, y + 4, 6.5, '#8B969A');
-    label(g, 'PICKS', 1271, 842, 7, '#8A959A');
+    label(g, 'O D D S E M B L Y', 764, 867, 8, '#EEEFE9', 'center');
+    for (const [y, name] of [[489, 'SERVO A'], [601, 'SERVO B'], [719, 'SERVO R']] as const) label(g, name, 1188, y + 4, 6.5, '#8B969A');
+    label(g, 'PICKS', 1238, 842, 7, '#8A959A');
   });
 }
 

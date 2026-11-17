@@ -76,6 +76,16 @@
 - Loom `1.06×`，左框 484、右缘 1423；730×548 下右余约 24px、底余约 31px。
 - 验收：`layout-v5/`（full/gameview-730/connection/shaft/gauge/conduit + Read→Bash→Edit 录屏）。
 
+
+## layout v6（视觉质量整改）
+
+- 固定读数窗 245×100：单壳 + 凹窗，删除双层边框/安装轨/夹具/连杆；730 下宽约 101px，
+  TYPE 20.2 / ×N 12.4 / step 10.7 CSS px。
+- 730 实际层级：点阵/目录小字删除，经线 alpha 0.58，主框/结构 plate 加粗，螺栓简化。
+- 输出轴减少安装板堆叠，连续中心线与联轴器键；右侧伺服曲柄内收，Loom 右缘留约 35px。
+- Loom `1.03×`、`MOUNT {x:105,y:36}`，左框 448、帧右缘 1361。
+- 验收：`layout-v6/`（readout-before-after、full/gameview-730、connection/shaft/gauge/conduit/wheel/readhead、Read→Bash×2→Edit 录屏）。
+
 ## 动态录屏（读数器固定）
 
 | 文件 | 内容 |
