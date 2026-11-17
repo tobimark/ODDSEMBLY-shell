@@ -51,7 +51,8 @@ export class LoomScene extends Container {
     }
     this.dialBody.addChild(this.dial.body);
     this.dialFront.addChild(this.dial.front);
-    this.wheel.position.set(221, 660); this.gearA.position.set(221, 509); this.gearB.position.set(281, 509);
+    // drive cluster pulled 60 px left of the loom frame, so it reads as a separate block
+    this.wheel.position.set(161, 660); this.gearA.position.set(161, 509); this.gearB.position.set(221, 509);
     this.shaftA.position.set(307, 401); this.shaftB.position.set(307, 513);
     this.reed.position.set(308, 606); this.shuttle.position.set(366, 675);
     const belt = surface(200, 140, g => {
@@ -60,7 +61,7 @@ export class LoomScene extends Container {
       line(g, [130, 614, 191, 494], '#4D5969', 5); line(g, [312, 614, 251, 494], '#4D5969', 5);
       line(g, [129, 614, 190, 494], '#D1D2BF', 1); line(g, [313, 614, 252, 494], '#D1D2BF', 1);
     });
-    belt.position.set(120, 486);
+    belt.position.set(60, 486);
     const race = surface(940, 52, g => {
       g.translate(-302, -651);
       metal(g, 326, 687, 884, 8);
@@ -123,7 +124,7 @@ export class LoomScene extends Container {
       this.weft.moveTo(edge, 683).lineTo(this.shuttle.x, 678).stroke({ color: m.active.type === 'Bash' ? 0x171C60 : 0x33CBCC, width: 1.4 });
     }
     const a = -1.15 + m.shed * .55 + m.beat * .2;
-    this.needle.clear().moveTo(246, 392).lineTo(246 + Math.cos(a) * 22, 392 + Math.sin(a) * 22).stroke({ color: 0x171C60, width: 1.5 }).circle(246, 392, 2.5).fill(0x171C60);
+    this.needle.clear().moveTo(186, 392).lineTo(186 + Math.cos(a) * 22, 392 + Math.sin(a) * 22).stroke({ color: 0x171C60, width: 1.5 }).circle(186, 392, 2.5).fill(0x171C60);
     if (this.lastStage !== m.stage) { this.stageLabel.text = m.stage; this.lastStage = m.stage; }
   }
 

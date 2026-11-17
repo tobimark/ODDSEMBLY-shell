@@ -54,6 +54,19 @@
 | `layout-v3/readout-2x.png` | 读数器 2×（210×94，TYPE 44 / 第二行 22） |
 | `layout-v3/comparison-before-after.png` | 上一版 → 本版 |
 
+
+## layout v4（2026-11-17 下午）
+
+修正上一版两处：底部空带与齿轮/Loom 过近。
+
+- 场景按 fit-width 放入 **730×548** 可见 GameView（730×500 内容，上贴模式栏，
+  下距 HUD 28px）。
+- 齿轮、飞轮、张力表、驱动箱、电机整体左移 60px；驱动箱右缘 407，与 Loom 左框 484
+  留 **77px**，两根 outboard rail 跨接。
+- Loom `1.1×`、左框 484、右缘 1459。
+
+文件：[layout-v4/](layout-v4/)；比例规则见 [docs/LAYOUT.md](../../docs/LAYOUT.md)。
+
 ## 动态录屏（读数器固定）
 
 | 文件 | 内容 |

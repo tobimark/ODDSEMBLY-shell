@@ -83,27 +83,29 @@ export function loomPlate() {
     }
     // Fixed lease rods.
     for (const y of [329, 345]) { metal(g, 325, y, 889, 6); for (const x of [322, 1217]) { plate(g, x - 8, y - 6, 16, 19, false, false); bolt(g, x, y + 3, 3); } }
-    // Main drive cassette, bolted directly to the left stanchion.
-    plate(g, 166, 483, 148, 303, false);
-    rect(g, 178, 494, 124, 282, F.enamel, 12, F.fine);
-    metal(g, 215, 497, 13, 278, true);
-    for (const y of [509, 566, 725]) bearing(g, 221, y, 13);
+    // Separate drive cassette: moved left with the flywheel/gears, leaving a
+    // real gap to the loom frame. Two rails re-connect it as an outboard unit.
+    plate(g, 106, 483, 148, 303, false);
+    rect(g, 118, 494, 124, 282, F.enamel, 12, F.fine);
+    metal(g, 155, 497, 13, 278, true);
+    for (const y of [509, 566, 725]) bearing(g, 161, y, 13);
     // A single small tension instrument built into the drive housing.
-    plate(g, 195, 346, 100, 103, false);
-    circle(g, 246, 393, 35, F.steel, F.edge); circle(g, 246, 392, 31, '#F9F7ED', '#FFFFFF', 1.5);
+    plate(g, 135, 346, 100, 103, false);
+    circle(g, 186, 393, 35, F.steel, F.edge); circle(g, 186, 392, 31, '#F9F7ED', '#FFFFFF', 1.5);
     for (let i = 0; i <= 24; i++) {
       const a = Math.PI * .75 + i / 24 * Math.PI * 1.5;
-      line(g, [246 + Math.cos(a) * (i % 4 ? 26 : 23), 392 + Math.sin(a) * (i % 4 ? 26 : 23), 246 + Math.cos(a) * 28, 392 + Math.sin(a) * 28], '#5A6979', .7);
+      line(g, [186 + Math.cos(a) * (i % 4 ? 26 : 23), 392 + Math.sin(a) * (i % 4 ? 26 : 23), 186 + Math.cos(a) * 28, 392 + Math.sin(a) * 28], '#5A6979', .7);
     }
-    label(g, 'TENSION', 246, 408, 5.5, '#657985', 'center'); label(g, 'N', 246, 382, 7, '#657985', 'center');
-    label(g, 'WARP / 112', 245, 437, 7, '#687987', 'center');
-    // Tension linkage and physically mounted sensor cable.
-    line(g, [246, 346, 246, 313, 301, 313], '#5B6C7A', 5); line(g, [246, 346, 246, 313, 301, 313], '#C2CCC6', 2.5);
+    label(g, 'TENSION', 186, 408, 5.5, '#657985', 'center'); label(g, 'N', 186, 382, 7, '#657985', 'center');
+    label(g, 'WARP / 112', 185, 437, 7, '#687987', 'center');
     // Worm shaft, drive motor and cooling fins.
-    plate(g, 155, 800, 157, 57, true);
-    for (let x = 167; x < 277; x += 7) metal(g, x, 810, 3, 35, true);
-    circle(g, 290, 828, 13, '#D6DBD5', '#738594'); bolt(g, 290, 828, 5);
-    metal(g, 219, 774, 12, 28, true); label(g, 'SERVO / KM–01', 163, 875, 8, '#7B8991');
+    plate(g, 95, 800, 157, 57, true);
+    for (let x = 107; x < 217; x += 7) metal(g, x, 810, 3, 35, true);
+    circle(g, 230, 828, 13, '#D6DBD5', '#738594'); bolt(g, 230, 828, 5);
+    metal(g, 159, 774, 12, 28, true); label(g, 'SERVO / KM–01', 103, 875, 8, '#7B8991');
+    // outboard mounting rails bridge the deliberate 57 px gap
+    metal(g, 254, 530, 62, 9, true); bolt(g, 260, 534, 2.4); bolt(g, 309, 534, 2.4);
+    metal(g, 254, 742, 62, 9, true); bolt(g, 260, 746, 2.4); bolt(g, 309, 746, 2.4);
     // Lower take-up roller bearing boxes and feet.
     plate(g, 305, 851, 928, 23, false);
     metal(g, 332, 826, 877, 27);

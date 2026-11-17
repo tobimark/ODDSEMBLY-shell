@@ -81,10 +81,10 @@ IDLE ──event──► ARMING(105 ms) ──► MOVING(180 ms) ──► HOLD
 
 按最新评审，本轮不增加机械件，只做减法与重新构图：
 
-- **三分区构图**：Loom 保持 `scale 1.0`，整体右移到 `MOUNT {x:151, y:0}`，左框落在
-  x=484；转盘整体缩到 **0.83**、平移到 `center(-553,-390)`，可见弧带只占 x 0–470；
-  齿轮组留在 x≈270–474、y≈480–775。三者没有像素级重叠，间距见
-  [LAYOUT.md](LAYOUT.md)。设计 1472×1008 实际显示为 730×495（×0.496）。
+- **三分区构图**：Loom `scale 1.1`、`MOUNT {x:117.7, y:-3}`，左框 x=484、右缘 1459；
+  转盘缩到 **0.83**、平移到 `center(-553,-390)`，可见弧带占 x 0–470；
+  齿轮、飞轮、张力表与驱动箱作为一体左移，齿轮箱右缘 407，与 Loom 留 **77px** 间隙，
+  两根 outboard rail 跨过间隙。三者无像素级重叠；显示比例见 [LAYOUT.md](LAYOUT.md)。
 - **删除左下控制箱与队列牌**：连同箱脚、接线盒、箱→队列线、读头→控制箱导管一起删除；
   事件引擎与 queue 遥测保留，只是不再有可见外壳。共享床身缩到 Loom 脚下
   （x≈460–1380，y=840）。
@@ -106,7 +106,7 @@ IDLE ──event──► ARMING(105 ms) ──► MOVING(180 ms) ──► HOLD
 包含 READ→BASH→BASH×N（不推轮）→EDIT/WRITE/SEARCH→12 组整圈→READ；读数器位置不变。
 前后对比：`review/event-dial/visual-subtraction/comparison-before-after.png`；
 壳内尺寸与三分区比例：[LAYOUT.md](LAYOUT.md)。
-壳内示意：`review/event-dial/visual-subtraction/shell-context.png`（合成图，非运行时集成）。
+壳内示意：`review/event-dial/layout-v4/shell-context.png`（合成图，非运行时集成）。
 
 ## 遥测 / 调试
 
