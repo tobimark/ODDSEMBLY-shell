@@ -1,185 +1,192 @@
 # KunlunMeta Agent Visual Engine — Loom
 
-程序化绘制的 AI Agent 视觉世界：每一次真实的工具调用，都在织机上织入一道纬线。
+把 AI Agent 的每一次工具调用，变成织机上一道真实的纬线。
+
+![合并后的界面：CrommaCode 外壳 + 中央 Loom](docs/img/hero.png)
+
+画面**全部由代码程序化绘制**（Canvas 2D 材质 + PixiJS v8 合成），没有一张位图素材：112 根经线、16 组纱色、
+四片综框、曲柄滑块伺服、12 槽事件转盘、以及会从零长到满匹的布面，都是算出来的。
+
+---
+
+## 它解决的问题
+
+Agent 干活时，终端只剩滚动的日志：你既看不出它在做什么，也看不出它有多忙。Loom 把工具调用流
+翻译成一台**可读的机械**——
+
+| Agent 侧 | 织机侧 |
+|---|---|
+| 一次工具调用 | 一次投梭 = 一次打纬 = 织入一道纬线 |
+| 工具类型（Read / Edit / Write / Bash / Search） | 这一道纬线的颜色、转盘上的槽位与读数 |
+| 调用节奏、并发爆发 | 投梭速度、队列深度、饱和时的合并计数 |
+| 会话累计 | 布面长度（55 行满匹后换新布） |
+
+它是一台**真织**的织机，不是一个在长高的贴图：布面每一格由当次开口（draft）决定，改开口计划布面就会变
+（见 [织法](#织法是真的draft)）。
+
+---
+
+## 长什么样
+
+一台空织机：经线从横梁一直通到卷取梁，梭子和筘停在最底部，布面还没有开始。
+
+![空织机](docs/img/empty.png)
+
+织到第 40 针：布边向上生长，筘、梭、梭道跟着织口一起上行，综框被布逐渐埋住。
+
+![40 针](docs/img/rows40.png)
+
+`SHEDDING` 相位：四片综框按 draft 抬起其中两片，经线开口，等梭子穿过。
+
+![开口](docs/img/shed.png)
+
+布面放大：每 2 px 一根纬线，压/浮由 draft 决定，斜纹是 45° 的对角而不是贴图。
+
+![布面](docs/img/cloth.png)
+
+每次调用还有一道光沿导管从转盘跑到齿轮组，抵达时齿轮短促辉光（不改转速）。
+
+![光路](docs/img/pulse.png)
+
+---
+
+## 一次调用发生了什么
+
+```
+ToolEvent ──▶ 队列（最多 3）──▶ 一次织造循环 ──▶ 计一针 ──▶ 布面 +1 行
+                                   │
+      SHEDDING ──▶ PICKING ──▶ CLOSING ──▶ BEATING ──▶ TAKE-UP
+       提综开口      投梭飞纬      综框下落     打纬压紧     卷取一行
+```
+
+- 基础周期 **1.65 s**；队列越深越快（有下限），既不会卡成慢动作，也不会快到看不清打纬。
+- 队列满时新调用**合并**进当前这一梭：不丢事件，只少一次机械动作（转盘照常计 `×N`）。
+- 12 槽事件转盘：同一工具的连续调用**不推格**，读数窗显示 `BASH ×12`；换工具才前进 30°。
+
+---
+
+## 织法是真的：draft
+
+![四片综框](docs/img/shed.png)
+
+参考机（CrommaCode）的织机事件是一次调用走 `Shuttle → Needles/Lift → Dock → BeatUp → Lower → TakeUp/Stitch`，
+其中 `Needles/Lift` 是**选一组经线抬起**；布面由"织入的针"生成，提花机只做几何/相位计算、不含随机数。
+
+本实现把这条链子落成一份可测的开口计划：
+
+```ts
+// atelier/draft.ts —— 直穿、2/2 斜纹
+DRAFT = { shafts: 4, rows: [[0,1],[1,2],[2,3],[3,0]] }
+shaftOf(end)             // 这根经线穿在第几片综框
+warpOver(end, weftLine)  // 这一格是不是经线压在上面
+```
+
+- **同一份 draft 同时驱动综框和布面**：抬起的经线压纬，其余纬压经；
+- 每 2 px 一根纬线推进一次开口，所以斜纹是真正的 45° 对角；
+- 改 draft（例如 `[[0,2],[1,3]]` 或两片 plain weave），布面纹样随之改变。
+
+`scripts/test-draft.mjs` 断言的正是"不是贴图"这件事——每针恰好抬起指定的两片、每行恰好 50% 在上、
+相邻两针错开一根、换 draft 布面必然不同。
+
+已知简化：真提花是逐针选针，这里用四片综框分成 4 组近似（四片织机能表达的最大自由度）。
+
+---
+
+## 配色与材质
+
+参考机实测：97% 的像素落在 `#F6F0EA`–`#FCFCF6`，最深的结构线只到 `#746C64`/`#8C8478`。所以这台机器是
+**浅底 + 发丝线**：机架 `#E1DACA`、结构线 `#7A6F62`、钢面 `#CFC8B6`、转盘弧 `#C9C2B0`。
+
+唯一的彩色来自工具（`Read #789ED0 · Bash #77BA89 · Edit #C686C0 · Write #D5A868 · Search #5AB2C6`），
+织物则把它压成 34% 的淡染——布面始终是浅色织物，调用只留下淡色条带。
+
+---
+
+## 与外壳合并
+
+`shell/` 是 CrommaCode 客户端外壳的复刻；中央 Game View 里挂载的就是这份引擎（`@loom` 别名指向 `../src`），
+不是复制品。
+
+- 事件来自外壳自己的 `snapshot.toolCalls`，按 OpenCode 的 call id 去重，没有第二条事件管线；
+- 打开外壳时**不重放历史**，只织打开之后新到达的调用；
+- 画布下边界停在「游戏视图」标题行，不会压到 HUD 与卡片；
+- 卸载即销毁引擎，不泄漏画布或 WebGL 上下文。
+
+---
+
+## 快速开始
+
+```powershell
+# Loom 独立页面
+npm install
+npm run dev                      # http://127.0.0.1:5173
+npm test                         # 机制 / 转盘 / draft / 实时链路
+npm run build                    # dist/
+
+# 真实 Agent 驱动（本机 OpenCode 需在运行）
+opencode service start           # 19474
+npm run bridge:opencode          # ws://127.0.0.1:8787
+node scripts/serve.mjs 4178       # 然后打开 ?mode=loom&live=ws://127.0.0.1:8787
+
+# 外壳（合并后的完整界面）
+cd shell
+npm install
+npm run bridge                   # http://127.0.0.1:8788
+npm run dev                      # http://127.0.0.1:5180
+```
+
+脚本化的 mock 演示（不消耗模型调用）：
+
+```powershell
+node scripts/mock-demo.mjs --url=http://127.0.0.1:8790 --interval=700 --loop
+# 桥用 --allow-inject 启动，页面加 &mock=1 会把状态标成 MOCK 而不是 LIVE
+```
+
+---
 
 ## 仓库结构
 
 | 路径 | 内容 |
 |---|---|
-| `src/` `index.html` `public/` | Loom 引擎与独立页面（Pixi v8 + Canvas 2D 程序化材质） |
-| `shell/` | CrommaCode 外壳复刻；中央 Game View 挂载同一份 Loom 引擎（`@loom` 别名指向 `../src`） |
-| `scripts/` | 桥接（`opencode-loom-bridge`）、构建、单测（`test-*.mjs`）、验收与采集脚本 |
-| `docs/` | 视觉规范、事件转盘、联调与回滚文档 |
-| `review/` | 评审文档（**只保留 `.md`**；截图/录像等产物不入库，由脚本再生） |
+| `src/` `index.html` `public/` | Loom 引擎与独立页面 |
+| `shell/` | CrommaCode 外壳；中央 Game View 挂载同一份引擎 |
+| `scripts/` | 桥接、构建、单测、验收、采集脚本 |
+| `docs/` | 视觉规范、事件转盘、联调、回滚 |
+| `review/` | 评审文档（只保留 `.md`；截图录像等产物由脚本再生，不入库） |
 
-构建产物（`node_modules/` `dist/` `shots/` `review/` 下的二进制、`.tmp*`、日志）全部忽略，
-仓库只保留源码、脚本与文档。
+`node_modules/`、`dist/`、`shots/`、`review/` 下的二进制、`.tmp*`、日志都不入库。
 
-技术栈：TypeScript + React + PixiJS v8。全部画面由代码程序化绘制（Canvas 2D 材质 + Pixi 合成），不使用截图或外部素材。
+---
 
-**唯一交付场景：Loom / 织机**。112 根经线、16 组纱色、右侧三组曲柄滑块伺服（曲柄 25、连杆 75 固定杆长，圆交点求解），
-一个 ToolEvent = 一次投梭 = 一次打纬 = 一道纬线。可复用的多模式引擎骨架（事件总线、确定性回放、音频、弹簧动画、程序化绘图库）保留在 `src/engine/core/`，为后续场景预留接口；Chips / Westworld 原型已归档，不在交付内（见文末）。
+## 测试与验收
 
-## 快速开始
-
-本轮视觉版本：**Precision Flat Mechanical**。事件刻度机构与 Loom 共用浅色薄壳、细线轴承、固定安装鞍座和贯通底座。
-查看 [视觉规范](docs/PRECISION_FLAT_MECHANICAL.md) 与 [本轮交付、截图和回归结果](review/precision-flat/DELIVERY.md)。
-原 DSH 对照点保留在 `feat/loom-event-dial` / `c6d93db`。
-
-## 事件转盘（动态 · 视觉减法版）
-
-Loom 左侧的大型事件刻度机构是「**12 槽索引鼓 + 固定读数器**」：
-
-- 新工具事件 → **105 ms** 显示延迟 → **180 ms** 索引步进（30°/格）→ 读数停留 ≈2 s 后回到 IDLE；
-- 同工具调用就地合并为 `×N`（不转轮）；`Sxx/12` 为当前槽位/12 槽；
-- 读数窗是 **245×100 的固定矩形窗**，直接坐在盘面静止结构上，只显示工具 / ×N / Sxx/12；没有 rotation、没有悬挂夹具；
-- 工具色：Read `#789ED0`、Bash `#77BA89`、Edit `#C686C0`、Write `#D5A868`、Search `#5AB2B6`；
-- 遥测：`window.__engine.getModeTelemetry().dial`；细节与证据见 [docs/EVENT_DIAL.md](docs/EVENT_DIAL.md)；
-- 回滚：`?motion=off` 关闭步进动效；完整回滚见 [docs/ROLLBACK.md](docs/ROLLBACK.md)（基线 tag `pre-dynamic-dial`）。
-
-```bash
-npm run review:dial       # 11 个确定性状态断言 + 截图（review/event-dial/）
-npm run shot:dial-motion  # 180 ms 步进逐帧 contact sheet
-npm run record:dial       # 30 fps 11 s 录屏（读数器固定、转轮索引/回绕）
-```
-
-需要 Node.js 22+。
-
-```bash
-npm install
-npm run dev            # http://127.0.0.1:5173/
-```
-
-生产构建与预览：
-
-```bash
-npm run build          # tsc -b + vite build → dist/
-npm run preview        # http://127.0.0.1:4173/
-```
-
-## 操作
-
-- `Play / Pause / Resume / Stop` 控制织机；`0.5× / 1× / 2×` 速度；`Sound on/off` 静音；`Detail` 放大。
-- 底部工具按钮或数字键 `1–5` 注入 Read / Edit / Write / Bash / Search（等价于一次真实 Agent 工具调用）。
-- `Space` 播放/暂停，`M` 静音。
-- 打纬声只在打纬提交织行时响一次；排队中的事件不发声。12 个回放事件 = 12 次织入 = 12 声。
-
-URL 参数：
-
-| 参数 | 作用 |
+| 命令 | 覆盖 |
 |---|---|
-| `?noauto=1` | 不自动开始模拟器（等待外部事件/手动注入） |
-| `?static=1` | 停住 rAF 时钟，首帧后仅由 `__engine.tick()` 推进（截图/测试） |
-| `?deterministic=1` | 同上，但保留完整引擎（确定性回放证明） |
-| `?replay=1` | 加载 `public/replay/loom-session.json` 的 12 事件会话 |
-| `?session=replay/xxx.json` | 指定回放文件 |
-| `?ui=0` | 隐藏 React HUD，只留画布 |
-| `?motion=off` | 降低动效 |
-| `?feed=ws://127.0.0.1:8765` | 连接真实 Agent 事件桥 |
+| `npm test` | 机械相位与队列（`test-mechanism`）、转盘 12 槽与 ×N（`test-dial`）、开口计划与布面（`test-draft`）、实时链路去重/重连/缺口（`test-live-link`） |
+| `npm run accept:live` | 端到端：真实 OpenCode 调用 → 桥 → 页面，逐条核对账本 |
+| `npm run shot` / `record:dial` | 截图与确定性录像（产物落 `shots/`、`review/`） |
 
-## 事件从哪来
+`tsc --noEmit` 在根目录与 `shell/` 均无错误；两个应用都可 `build`。
 
-所有视觉反应消费同一个 `ToolEvent`：`{ id, type: 'Read'|'Edit'|'Write'|'Bash'|'Search', detail, at }`。三种来源可随时切换：
+---
 
-1. **内置模拟器**（默认）：空闲 / 单发 / 连续爆发 / 思考停顿，用于演示。
-2. **确定性回放**：`?replay=1` 注入仓库内 12 事件真实会话，逐事件可复现。
-3. **真实 Agent 桥**：
+## 文档
 
-   ```bash
-   npm run bridge -- --demo                    # 无外部 Agent 时循环演示 12 事件
-   npm run bridge -- --tail=C:\path\trace.jsonl  # 跟随 Claude Code / Codex 风格 JSONL
-   curl -X POST http://127.0.0.1:8765/event -d "{\"type\":\"Bash\",\"detail\":\"npm test\"}"
-   ```
+- [视觉规范（Precision Flat Mechanical）](docs/PRECISION_FLAT_MECHANICAL.md)
+- [布料生长 / 浅色配色 / 转盘光路](docs/LOOM_VISUAL.md)
+- [事件转盘](docs/EVENT_DIAL.md)
+- [布局](docs/LAYOUT.md)
+- [真实 OpenCode 联调](docs/OPENCODE_LIVE.md)
+- [回滚说明](docs/ROLLBACK.md)
+- 外壳侧：[合并指南](shell/docs/MERGE-GUIDE.md)、[工作台契约](shell/docs/OPENCODE-WORKBENCH-CONTRACT.md)
 
-   打开 `http://127.0.0.1:5173/?feed=ws://127.0.0.1:8765`。桥只监听 loopback，无鉴权，仅用于本地开发。
-
-4. **真实 OpenCode（LIVE WEAVE）**：直接订阅 OpenCode 自己的事件流，外部 CLI/TUI 的
-   工具调用实时驱动织机。与上面的通用桥不同，它按 tool-call id 去重、关联
-   success/failed/aborted、并带断线恢复与视觉预算。
-
-   ```powershell
-   npm run bridge:opencode     # 自动读取 ~/.config/opencode/service.json
-   # 打开 http://127.0.0.1:5173/?mode=loom&live=ws://127.0.0.1:8787
-   # 然后让外部 CLI/TUI 连到同一个 server：
-   opencode --server http://127.0.0.1:19474
-   ```
-
-   完整说明、验收与已知限制见 [`docs/OPENCODE_LIVE.md`](docs/OPENCODE_LIVE.md)；
-   一键真实验收：`npm run accept:live`。
-
-浏览器控制台 / 外部脚本也可直接驱动：
-
-```js
-window.__engine.inject({ id: 101, type: 'Write', detail: 'README.md · +96 lines' });
-window.__engine.trigger('Bash');
-window.__engine.tick(1 / 60);      // deterministic/static 模式下手动推进
-window.__engine.getStatus();
-window.__engine.getTelemetry();    // 织机遥测快照
-```
-
-## 架构
-
-```
-src/engine/
-  core/      VisualEngine · EventBus · ReplayPlayer · AudioEngine · AgentSimulator
-             Spring/Tween · 程序化绘图库 · 模式注册表 · 设计空间
-  modes/loom/ Precision Flat Loom（保留机构约束、织物与音频；统一装配和绘制）
-  gallery/    归档的 Chips / Westworld 原型（不参与构建，可恢复）
-  theme.ts    KunlunMeta 品牌色板
-```
-
-- React 只读 `EventBus` 状态；画布动画不依赖 React。
-- Loom 是一个独立 `VisualMode`：`mount/update/trigger/hud/telemetry/reset/destroy`，引擎只认识接口。
-- 设计空间固定 1472×1008，按窗口等比缩放；响应式只缩放不重排。
-- 确定性回放：`?deterministic=1` 时引擎时钟只由 `tick(dt)` 推进，模式内无 `performance.now()`/未播种随机数，相同 dt 序列 + 相同事件流 ⇒ 相同像素。
-- 详见 [`review/v2/ARCHITECTURE.md`](review/v2/ARCHITECTURE.md)。
-
-## 验证
-
-```bash
-npm test                        # 织造时序 + 连杆固定杆长（12,003 姿态）
-npm run build                   # 生产构建
-node scripts/parity-loom.mjs    # 重构前 vs 重构后 Loom 像素回归（7/7 相同）
-node scripts/verify-v2.mjs      # 浏览器验收（默认 loom）
-node scripts/replay-proof.mjs   # 确定性回放双次截图 SHA-256
-node scripts/record-v2.mjs      # 真实 Canvas + WebAudio 录屏（webm + mp4）
-```
-
-证据目录 `review/v2/`：
-
-- `verification.json` — 浏览器验收结果（canvas/UI/响应式/控制/telemetry）
-- `replay/` — 确定性回放双次截图与哈希
-- `loom/live.webm` / `.mp4` — 真实 Canvas + 音轨录屏
-- `loom/hero-final.png` / `ui-1472.png` / `ui-1920.png` / `ui-768.png` — 视觉证据
-- `REVIEW.md` — 诚实的完成度评估与已知问题
-- `GIT_LOG.md` — 变更记录
-- `../takeover/TAKEOVER.md` — 对 Astra review-v2 交接包的接管复核记录
-- `../mechanics-v2/` — Astra 原始评审证据（历史基线）
-
-## 基线与回退
-
-| 标签 / 分支 | 内容 |
-|---|---|
-| `review-v2-baseline` (`3a778b9`) | Astra Loom 评审修正版交接基线 |
-| `archive/modes-wip-2026-11-16` (`c503d3a`) | 归档的三模式原型（Chips/Westworld + 全模式 QA 证据） |
-| `deliverable/loom-v1` | 本次 Loom 交付 |
-
-全量 Git bundle 备份：`../backup/kunlun-loom-pre-v2.bundle`。回退到交接基线：
-
-```bash
-git checkout review-v2-baseline
-```
-
-## 归档的探索（不在交付内）
-
-Chips（工具调用卡牌世界）与 Westworld（压力工厂装置）原型保存在 `src/engine/gallery/`，
-并从构建与 `tsconfig` 中排除；完整源码、截图与全模式 QA 证据保存在 git tag
-`archive/modes-wip-2026-11-16`。恢复步骤见 [`src/engine/gallery/README.md`](src/engine/gallery/README.md)。
+---
 
 ## 已知限制
 
 - 平面机构艺术，不做动力学、碰撞或制造校核；连杆只保证几何杆长与位置解算。
 - 真实 Agent 桥为本地开发工具（loopback、无鉴权），不是生产级事件服务。
-- WebAudio 需要用户手势才能启动；headless 自动化会加 `--autoplay-policy=no-user-gesture-required`。
+- WebAudio 需要用户手势才能启动；headless 自动化需加 `--autoplay-policy=no-user-gesture-required`。
+- 纯聊天（无工具调用）不会织布——织机只对工具动作反应。
 - 跨机器像素确定性未证明（同机同浏览器已在回放中验证）。
-- 逐项完成度与未达标项见 `review/v2/REVIEW.md`。
+- 四片综框是提花的近似；逐针选针需替换 draft 的数据结构。
