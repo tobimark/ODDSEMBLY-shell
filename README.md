@@ -116,23 +116,57 @@ warpOver(end, weftLine)  // 这一格是不是经线压在上面
 
 ## 快速开始
 
+### 一条命令起全部（不含 OpenCode）
+
 ```powershell
-# Loom 独立页面
 npm install
+npm run dev:all
+```
+
+起来之后：
+
+| 地址 | 是什么 |
+|---|---|
+| http://127.0.0.1:5180 | **产品外壳**（完整界面，从这里开始） |
+| http://127.0.0.1:5173 | **引擎验收台**（无 HUD 干扰地看场景，截图/ parity 脚本的靶子） |
+| http://127.0.0.1:8788/api/health | 桥接健康检查 |
+
+`Ctrl+C` 一次，三个进程一起退出（含 Vite 派生的 esbuild）。只想起产品和桥接：
+
+```powershell
+npm run dev:all:no-lab
+```
+
+OpenCode **不在**这条命令里。它没在跑时，外壳显示「未连接」是预期状态，不是故障 ——
+桥接照常监听，页面照常可用，只是没有实时 Agent 数据。要接真实 Agent 见下一节。
+
+### 分开起（调试单个进程时用）
+
+```powershell
+# 只起引擎验收台
 npm run dev                      # http://127.0.0.1:5173
 npm test                         # 机制 / 转盘 / draft / 实时链路
 npm run build                    # dist/
 
-# 真实 Agent 驱动（本机 OpenCode 需在运行）
+# 只起外壳（另一个终端）
+cd shell
+npm run dev                      # http://127.0.0.1:5180
+npm run bridge                   # http://127.0.0.1:8788
+```
+
+> 为什么是两个 Vite：`src/` 是引擎本身加一个验收台，`shell/` 是产品外壳且通过
+> `@loom` 别名直接引用 `../src`（同一份引擎，不复制）。两者路由与端口独立，
+> `scripts/dev.mjs` 只是把它们和桥接一起拉起来并统一收尾。
+
+### 真实 Agent 驱动（本机 OpenCode 需在运行）
+
+```powershell
 opencode service start           # 19474
+npm run dev:all                  # 桥接会自动读取 service.json 里的端口与密码
+
+# 或者用独立页 + WebSocket 链路（旧路径，仍可用）
 npm run bridge:opencode          # ws://127.0.0.1:8787
 node scripts/serve.mjs 4178       # 然后打开 ?mode=loom&live=ws://127.0.0.1:8787
-
-# 外壳（合并后的完整界面）
-cd shell
-npm install
-npm run bridge                   # http://127.0.0.1:8788
-npm run dev                      # http://127.0.0.1:5180
 ```
 
 脚本化的 mock 演示（不消耗模型调用）：
@@ -148,9 +182,9 @@ node scripts/mock-demo.mjs --url=http://127.0.0.1:8790 --interval=700 --loop
 
 | 路径 | 内容 |
 |---|---|
-| `src/` `index.html` `public/` | Loom 引擎与独立页面 |
-| `shell/` | CrommaCode 外壳；中央 Game View 挂载同一份引擎 |
-| `scripts/` | 桥接、构建、单测、验收、采集脚本 |
+| `src/` `index.html` `public/` | Loom 引擎 + 引擎验收台（无 HUD 的独立页） |
+| `shell/` | 产品外壳（React + CSS）；中央 Game View 通过 `@loom` 别名挂载同一份引擎 |
+| `scripts/` | 桥接、构建、单测、验收、采集脚本；`dev.mjs` 是一条命令启动器 |
 | `docs/` | 视觉规范、事件转盘、联调、回滚 |
 | `review/` | 评审文档（只保留 `.md`；截图录像等产物由脚本再生，不入库） |
 
